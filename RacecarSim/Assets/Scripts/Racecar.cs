@@ -24,11 +24,14 @@ public class Racecar : MonoBehaviour
     public Drive Drive { get; private set; }
     public Controller Controller { get; private set; }
 
+    public PhysicsModule Physics { get; private set; }
+
     private void Start()
     {
         // Find submodules
-        this.Drive = this.gameObject.GetComponent<Drive>();
-        this.Controller = this.gameObject.GetComponent<Controller>();
+        this.Drive = this.GetComponent<Drive>();
+        this.Controller = this.GetComponent<Controller>();
+        this.Physics = this.GetComponent<PhysicsModule>();
 
         this.GetComponent<Rigidbody>().centerOfMass = new Vector3(0, -1f, 0);
 

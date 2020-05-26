@@ -7,6 +7,9 @@ public class PhysicsModule : MonoBehaviour
 {
     private Rigidbody rb;
     private Vector3 prevVelocity;
+    private Vector3 averageAcceleration = Vector3.zero;
+
+    private const int accelerationSamples = 10;
 
     private void Start()
     {
@@ -16,13 +19,15 @@ public class PhysicsModule : MonoBehaviour
 
     private void FixedUpdate()
     {
+        Vector3 curAcceleration = (this.rb.velocity - this.prevVelocity) / Time.deltaTime;
+        this.averageAcceleration += (curAcceleration - this.averageAcceleration) / PhysicsModule.accelerationSamples;
         prevVelocity = this.rb.velocity;
     }
 
     #region Python Interface
     public Vector3 get_linear_acceleration()
     {
-        return this.prevVelocity - this.rb.velocity;
+        return this.averageAcceleration;
     }
 
     public Vector3 get_angular_velocity()

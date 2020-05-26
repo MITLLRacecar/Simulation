@@ -3,6 +3,14 @@ using UnityEngine;
 
 public class Racecar : MonoBehaviour
 {
+    public Camera ThirdPersonCamera;
+
+    #region Constants
+    private static readonly Vector3 cameraOffset = new Vector3(0, 5, -6);
+    private const float cameraSpeed = 2;
+
+    #endregion
+
     private Action userStart;
     private Action userUpdate;
     private Action userUpdateSlow;
@@ -10,8 +18,8 @@ public class Racecar : MonoBehaviour
     private Action curUpdate;
     private Action curUpdateSlow;
 
-    private double updateSlowTime = 1;
-    private double updateSlowCounter = 0;
+    private float updateSlowTime = 1;
+    private float updateSlowCounter = 0;
 
     public Drive Drive { get; private set; }
     public Controller Controller { get; private set; }
@@ -53,6 +61,15 @@ public class Racecar : MonoBehaviour
         {
             this.enterDefaultDrive();
         }
+    }
+
+    private void LateUpdate()
+    {
+        Vector3 followPoint = this.transform.forward * Racecar.cameraOffset.z;
+        Vector3 targetCameraPosition = this.transform.position + new Vector3(followPoint.x, Racecar.cameraOffset.y, followPoint.z);
+        this.ThirdPersonCamera.transform.position = Vector3.Lerp(this.ThirdPersonCamera.transform.position, targetCameraPosition, Racecar.cameraSpeed * Time.deltaTime);
+
+        this.ThirdPersonCamera.transform.LookAt(this.transform.position);
     }
 
     private void defaultStart()
@@ -109,7 +126,7 @@ public class Racecar : MonoBehaviour
         return Time.deltaTime;
     }
 
-    void set_update_slow_time(double time)
+    void set_update_slow_time(float time)
     {
         this.updateSlowTime = time;
     }

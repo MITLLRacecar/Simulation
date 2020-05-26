@@ -21,7 +21,7 @@ public class Drive : MonoBehaviour
     private float curSpeed = 0;
     private float curAngle = 0;
 
-    private void Update()
+    private void FixedUpdate()
     {
         this.WheelColliders[WheelPosition.BackLeft.GetHashCode()].motorTorque = this.curSpeed;
         this.WheelColliders[WheelPosition.BackRight.GetHashCode()].motorTorque = this.curSpeed;

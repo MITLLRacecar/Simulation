@@ -14,7 +14,7 @@ public class Drive : MonoBehaviour
     public GameObject[] Wheels = new GameObject[4];
     public WheelCollider[] WheelColliders = new WheelCollider[4];
 
-    private static readonly float[] unitySpeedScaleFactor = { 1f / 0.25f, 1f / 0.33f };
+    private static readonly float[] unitySpeedScaleFactor = { 400f / 0.25f, 400f / 0.33f };
     public const float unityMaxAngle = 20;
 
     private float[] userSpeedScaleFactor = { 0.25f, 0.33f };
@@ -34,7 +34,7 @@ public class Drive : MonoBehaviour
     {
         int isBackward = Convert.ToInt32(speed < 0);
         this.curSpeed = speed * this.userSpeedScaleFactor[isBackward] * Drive.unitySpeedScaleFactor[isBackward];
-        this.curAngle = angle;
+        this.curAngle = angle * unityMaxAngle;
     }
 
     public void stop()

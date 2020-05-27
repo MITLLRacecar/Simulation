@@ -28,8 +28,6 @@ public class Lidar : MonoBehaviour
     {
         int lastSample = (curSample + Mathf.RoundToInt(Lidar.samplesPerSecond * Time.deltaTime)) % numSamples;
 
-        Debug.Log(this.carTransform.rotation.eulerAngles.y);
-
         while (curSample != lastSample)
         {
             this.transform.rotation = Quaternion.Euler(0, this.carTransform.rotation.eulerAngles.y + 360 * curSample / Lidar.numSamples, 0);

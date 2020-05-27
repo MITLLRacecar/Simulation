@@ -19,7 +19,8 @@ public class Hud : MonoBehaviour
     private enum Images
     {
         ColorFeed = 1,
-        LidarMap = 3
+        DepthFeed = 3,
+        LidarMap = 5
     }
 
     private Text[] texts;
@@ -33,6 +34,7 @@ public class Hud : MonoBehaviour
         this.images = this.GetComponentsInChildren<RawImage>();
 
         this.images[Images.LidarMap.GetHashCode()].texture = new Texture2D(Hud.lidarMapDimensions[0], Hud.lidarMapDimensions[1]);
+        this.images[Images.DepthFeed.GetHashCode()].texture = new Texture2D(CameraModule.Width, CameraModule.Height);
     }
 
     private void Update()
@@ -42,6 +44,7 @@ public class Hud : MonoBehaviour
         this.texts[Texts.AngularVelocity.GetHashCode()].text = FormatVector3(this.Racecar.Physics.get_angular_velocity());
 
         this.Racecar.Lidar.UpdateMap((Texture2D)this.images[Images.LidarMap.GetHashCode()].texture);
+        this.Racecar.Camera.VisualizeDepth((Texture2D)this.images[Images.DepthFeed.GetHashCode()].texture);
     }
 
     private string FormatVector3(Vector3 vector)

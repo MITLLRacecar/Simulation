@@ -22,6 +22,7 @@ public class Racecar : MonoBehaviour
     private float updateSlowCounter = 0;
 
     public Drive Drive { get; private set; }
+    public CameraModule Camera { get; private set; }
     public Controller Controller { get; private set; }
     public PhysicsModule Physics { get; private set; }
     public Lidar Lidar { get; private set; }
@@ -30,6 +31,7 @@ public class Racecar : MonoBehaviour
     {
         // Find submodules
         this.Drive = this.GetComponent<Drive>();
+        this.Camera = this.GetComponentInChildren<CameraModule>();
         this.Controller = this.GetComponent<Controller>();
         this.Physics = this.GetComponent<PhysicsModule>();
         this.Lidar = this.GetComponentInChildren<Lidar>();

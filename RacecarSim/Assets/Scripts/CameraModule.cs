@@ -20,12 +20,12 @@ public class CameraModule : MonoBehaviour
     private static float maxCode = 0.0f;
     #endregion
 
-    private Tuple<int, int, int>[][] colorImage;
+    private byte[][] colorImage;
     private bool isColorImageValid = false;
     private float[][] depthImage;
     private bool isDepthImageValid = false;
 
-    public Tuple<int, int, int>[][] ColorImage
+    public byte[][] ColorImage
     {
         get
         {
@@ -104,6 +104,7 @@ public class CameraModule : MonoBehaviour
 
     private void TakeColorImage()
     {
+        // Look into Texture2D.EncodeToPNG
         this.isColorImageValid = true;
     }
 
@@ -135,7 +136,7 @@ public class CameraModule : MonoBehaviour
     }
 
     #region Python Interface
-    public Tuple<int, int, int>[][] get_image()
+    public byte[][] get_image()
     {
         return this.ColorImage;
     }

@@ -50,11 +50,13 @@ public class Lidar : MonoBehaviour
     {
         Unity.Collections.NativeArray<Color32> rawData = map.GetRawTextureData<Color32>();
 
+        // Set background color
         for (int i = 0; i < rawData.Length; i++)
         {
             rawData[i] = Hud.SensorBackgroundColor;
         }
 
+        // Render samples
         Vector2 center = new Vector2(map.width / 2, map.height / 2);
         float length = Mathf.Min(map.width / 2.0f, map.height / 2.0f);
         for (int i = 0; i < this.samples.Length; i++)

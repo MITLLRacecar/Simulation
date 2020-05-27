@@ -21,22 +21,22 @@ public class Racecar : MonoBehaviour
     private float updateSlowTime = 1;
     private float updateSlowCounter = 0;
 
-    public Drive Drive { get; private set; }
     public CameraModule Camera { get; private set; }
     public Controller Controller { get; private set; }
-    public PhysicsModule Physics { get; private set; }
+    public Drive Drive { get; private set; }
     public Lidar Lidar { get; private set; }
+    public PhysicsModule Physics { get; private set; }
 
     private void Start()
     {
         // Find submodules
-        this.Drive = this.GetComponent<Drive>();
         this.Camera = this.GetComponentInChildren<CameraModule>();
         this.Controller = this.GetComponent<Controller>();
-        this.Physics = this.GetComponent<PhysicsModule>();
+        this.Drive = this.GetComponent<Drive>();
         this.Lidar = this.GetComponentInChildren<Lidar>();
-        this.Lidar.SetCarTransform(this.transform);
+        this.Physics = this.GetComponent<PhysicsModule>();
 
+        this.Lidar.SetCarTransform(this.transform);
         this.GetComponent<Rigidbody>().centerOfMass = new Vector3(0, -1f, 0);
 
         this.enterDefaultDrive();

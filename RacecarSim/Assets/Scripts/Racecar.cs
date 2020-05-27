@@ -23,8 +23,8 @@ public class Racecar : MonoBehaviour
 
     public Drive Drive { get; private set; }
     public Controller Controller { get; private set; }
-
     public PhysicsModule Physics { get; private set; }
+    public Lidar Lidar { get; private set; }
 
     private void Start()
     {
@@ -32,6 +32,8 @@ public class Racecar : MonoBehaviour
         this.Drive = this.GetComponent<Drive>();
         this.Controller = this.GetComponent<Controller>();
         this.Physics = this.GetComponent<PhysicsModule>();
+        this.Lidar = this.GetComponentInChildren<Lidar>();
+        this.Lidar.SetCarTransform(this.transform);
 
         this.GetComponent<Rigidbody>().centerOfMass = new Vector3(0, -1f, 0);
 

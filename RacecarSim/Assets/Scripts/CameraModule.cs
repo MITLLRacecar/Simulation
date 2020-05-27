@@ -82,6 +82,7 @@ public class CameraModule : MonoBehaviour
     private void Start()
     {
         this.GetComponent<Camera>().fieldOfView = CameraModule.fieldOfView[0];
+        this.GetComponent<Camera>().aspect = (float)CameraModule.ColorWidth / CameraModule.ColorHeight;
 
         this.depthImage = new float[CameraModule.DepthHeight][];
         for (int r = 0; r < CameraModule.DepthHeight; r++)

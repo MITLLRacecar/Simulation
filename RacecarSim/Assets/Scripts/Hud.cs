@@ -11,16 +11,16 @@ public class Hud : MonoBehaviour
 
     private enum Texts
     {
-        TrueSpeed = 1,
-        LinearAcceleration = 5,
-        AngularVelocity = 8
+        TrueSpeed = 4,
+        LinearAcceleration = 8,
+        AngularVelocity = 11
     }
 
     private enum Images
     {
-        ColorFeed = 1,
-        DepthFeed = 3,
-        LidarMap = 5
+        ColorFeed = 2,
+        DepthFeed = 4,
+        LidarMap = 6
     }
 
     private Text[] texts;
@@ -29,15 +29,15 @@ public class Hud : MonoBehaviour
     #region Constants
     public static readonly Color SensorBackgroundColor = new Color(0.2f, 0.2f, 0.2f);
 
-    private static readonly int[] lidarMapDimensions = { 128, 128 };
+    private const int lidarMapScale = 4;
     #endregion
 
     private void Start()
     {
-        this.texts = this.GetComponentsInChildren<Text>();
+        this.texts = GetComponentsInChildren<Text>();
         this.images = this.GetComponentsInChildren<RawImage>();
 
-        this.images[Images.LidarMap.GetHashCode()].texture = new Texture2D(Hud.lidarMapDimensions[0], Hud.lidarMapDimensions[1]);
+        this.images[Images.LidarMap.GetHashCode()].texture = new Texture2D(CameraModule.ColorWidth / Hud.lidarMapScale, CameraModule.ColorHeight / Hud.lidarMapScale);
         this.images[Images.DepthFeed.GetHashCode()].texture = new Texture2D(CameraModule.DepthWidth, CameraModule.DepthHeight);
     }
 

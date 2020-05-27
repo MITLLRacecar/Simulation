@@ -6,11 +6,13 @@ using UnityEngine;
 public class CameraModule : MonoBehaviour
 {
     #region Constants
-    public const int Width = 640;
-    public const int Height = 480;
+    public const int ColorWidth = 640;
+    public const int ColorHeight = 480;
+
+    public const int DepthWidth = CameraModule.ColorWidth / 8;
+    public const int DepthHeight = CameraModule.ColorHeight / 8;
 
     private static readonly float[] fieldOfView = { 69.4f, 42.5f };
-    private static readonly int depthSampleFactor = 8;
 
     private static float minRange = 0.105f;
     private static float minCode = 0.0f;
@@ -29,7 +31,7 @@ public class CameraModule : MonoBehaviour
         {
             if (!this.isColorImageValid)
             {
-                this.takeColorImage();
+                this.TakeColorImage();
             }
 
             return this.colorImage;
@@ -42,7 +44,7 @@ public class CameraModule : MonoBehaviour
         {
             if (!isDepthImageValid)
             {
-                this.takeDepthImage();
+                this.TakeDepthImage();
             }
 
             return this.depthImage;
@@ -51,77 +53,84 @@ public class CameraModule : MonoBehaviour
 
     public void VisualizeDepth(Texture2D texture)
     {
-        //if (texture.width != CameraModule.Width || texture.height != CameraModule.Height)
-        //{
-        //    throw new Exception("texture dimensions must match depth image dimensions");
-        //}
+        if (texture.width != CameraModule.DepthWidth || texture.height != CameraModule.DepthHeight)
+        {
+            throw new Exception("texture dimensions must match depth image dimensions");
+        }
 
-        //Unity.Collections.NativeArray<Color32> rawData = texture.GetRawTextureData<Color32>();
+        Unity.Collections.NativeArray<Color32> rawData = texture.GetRawTextureData<Color32>();
 
-        //for (int i = 0; i < rawData.Length; i++)
-        //{
-        //    rawData[i] = Color.black;
-        //}
+        for (int i = 0; i < rawData.Length; i++)
+        {
+            rawData[i] = Hud.SensorBackgroundColor;
+        }
 
-        //for (int r = 0; r < this.DepthImage.Length; r++)
-        //{
-        //    for (int c = 0; c < this.DepthImage[r].Length; c++)
-        //    {
-        //        if (this.DepthImage[r][c] != CameraModule.minCode && this.DepthImage[r][c] != CameraModule.maxCode)
-        //        {
-        //            rawData[r * texture.width + c] = Color.Lerp(Color.red, Color.blue, DepthImage[r][c] / CameraModule.maxRange);
-        //        }
-        //    }
-        //}
+        for (int r = 0; r < CameraModule.DepthHeight; r++)
+        {
+            for (int c = 0; c < CameraModule.DepthWidth; c++)
+            {
+                if (this.DepthImage[r][c] != CameraModule.minCode && this.DepthImage[r][c] != CameraModule.maxCode)
+                {
+                    rawData[r * texture.width + c] = Color.Lerp(Color.red, Color.blue, DepthImage[r][c] / 100 / CameraModule.maxRange);
+                }
+            }
+        }
 
-        //texture.Apply();
+        texture.Apply();
     }
 
     private void Start()
     {
         this.GetComponent<Camera>().fieldOfView = CameraModule.fieldOfView[0];
 
-        this.depthImage = new float[CameraModule.Height][];
-        for (int r = 0; r < CameraModule.Height; r++)
+        this.depthImage = new float[CameraModule.DepthHeight][];
+        for (int r = 0; r < CameraModule.DepthHeight; r++)
         {
-            this.depthImage[r] = new float[CameraModule.Width];
+            this.depthImage[r] = new float[CameraModule.DepthWidth];
         }
     }
 
     private void LateUpdate()
     {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            Debug.Log(this.DepthImage);
+        }
+
         this.isColorImageValid = false;
         this.isDepthImageValid = false;
     }
 
-    private void takeColorImage()
+    private void TakeColorImage()
     {
-
+        this.isColorImageValid = true;
     }
 
-    private void takeDepthImage()
+    private void TakeDepthImage()
     {
         float imageWidth = Mathf.Tan(CameraModule.fieldOfView[0] * Mathf.PI / 180);
         float imageHeight = Mathf.Tan(CameraModule.fieldOfView[1] * Mathf.PI / 180);
-        for (int r = 0; r < CameraModule.Height; r++)
+
+        for (int r = 0; r < CameraModule.DepthHeight; r++)
         {
-            for (int c = 0; c < CameraModule.Width; c++)
+            for (int c = 0; c < CameraModule.DepthWidth; c++)
             {
-                if (r % depthSampleFactor == 0 && c % depthSampleFactor == 0)
+                Vector3 direction = this.transform.forward
+                    + this.transform.up * imageHeight * ((float)r / CameraModule.DepthHeight - 0.5f)
+                    + this.transform.right * imageWidth * ((float)c / CameraModule.DepthWidth - 0.5f);
+
+                if (Physics.Raycast(this.transform.position, direction, out RaycastHit raycastHit, CameraModule.maxRange))
                 {
-                    Vector3 direction = this.transform.forward
-                        + this.transform.up * imageHeight * -(r / CameraModule.Height - 0.5f)
-                        + this.transform.right * imageWidth * (c / CameraModule.Width - 0.5f);
-
-                    if (Physics.Raycast(this.transform.position, direction, out RaycastHit raycastHit, CameraModule.maxRange))
-                    {
-                        this.depthImage[r][c] = raycastHit.distance > CameraModule.minRange ? raycastHit.distance * 100 : CameraModule.minCode;
-                    }
-
-                    this.depthImage[r][c] = CameraModule.maxCode;
+                    this.depthImage[r][c] = raycastHit.distance > CameraModule.minRange ? raycastHit.distance * 100 : CameraModule.minCode;
                 }
+                else
+                {
+                    this.depthImage[r][c] = CameraModule.maxCode;
+                }               
             }
         }
+
+        this.isDepthImageValid = true;
     }
 
     #region Python Interface
@@ -137,12 +146,12 @@ public class CameraModule : MonoBehaviour
 
     public int get_width()
     {
-        return CameraModule.Width;
+        return CameraModule.ColorWidth;
     }
 
     public int get_height()
     {
-        return CameraModule.Height;
+        return CameraModule.ColorHeight;
     }
     #endregion
 }

@@ -52,7 +52,7 @@ public class Lidar : MonoBehaviour
 
         for (int i = 0; i < rawData.Length; i++)
         {
-            rawData[i] = Color.black;
+            rawData[i] = Hud.SensorBackgroundColor;
         }
 
         Vector2 center = new Vector2(map.width / 2, map.height / 2);

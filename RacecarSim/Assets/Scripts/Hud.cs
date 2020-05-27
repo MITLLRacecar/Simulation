@@ -26,7 +26,11 @@ public class Hud : MonoBehaviour
     private Text[] texts;
     private RawImage[] images;
 
+    #region Constants
+    public static readonly Color SensorBackgroundColor = new Color(0.2f, 0.2f, 0.2f);
+
     private static readonly int[] lidarMapDimensions = { 128, 128 };
+    #endregion
 
     private void Start()
     {
@@ -34,7 +38,7 @@ public class Hud : MonoBehaviour
         this.images = this.GetComponentsInChildren<RawImage>();
 
         this.images[Images.LidarMap.GetHashCode()].texture = new Texture2D(Hud.lidarMapDimensions[0], Hud.lidarMapDimensions[1]);
-        this.images[Images.DepthFeed.GetHashCode()].texture = new Texture2D(CameraModule.Width, CameraModule.Height);
+        this.images[Images.DepthFeed.GetHashCode()].texture = new Texture2D(CameraModule.DepthWidth, CameraModule.DepthHeight);
     }
 
     private void Update()

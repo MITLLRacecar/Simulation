@@ -40,8 +40,7 @@ public class Lidar : MonoBehaviour
 
     private float TakeSample()
     {
-        RaycastHit raycastHit;
-        if(Physics.Raycast(this.transform.position, this.transform.forward, out raycastHit, Lidar.maxRange))
+        if(Physics.Raycast(this.transform.position, this.transform.forward, out RaycastHit raycastHit, Lidar.maxRange))
         {
             return raycastHit.distance > Lidar.minRange ? raycastHit.distance * 100 : Lidar.minCode;
         }

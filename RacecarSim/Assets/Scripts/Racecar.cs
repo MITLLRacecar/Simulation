@@ -11,10 +11,6 @@ public class Racecar : MonoBehaviour
 
     #endregion
 
-    private Action userStart;
-    private Action userUpdate;
-    private Action userUpdateSlow;
-
     private Action curUpdate;
     private Action curUpdateSlow;
 
@@ -39,7 +35,7 @@ public class Racecar : MonoBehaviour
         this.Lidar.SetCarTransform(this.transform);
         this.GetComponent<Rigidbody>().centerOfMass = new Vector3(0, -1f, 0);
 
-        this.enterDefaultDrive();
+        this.EnterDefaultDrive();
     }
 
     private void Update()
@@ -58,15 +54,15 @@ public class Racecar : MonoBehaviour
 
         if (Input.GetButton("Start") && Input.GetButton("Back"))
         {
-            this.handleExit();
+            this.HandleExit();
         }
         else if (Input.GetButtonDown("Start"))
         {
-            this.enterUserProgram();
+            this.EnterUserProgram();
         }
         else if (Input.GetButtonDown("Back"))
         {
-            this.enterDefaultDrive();
+            this.EnterDefaultDrive();
         }
     }
 
@@ -98,7 +94,7 @@ public class Racecar : MonoBehaviour
         }
     }
 
-    private void enterDefaultDrive()
+    private void EnterDefaultDrive()
     {
         Debug.Log(">> Entering default drive mode");
         this.defaultStart();
@@ -106,26 +102,35 @@ public class Racecar : MonoBehaviour
         this.curUpdateSlow = null;
     }
 
-    private void enterUserProgram()
+    private void EnterUserProgram()
     {
         Debug.Log(">> Entering user program mode");
-        this.userStart();
-        this.curUpdate = this.userUpdate;
-        this.curUpdateSlow = this.userUpdateSlow;
+        this.UserStart();
+        this.curUpdate = this.UserUpdate;
+        this.curUpdateSlow = null;
     }
 
-    private void handleExit()
+    private void HandleExit()
     {
         Debug.Log(">> Goodbye!");
+        PythonInterface.Instance.HandleExit();
         Application.Quit();
+    }
+
+    private void UserStart()
+    {
+
+    }
+
+    private void UserUpdate()
+    {
+
     }
 
     #region Python Interface
     void set_start_update(Action start, Action update, Action update_slow = null)
     {
-        this.userStart = start;
-        this.userUpdate = update;
-        this.userUpdateSlow = update_slow;
+        // What to do about this method?
     }
 
     double get_delta_time()

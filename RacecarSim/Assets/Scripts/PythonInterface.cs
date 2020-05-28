@@ -1,15 +1,17 @@
 ﻿using System;
-using System.Collections;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.Experimental.UIElements;
 
 public class PythonInterface : MonoBehaviour
 {
     public Racecar Racecar;
+
+    public static PythonInterface Instance;
 
     private enum FunctionCode
     {
@@ -17,35 +19,35 @@ public class PythonInterface : MonoBehaviour
         set_start_update,
         get_delta_time,
         set_update_slow_time,
-        get_image,
-        get_depth_image,
-        get_width,
-        get_height,
-        is_down,
-        was_pressed,
-        was_released,
-        get_trigger,
-        get_joystick,
-        show_image,
-        set_speed_angle,
-        stop,
-        set_max_speed_scale_factor,
-        pin_mode,
-        pin_write,
-        get_length,
-        get_ranges,
-        get_linear_acceleration,
-        get_angular_velocity,
-        set_speaker,
-        set_mic,
-        set_output_stream,
-        set_input_stream,
-        play_audio,
-        record_audio,
-        play,
-        rec,
-        set_file,
-        list_devices
+        camera_get_image,
+        camera_get_depth_image,
+        camera_get_width,
+        camera_get_height,
+        controller_is_down,
+        controller_was_pressed,
+        controller_was_released,
+        controller_get_trigger,
+        controller_get_joystick,
+        display_show_image,
+        drive_set_speed_angle,
+        drive_stop,
+        drive_set_max_speed_scale_factor,
+        gpio_pin_mode,
+        gpio_pin_write,
+        lidar_get_length,
+        lidar_get_ranges,
+        physics_get_linear_acceleration,
+        physics_get_angular_velocity,
+        sound_set_speaker,
+        sound_set_mic,
+        sound_set_output_stream,
+        sound_set_input_stream,
+        sound_play_audio,
+        sound_record_audio,
+        sound_play,
+        sound_rec,
+        sound_set_file,
+        sound_list_devices
     }
 
     public enum DataCode
@@ -62,24 +64,30 @@ public class PythonInterface : MonoBehaviour
     }
 
     #region Constants
-    private const int sendPort = 5065;
-    private const int receivePort = 5066;
+    private const int functionPort = 5065;
+    private const int clockPort = 5066;
     private static readonly IPAddress ipAddress = IPAddress.Parse("127.0.0.1");
     #endregion
 
     private Thread receiveThread;
-    IPEndPoint receiveEndPoint = new IPEndPoint(ipAddress, recievePort);
 
-    private UdpClient sender = new UdpClient();
-    private IPEndPoint sendEndPoint = new IPEndPoint(ipAddress, sendPort);
+    private bool running;
 
-    void Start()
+
+    public void HandleExit()
     {
+        this.running = false;
+    }
+
+    private void Start()
+    {
+        Instance = this;
         InitUDP();
     }
 
     private void InitUDP()
     {
+        this.running = true;
         receiveThread = new Thread(new ThreadStart(ReceiveData));
         receiveThread.IsBackground = true;
         receiveThread.Start();
@@ -87,69 +95,66 @@ public class PythonInterface : MonoBehaviour
 
     private void ReceiveData()
     {
-        using (UdpClient receiver = new UdpClient(receivePort))
+        IPEndPoint endpoint = new IPEndPoint(PythonInterface.ipAddress, PythonInterface.functionPort);
+        using (UdpClient client = new UdpClient(functionPort))
         {
-            while (true)
+            while (this.running)
             {
-                try
+                byte[] data = client.Receive(ref endpoint);
+                FunctionCode functionCode = (FunctionCode)data[0];
+
+                byte[] sendData;
+
+                switch (functionCode)
                 {
-                    byte[] data = receiver.Receive(ref this.receiveEndPoint);
-                    FunctionCode functionCode = (FunctionCode)data[0];
+                    case FunctionCode.camera_get_width:
+                        sendData = BitConverter.GetBytes(this.Racecar.Camera.get_width());
+                        client.Send(sendData, sendData.Length, endpoint);
+                        break;
 
-                    switch (functionCode)
-                    {
-                        case FunctionCode.set_speed_angle:
-                            this.Racecar.Drive.set_speed_angle(1, 1);
-                            break;
+                    case FunctionCode.camera_get_height:
+                        sendData = BitConverter.GetBytes(this.Racecar.Camera.get_height());
+                        client.Send(sendData, sendData.Length, endpoint);
+                        break;
 
-                        default:
-                            print($"The function {functionCode} is not supported by the Unity Layer");
-                            break;
-                    }
+                    case FunctionCode.controller_is_down:
+                        Controller.Button button = (Controller.Button)BitConverter.ToInt32(data, 4);
+                        sendData = BitConverter.GetBytes(this.Racecar.Controller.is_down(button));
+                        client.Send(sendData, sendData.Length, endpoint);
+                        break;
 
+                    case FunctionCode.drive_set_speed_angle:
+                        float speed = BitConverter.ToSingle(data, 4);
+                        float angle = BitConverter.ToSingle(data, 8);
+                        this.Racecar.Drive.set_speed_angle(speed, angle);
+                        break;
+
+                    case FunctionCode.drive_stop:
+                        this.Racecar.Drive.stop();
+                        break;
+
+                    case FunctionCode.drive_set_max_speed_scale_factor:
+                        float forwardFactor = BitConverter.ToSingle(data, 4);
+                        float backFactor = BitConverter.ToSingle(data, 8);
+                        this.Racecar.Drive.set_max_speed_scale_factor(new float[] { forwardFactor, backFactor });
+                        break;
+
+                    case FunctionCode.lidar_get_length:
+                        sendData = BitConverter.GetBytes(this.Racecar.Lidar.get_length());
+                        client.Send(sendData, sendData.Length, endpoint);
+                        break;
+
+                    //case FunctionCode.physics_get_angular_velocity:
+                    //    Vector3 angularVelocity = this.Racecar.Physics.get_angular_velocity();
+                    //    sendData = BitConverter.GetBytes();
+                    //    client.Send(sendData, sendData.Length, endpoint);
+                    //    break;
+
+                    default:
+                        print($"The function {functionCode} is not supported by the RACECAR-MN Unity simulation");
+                        break;
                 }
-                catch (Exception e)
-                {
-                    print(e.ToString());
-                }
-            }
-        }
-    }
 
-    //public void SendBool(DataCode dataCode, bool value)
-    //{
-    //    try
-    //    {
-    //        byte[] data = new byte[sizeof(bool) + 1];
-    //        data[0] = (byte)dataCode;
-    //        data.CopyTo(BitConverter.GetBytes(value), 1);
-    //        sender.Send(data, data.Length, this.receiveEndPoint);
-    //    }
-    //    catch (Exception e)
-    //    {
-    //        print(e.ToString());
-    //    }
-    //}
-
-    public void SendData()
-    {
-        using (UdpClient sender = new UdpClient())
-        {
-
-            for (int i = 0; i < 30; i++)
-            {
-                try
-                {
-                    byte[] data = Encoding.UTF8.GetBytes("Hello Python!");
-                    sender.Send(data, data.Length, iPEndPoint);
-
-                    print("Sending data to Python...");
-                }
-                catch (Exception e)
-                {
-                    print(e.ToString());
-                }
-                Thread.Sleep(1000);
             }
         }
     }

@@ -118,7 +118,7 @@ public class PythonInterface : MonoBehaviour
                         break;
 
                     case FunctionCode.controller_is_down:
-                        Controller.Button button = (Controller.Button)BitConverter.ToInt32(data, 4);
+                        Controller.Button button = (Controller.Button)data[1];
                         sendData = BitConverter.GetBytes(this.Racecar.Controller.is_down(button));
                         client.Send(sendData, sendData.Length, endpoint);
                         break;

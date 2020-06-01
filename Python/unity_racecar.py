@@ -65,7 +65,6 @@ class Racecar:
         Racecar.__SOCKET.sendto(
             data, (Racecar.__IP, Racecar.__UNITY_PORT)
         )
-        print("data sent")
 
     def __receive_data(self, buffer_size=4):
         data, _ = Racecar.__SOCKET.recvfrom(buffer_size)
@@ -82,11 +81,10 @@ class Racecar:
         self.__SOCKET.bind((self.__IP, self.__PYTHON_PORT))
 
     def go(self):
-        print(">> Python script ready, please start Unity...")
+        print(">> Python script loaded, please enter user program mode in Unity")
         while True:
             data, _ = self.__SOCKET.recvfrom(256)
             header = int.from_bytes(data, sys.byteorder)
-            print("data received:", header)
 
             response = self.Header.error
             if header == self.Header.unity_start.value:
@@ -96,9 +94,10 @@ class Racecar:
                 self.update()
                 response = self.Header.python_finished
             elif header == self.Header.unity_exit.value:
+                print(">> Exit command received from Unity")
                 break
             else:
-                print("Unexpected packet from Unity")
+                print(">> Error: unexpected packet from Unity", header)
 
             self.__send_header(response)
 
@@ -112,23 +111,11 @@ def start():
     print("start")
 
 def update():
-    print("update")
-    rc.drive.set_speed_angle(1, -0.5)
+    if rc.controller.is_down(rc.controller.Button.A):
+        rc.drive.set_speed_angle(1, -0.5)
+
+    if rc.controller.was_pressed(rc.controller.Button.B):
+        print("kachow")
 
 rc.set_start_update(start, update)
 rc.go()
-
-# while True:
-#     # send a drive instruction
-#     data = struct.pack("Bff", Header.drive_set_speed_angle.value, 1, -0.5)
-
-#     __FUNCTION_SOCKET.sendto(data, (UDP_IP, UDP_FUNCTION_PORT))
-
-#     # ask for image height
-#     data = struct.pack("B", Header.camera_get_height.value)
-#     __FUNCTION_SOCKET.sendto(data, (UDP_IP, UDP_FUNCTION_PORT))
-
-#     receivedData, addr = __FUNCTION_SOCKET.recvfrom(16)
-#     print("get_height returned:", int.from_bytes(receivedData, sys.byteorder))
-
-#     time.sleep(2)

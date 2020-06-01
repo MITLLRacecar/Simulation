@@ -72,6 +72,8 @@ public class PythonInterface : MonoBehaviour
     private const int unityPort = 5065;
     private const int pythonPort = 5066;
     private static readonly IPAddress ipAddress = IPAddress.Parse("127.0.0.1");
+
+    private const int timeoutTime = 1000;
     #endregion
 
     private UdpClient client;
@@ -102,6 +104,7 @@ public class PythonInterface : MonoBehaviour
         this.pythonEndpoint = new IPEndPoint(PythonInterface.ipAddress, PythonInterface.pythonPort);
         this.client = new UdpClient(unityEndpoint);
         this.client.Connect(this.pythonEndpoint);
+        this.client.Client.ReceiveTimeout = PythonInterface.timeoutTime;
     }
 
     private void PythonCall(Header function)
@@ -114,7 +117,25 @@ public class PythonInterface : MonoBehaviour
 
         while (!pythonFinished)
         {
-            byte[] data = client.Receive(ref this.pythonEndpoint);
+            byte[] data;
+            try
+            {
+                data = client.Receive(ref this.pythonEndpoint);
+            }
+            catch (SocketException e)
+            {
+                if (e.SocketErrorCode == SocketError.TimedOut)
+                {
+                    print(">> Error: No message received from Python within the alloted time.  Returning to default drive mode.");
+                }
+                else
+                {
+                    print(">> Error: An error occured when attempting to receive data from Python.  Returning to default drive mode.");
+                }
+                this.Racecar.EnterDefaultDrive();
+                break;
+            }
+
             Header Header = (Header)data[0];
 
             byte[] sendData;
@@ -126,18 +147,30 @@ public class PythonInterface : MonoBehaviour
 
                 case Header.camera_get_width:
                     sendData = BitConverter.GetBytes(this.Racecar.Camera.get_width());
-                    client.Send(sendData, sendData.Length, this.pythonEndpoint);
+                    client.Send(sendData, sendData.Length);
                     break;
 
                 case Header.camera_get_height:
                     sendData = BitConverter.GetBytes(this.Racecar.Camera.get_height());
-                    client.Send(sendData, sendData.Length, this.pythonEndpoint);
+                    client.Send(sendData, sendData.Length);
                     break;
 
                 case Header.controller_is_down:
-                    Controller.Button button = (Controller.Button)data[1];
-                    sendData = BitConverter.GetBytes(this.Racecar.Controller.is_down(button));
-                    client.Send(sendData, sendData.Length, this.pythonEndpoint);
+                    Controller.Button buttonDown = (Controller.Button)data[1];
+                    sendData = BitConverter.GetBytes(this.Racecar.Controller.is_down(buttonDown));
+                    client.Send(sendData, sendData.Length);
+                    break;
+
+                case Header.controller_was_pressed:
+                    Controller.Button buttonPressed = (Controller.Button)data[1];
+                    sendData = BitConverter.GetBytes(this.Racecar.Controller.was_pressed(buttonPressed));
+                    client.Send(sendData, sendData.Length);
+                    break;
+
+                case Header.controller_was_released:
+                    Controller.Button buttonReleased = (Controller.Button)data[1];
+                    sendData = BitConverter.GetBytes(this.Racecar.Controller.was_released(buttonReleased));
+                    client.Send(sendData, sendData.Length);
                     break;
 
                 case Header.drive_set_speed_angle:
@@ -158,14 +191,15 @@ public class PythonInterface : MonoBehaviour
 
                 case Header.lidar_get_length:
                     sendData = BitConverter.GetBytes(this.Racecar.Lidar.get_length());
-                    client.Send(sendData, sendData.Length, this.pythonEndpoint);
+                    client.Send(sendData, sendData.Length);
                     break;
 
-                //case Header.physics_get_angular_velocity:
-                //    Vector3 angularVelocity = this.Racecar.Physics.get_angular_velocity();
-                //    sendData = BitConverter.GetBytes();
-                //    client.Send(sendData, sendData.Length, endpoint);
-                //    break;
+                case Header.physics_get_angular_velocity:
+                    Vector3 angularVelocity = this.Racecar.Physics.get_angular_velocity();
+                    sendData = new byte[sizeof(float) * 3];
+                    Buffer.BlockCopy(new float[] { angularVelocity.x, angularVelocity.y, angularVelocity.z }, 0, sendData, 0, sendData.Length);
+                    client.Send(sendData, sendData.Length);
+                    break;
 
                 default:
                     print($"The function {Header} is not supported by the RACECAR-MN Unity simulation");

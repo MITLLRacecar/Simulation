@@ -1,3 +1,4 @@
+import sys
 import struct
 from enum import IntEnum
 
@@ -26,7 +27,7 @@ class Controller:
                 "BB", self.__racecar.Header.controller_is_down.value, button.value
             )
         )
-        return bool.from_bytes(self.__racecar._Racecar__receive_data())
+        return bool.from_bytes(self.__racecar._Racecar__receive_data(), sys.byteorder)
 
     def was_pressed(self, button):
         self.__racecar._Racecar__send_data(
@@ -36,7 +37,7 @@ class Controller:
                 button.value,
             )
         )
-        return bool.from_bytes(self.__racecar._Racecar__receive_data())
+        return bool.from_bytes(self.__racecar._Racecar__receive_data(), sys.byteorder)
 
     def was_released(self, button):
         self.__racecar._Racecar__send_data(
@@ -46,7 +47,7 @@ class Controller:
                 button.value,
             )
         )
-        return bool.from_bytes(self.__racecar._Racecar__receive_data())
+        return bool.from_bytes(self.__racecar._Racecar__receive_data(), sys.byteorder)
 
     def get_trigger(self, trigger):
         self.__racecar._Racecar__send_data(

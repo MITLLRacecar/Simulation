@@ -94,7 +94,7 @@ public class Racecar : MonoBehaviour
         }
     }
 
-    private void EnterDefaultDrive()
+    public void EnterDefaultDrive()
     {
         Debug.Log(">> Entering default drive mode");
         this.defaultStart();

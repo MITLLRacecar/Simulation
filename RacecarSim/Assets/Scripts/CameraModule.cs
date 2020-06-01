@@ -20,21 +20,32 @@ public class CameraModule : MonoBehaviour
     private static float maxCode = 0.0f;
     #endregion
 
-    private byte[][] colorImage;
-    private bool isColorImageValid = false;
+    private byte[] colorImageRaw;
+    private bool isColorImageRawValid = false;
     private float[][] depthImage;
     private bool isDepthImageValid = false;
+    private byte[] depthImageRaw;
+    private bool isDepthImageRawValid = false;
 
-    public byte[][] ColorImage
+    public RenderTexture ColorImage
     {
         get
         {
-            if (!this.isColorImageValid)
-            {
-                this.TakeColorImage();
-            }
+            return this.GetComponent<Camera>().targetTexture;
+        }
+    }
 
-            return this.colorImage;
+    public byte[] ColorImageRaw
+    {
+        get
+        {
+            if (!isColorImageRawValid)
+            {
+                Texture2D dest = new Texture2D(this.ColorImage.width, this.ColorImage.height);
+                Graphics.CopyTexture(this.ColorImage, dest);
+                this.colorImageRaw = dest.GetRawTextureData();
+            }
+            return this.colorImageRaw;
         }
     }
 
@@ -48,6 +59,25 @@ public class CameraModule : MonoBehaviour
             }
 
             return this.depthImage;
+        }
+    }
+
+    public byte[] DepthImageRaw
+    {
+        get
+        {
+            if (!this.isDepthImageRawValid)
+            {
+                for (int r = 0; r < CameraModule.DepthHeight; r++)
+                {
+                    Buffer.BlockCopy(this.DepthImage[r], 0,
+                                    this.depthImageRaw, r * CameraModule.DepthWidth * sizeof(float),
+                                    CameraModule.DepthWidth * sizeof(float));
+                }
+                this.isDepthImageRawValid = true;
+            }
+
+            return this.depthImageRaw;
         }
     }
 
@@ -89,6 +119,8 @@ public class CameraModule : MonoBehaviour
         {
             this.depthImage[r] = new float[CameraModule.DepthWidth];
         }
+
+        this.depthImageRaw = new byte[sizeof(float) * CameraModule.DepthHeight * CameraModule.DepthWidth];
     }
 
     private void LateUpdate()
@@ -98,14 +130,9 @@ public class CameraModule : MonoBehaviour
             Debug.Log(this.DepthImage);
         }
 
-        this.isColorImageValid = false;
+        this.isColorImageRawValid = false;
         this.isDepthImageValid = false;
-    }
-
-    private void TakeColorImage()
-    {
-        // Look into Texture2D.EncodeToPNG
-        this.isColorImageValid = true;
+        this.isDepthImageRawValid = false;
     }
 
     private void TakeDepthImage()
@@ -134,26 +161,4 @@ public class CameraModule : MonoBehaviour
 
         this.isDepthImageValid = true;
     }
-
-    #region Python Interface
-    public byte[][] get_image()
-    {
-        return this.ColorImage;
-    }
-
-    public float[][] get_depth_image()
-    {
-        return this.DepthImage;
-    }
-
-    public int get_width()
-    {
-        return CameraModule.ColorWidth;
-    }
-
-    public int get_height()
-    {
-        return CameraModule.ColorHeight;
-    }
-    #endregion
 }

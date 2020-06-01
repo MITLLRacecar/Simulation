@@ -71,6 +71,8 @@ class Racecar:
 
         self.start = None
         self.update = None
+        self.update_slow = None
+        self.update_slow_time = 1
 
         self.__SOCKET.bind((self.__IP, self.__PYTHON_PORT))
 
@@ -96,41 +98,19 @@ class Racecar:
 
             self.__send_header(response)
 
-    def set_start_update(self, start, update):
+    def set_start_update(self, start, update, update_slow = None):
         self.start = start
         self.update = update
+        self.update_slow = update_slow
+
+    def get_delta_time(self):
+        self.__send_header(self.Header.racecar_get_delta_time)
+        [value] = struct.unpack("f", self.__receive_data())
+        return value
+
+    def set_update_slow_time(self, update_slow_time):
+        self.update_slow_time = update_slow_time
 
     def __update_modules(self):
+        self.camera._Camera__update()
         self.lidar._Lidar__update()
-
-rc = Racecar()
-
-def start():
-    print("start")
-
-def update():
-    MAX_SPEED = 1.0  # The speed when the trigger is fully pressed
-    MAX_ANGLE = 1.0  # The angle when the joystick is fully moved
-
-    forwardSpeed = rc.controller.get_trigger(rc.controller.Trigger.RIGHT)
-    backSpeed = rc.controller.get_trigger(rc.controller.Trigger.LEFT)
-    speed = (forwardSpeed - backSpeed) * MAX_SPEED
-
-    # If both triggers are pressed, stop for safety
-    if forwardSpeed > 0 and backSpeed > 0:
-        speed = 0
-
-    angle = (
-        rc.controller.get_joystick(rc.controller.Joystick.LEFT)[0] * MAX_ANGLE
-    )
-
-    rc.drive.set_speed_angle(speed, angle)
-
-    if rc.controller.was_pressed(rc.controller.Button.A):
-        print("Kachow!")
-
-    if rc.controller.was_pressed(rc.controller.Button.B):
-        print(rc.lidar.get_ranges()[0])
-
-rc.set_start_update(start, update)
-rc.go()

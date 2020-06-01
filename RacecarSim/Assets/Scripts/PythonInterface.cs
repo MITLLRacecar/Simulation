@@ -45,19 +45,6 @@ public class PythonInterface : MonoBehaviour
         physics_get_angular_velocity,
     }
 
-    public enum DataCode
-    {
-        start,
-        update,
-        updateSlow,
-        dataInt,
-        dataBool,
-        dataFloat,
-        dataColorImage,
-        dataDepthImage,
-        dataLidar
-    }
-
     #region Constants
     private const int unityPort = 5065;
     private const int pythonPort = 5066;
@@ -135,13 +122,26 @@ public class PythonInterface : MonoBehaviour
                     pythonFinished = true;
                     break;
 
+                case Header.racecar_get_delta_time:
+                    sendData = BitConverter.GetBytes(Time.deltaTime);
+                    client.Send(sendData, sendData.Length);
+                    break;
+
+                case Header.camera_get_image:
+                    client.Send(this.Racecar.Camera.ColorImageRaw, this.Racecar.Camera.ColorImageRaw.Length);
+                    break;
+
+                case Header.camera_get_depth_image:
+                    client.Send(this.Racecar.Camera.DepthImageRaw, this.Racecar.Camera.DepthImageRaw.Length);
+                    break;
+
                 case Header.camera_get_width:
-                    sendData = BitConverter.GetBytes(this.Racecar.Camera.get_width());
+                    sendData = BitConverter.GetBytes(CameraModule.ColorWidth);
                     client.Send(sendData, sendData.Length);
                     break;
 
                 case Header.camera_get_height:
-                    sendData = BitConverter.GetBytes(this.Racecar.Camera.get_height());
+                    sendData = BitConverter.GetBytes(CameraModule.ColorHeight);
                     client.Send(sendData, sendData.Length);
                     break;
 

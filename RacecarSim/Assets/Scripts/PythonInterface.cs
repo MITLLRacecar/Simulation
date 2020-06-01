@@ -13,12 +13,17 @@ public class PythonInterface : MonoBehaviour
 
     public static PythonInterface Instance;
 
-    private enum FunctionCode
+    private enum Header
     {
-        go,
-        set_start_update,
-        get_delta_time,
-        set_update_slow_time,
+        error,
+        unity_start,
+        unity_update,
+        unity_exit,
+        python_finished,
+        racecar_go,
+        racecar_set_start_update,
+        racecar_get_delta_time,
+        racecar_set_update_slow_time,
         camera_get_image,
         camera_get_depth_image,
         camera_get_width,
@@ -64,97 +69,107 @@ public class PythonInterface : MonoBehaviour
     }
 
     #region Constants
-    private const int functionPort = 5065;
-    private const int clockPort = 5066;
+    private const int unityPort = 5065;
+    private const int pythonPort = 5066;
     private static readonly IPAddress ipAddress = IPAddress.Parse("127.0.0.1");
     #endregion
 
-    private Thread receiveThread;
-
-    private bool running;
-
+    private UdpClient client;
+    private IPEndPoint pythonEndpoint;
+    private IPEndPoint unityEndpoint;
 
     public void HandleExit()
     {
-        this.running = false;
+        this.client.Send(new byte[] { (byte)Header.unity_exit.GetHashCode() }, 1);
+    }
+
+    public void PythonStart()
+    {
+        this.PythonCall(Header.unity_start);
+    }
+
+    public void PythonUpdate()
+    {
+        this.PythonCall(Header.unity_update);
     }
 
     private void Start()
     {
+        // QualitySettings.vSyncCount = 2;
+
         Instance = this;
-        InitUDP();
+        this.unityEndpoint = new IPEndPoint(PythonInterface.ipAddress, PythonInterface.unityPort);
+        this.pythonEndpoint = new IPEndPoint(PythonInterface.ipAddress, PythonInterface.pythonPort);
+        this.client = new UdpClient(unityEndpoint);
+        this.client.Connect(this.pythonEndpoint);
     }
 
-    private void InitUDP()
+    private void PythonCall(Header function)
     {
-        this.running = true;
-        receiveThread = new Thread(new ThreadStart(ReceiveData));
-        receiveThread.IsBackground = true;
-        receiveThread.Start();
-    }
+        // Tell Python what fuction to call
+        this.client.Send(new byte[] { (byte)function.GetHashCode() }, 1);
 
-    private void ReceiveData()
-    {
-        IPEndPoint endpoint = new IPEndPoint(PythonInterface.ipAddress, PythonInterface.functionPort);
-        using (UdpClient client = new UdpClient(functionPort))
+        // Respond to API calls until we receive a Header.python_finished
+        bool pythonFinished = false;
+
+        while (!pythonFinished)
         {
-            while (this.running)
+            byte[] data = client.Receive(ref this.pythonEndpoint);
+            Header Header = (Header)data[0];
+
+            byte[] sendData;
+            switch (Header)
             {
-                byte[] data = client.Receive(ref endpoint);
-                FunctionCode functionCode = (FunctionCode)data[0];
+                case Header.python_finished:
+                    pythonFinished = true;
+                    break;
 
-                byte[] sendData;
+                case Header.camera_get_width:
+                    sendData = BitConverter.GetBytes(this.Racecar.Camera.get_width());
+                    client.Send(sendData, sendData.Length, this.pythonEndpoint);
+                    break;
 
-                switch (functionCode)
-                {
-                    case FunctionCode.camera_get_width:
-                        sendData = BitConverter.GetBytes(this.Racecar.Camera.get_width());
-                        client.Send(sendData, sendData.Length, endpoint);
-                        break;
+                case Header.camera_get_height:
+                    sendData = BitConverter.GetBytes(this.Racecar.Camera.get_height());
+                    client.Send(sendData, sendData.Length, this.pythonEndpoint);
+                    break;
 
-                    case FunctionCode.camera_get_height:
-                        sendData = BitConverter.GetBytes(this.Racecar.Camera.get_height());
-                        client.Send(sendData, sendData.Length, endpoint);
-                        break;
+                case Header.controller_is_down:
+                    Controller.Button button = (Controller.Button)data[1];
+                    sendData = BitConverter.GetBytes(this.Racecar.Controller.is_down(button));
+                    client.Send(sendData, sendData.Length, this.pythonEndpoint);
+                    break;
 
-                    case FunctionCode.controller_is_down:
-                        Controller.Button button = (Controller.Button)data[1];
-                        sendData = BitConverter.GetBytes(this.Racecar.Controller.is_down(button));
-                        client.Send(sendData, sendData.Length, endpoint);
-                        break;
+                case Header.drive_set_speed_angle:
+                    float speed = BitConverter.ToSingle(data, 4);
+                    float angle = BitConverter.ToSingle(data, 8);
+                    this.Racecar.Drive.set_speed_angle(speed, angle);
+                    break;
 
-                    case FunctionCode.drive_set_speed_angle:
-                        float speed = BitConverter.ToSingle(data, 4);
-                        float angle = BitConverter.ToSingle(data, 8);
-                        this.Racecar.Drive.set_speed_angle(speed, angle);
-                        break;
+                case Header.drive_stop:
+                    this.Racecar.Drive.stop();
+                    break;
 
-                    case FunctionCode.drive_stop:
-                        this.Racecar.Drive.stop();
-                        break;
+                case Header.drive_set_max_speed_scale_factor:
+                    float forwardFactor = BitConverter.ToSingle(data, 4);
+                    float backFactor = BitConverter.ToSingle(data, 8);
+                    this.Racecar.Drive.set_max_speed_scale_factor(new float[] { forwardFactor, backFactor });
+                    break;
 
-                    case FunctionCode.drive_set_max_speed_scale_factor:
-                        float forwardFactor = BitConverter.ToSingle(data, 4);
-                        float backFactor = BitConverter.ToSingle(data, 8);
-                        this.Racecar.Drive.set_max_speed_scale_factor(new float[] { forwardFactor, backFactor });
-                        break;
+                case Header.lidar_get_length:
+                    sendData = BitConverter.GetBytes(this.Racecar.Lidar.get_length());
+                    client.Send(sendData, sendData.Length, this.pythonEndpoint);
+                    break;
 
-                    case FunctionCode.lidar_get_length:
-                        sendData = BitConverter.GetBytes(this.Racecar.Lidar.get_length());
-                        client.Send(sendData, sendData.Length, endpoint);
-                        break;
+                //case Header.physics_get_angular_velocity:
+                //    Vector3 angularVelocity = this.Racecar.Physics.get_angular_velocity();
+                //    sendData = BitConverter.GetBytes();
+                //    client.Send(sendData, sendData.Length, endpoint);
+                //    break;
 
-                    //case FunctionCode.physics_get_angular_velocity:
-                    //    Vector3 angularVelocity = this.Racecar.Physics.get_angular_velocity();
-                    //    sendData = BitConverter.GetBytes();
-                    //    client.Send(sendData, sendData.Length, endpoint);
-                    //    break;
-
-                    default:
-                        print($"The function {functionCode} is not supported by the RACECAR-MN Unity simulation");
-                        break;
-                }
-
+                default:
+                    print($"The function {Header} is not supported by the RACECAR-MN Unity simulation");
+                    break;
             }
         }
     }

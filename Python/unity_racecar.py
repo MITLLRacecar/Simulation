@@ -10,61 +10,65 @@ import unity_controller
 import unity_drive
 
 class Racecar:
-    __UDP_IP = "127.0.0.1"
-    __UDP_FUNCTION_PORT = 5065
-    __UDP_CLOCK_PORT = 5066
-    __FUNCTION_SOCKET = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    __CLOCK_SOCKET = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    __IP = "127.0.0.1"
+    __UNITY_PORT = 5065
+    __PYTHON_PORT = 5066
+    __SOCKET = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
-    class FunctionCode(IntEnum):
+    class Header(IntEnum):
         """
         The buttons on the controller
         """
+        error = 0
+        unity_start = 1
+        unity_update = 2
+        unity_exit = 3
+        python_finished = 4
+        racecar_go = 5
+        racecar_set_start_update = 6
+        racecar_get_delta_time = 7
+        racecar_set_update_slow_time = 8
+        camera_get_image = 9
+        camera_get_depth_image = 10
+        camera_get_width = 11
+        camera_get_height = 12
+        controller_is_down = 13
+        controller_was_pressed = 14
+        controller_was_released = 15
+        controller_get_trigger = 16
+        controller_get_joystick = 17
+        display_show_image = 18
+        drive_set_speed_angle = 19
+        drive_stop = 20
+        drive_set_max_speed_scale_factor = 21
+        gpio_pin_mode = 22
+        gpio_pin_write = 23
+        lidar_get_length = 24
+        lidar_get_ranges = 25
+        physics_get_linear_acceleration = 26
+        physics_get_angular_velocity = 27
+        sound_set_speaker = 28
+        sound_set_mic = 29
+        sound_set_output_stream = 30
+        sound_set_input_stream = 31
+        sound_play_audio = 32
+        sound_record_audio = 33
+        sound_play = 34
+        sound_rec = 35
+        sound_set_file = 36
+        sound_list_devices = 37
 
-        go = 0
-        set_start_update = 1
-        get_delta_time = 2
-        set_update_slow_time = 3
-        camera_get_image = 4
-        camera_get_depth_image = 5
-        camera_get_width = 6
-        camera_get_height = 7
-        controller_is_down = 8
-        controller_was_pressed = 9
-        controller_was_released = 10
-        controller_get_trigger = 11
-        controller_get_joystick = 12
-        display_show_image = 13
-        drive_set_speed_angle = 14
-        drive_stop = 15
-        drive_set_max_speed_scale_factor = 16
-        gpio_pin_mode = 17
-        gpio_pin_write = 18
-        lidar_get_length = 19
-        lidar_get_ranges = 20
-        physics_get_linear_acceleration = 21
-        physics_get_angular_velocity = 22
-        sound_set_speaker = 23
-        sound_set_mic = 24
-        sound_set_output_stream = 25
-        sound_set_input_stream = 26
-        sound_play_audio = 27
-        sound_record_audio = 28
-        sound_play = 29
-        sound_rec = 30
-        sound_set_file = 31
-        sound_list_devices = 32
-
-    def __send_call(self, function_code):
+    def __send_header(self, function_code):
         self.__send_data(struct.pack("B", function_code.value))
 
     def __send_data(self, data):
-        Racecar.__FUNCTION_SOCKET.sendto(
-            data, (Racecar.__UDP_IP, Racecar.__UDP_FUNCTION_PORT)
+        Racecar.__SOCKET.sendto(
+            data, (Racecar.__IP, Racecar.__UNITY_PORT)
         )
+        print("data sent")
 
     def __receive_data(self, buffer_size=4):
-        data, _ = Racecar.__FUNCTION_SOCKET.recvfrom(buffer_size)
+        data, _ = Racecar.__SOCKET.recvfrom(buffer_size)
         return data
 
     def __init__(self):
@@ -72,22 +76,56 @@ class Racecar:
         self.controller = unity_controller.Controller(self)
         self.drive = unity_drive.Drive(self)
 
+        self.start = None
+        self.update = None
+
+        self.__SOCKET.bind((self.__IP, self.__PYTHON_PORT))
+
+    def go(self):
+        print(">> Python script ready, please start Unity...")
+        while True:
+            data, _ = self.__SOCKET.recvfrom(256)
+            header = int.from_bytes(data, sys.byteorder)
+            print("data received:", header)
+
+            response = self.Header.error
+            if header == self.Header.unity_start.value:
+                self.start()
+                response = self.Header.python_finished
+            elif header == self.Header.unity_update.value:
+                self.update()
+                response = self.Header.python_finished
+            elif header == self.Header.unity_exit.value:
+                break
+            else:
+                print("Unexpected packet from Unity")
+
+            self.__send_header(response)
+
+    def set_start_update(self, start, update):
+        self.start = start
+        self.update = update
 
 rc = Racecar()
 
-while True:
+def start():
+    print("start")
+
+def update():
+    print("update")
     rc.drive.set_speed_angle(1, -0.5)
-    print(rc.controller.is_down(rc.controller.Button.A))
-    time.sleep(2)
+
+rc.set_start_update(start, update)
+rc.go()
 
 # while True:
 #     # send a drive instruction
-#     data = struct.pack("Bff", FunctionCode.drive_set_speed_angle.value, 1, -0.5)
+#     data = struct.pack("Bff", Header.drive_set_speed_angle.value, 1, -0.5)
 
 #     __FUNCTION_SOCKET.sendto(data, (UDP_IP, UDP_FUNCTION_PORT))
 
 #     # ask for image height
-#     data = struct.pack("B", FunctionCode.camera_get_height.value)
+#     data = struct.pack("B", Header.camera_get_height.value)
 #     __FUNCTION_SOCKET.sendto(data, (UDP_IP, UDP_FUNCTION_PORT))
 
 #     receivedData, addr = __FUNCTION_SOCKET.recvfrom(16)

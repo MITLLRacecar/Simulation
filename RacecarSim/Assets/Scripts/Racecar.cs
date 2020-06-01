@@ -105,8 +105,8 @@ public class Racecar : MonoBehaviour
     private void EnterUserProgram()
     {
         Debug.Log(">> Entering user program mode");
-        this.UserStart();
-        this.curUpdate = this.UserUpdate;
+        PythonInterface.Instance.PythonStart();
+        this.curUpdate = PythonInterface.Instance.PythonUpdate;
         this.curUpdateSlow = null;
     }
 
@@ -115,16 +115,6 @@ public class Racecar : MonoBehaviour
         Debug.Log(">> Goodbye!");
         PythonInterface.Instance.HandleExit();
         Application.Quit();
-    }
-
-    private void UserStart()
-    {
-
-    }
-
-    private void UserUpdate()
-    {
-
     }
 
     #region Python Interface

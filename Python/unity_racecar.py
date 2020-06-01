@@ -8,6 +8,8 @@ from enum import IntEnum
 import unity_camera
 import unity_controller
 import unity_drive
+import unity_lidar
+import unity_physics
 
 class Racecar:
     __IP = "127.0.0.1"
@@ -47,16 +49,6 @@ class Racecar:
         lidar_get_ranges = 25
         physics_get_linear_acceleration = 26
         physics_get_angular_velocity = 27
-        sound_set_speaker = 28
-        sound_set_mic = 29
-        sound_set_output_stream = 30
-        sound_set_input_stream = 31
-        sound_play_audio = 32
-        sound_record_audio = 33
-        sound_play = 34
-        sound_rec = 35
-        sound_set_file = 36
-        sound_list_devices = 37
 
     def __send_header(self, function_code):
         self.__send_data(struct.pack("B", function_code.value))
@@ -74,6 +66,8 @@ class Racecar:
         self.camera = unity_camera.Camera(self)
         self.controller = unity_controller.Controller(self)
         self.drive = unity_drive.Drive(self)
+        self.physics = unity_physics.Physics(self)
+        self.lidar = unity_lidar.Lidar(self)
 
         self.start = None
         self.update = None
@@ -92,6 +86,7 @@ class Racecar:
                 response = self.Header.python_finished
             elif header == self.Header.unity_update.value:
                 self.update()
+                self.__update_modules()
                 response = self.Header.python_finished
             elif header == self.Header.unity_exit.value:
                 print(">> Exit command received from Unity")
@@ -105,17 +100,37 @@ class Racecar:
         self.start = start
         self.update = update
 
+    def __update_modules(self):
+        self.lidar._Lidar__update()
+
 rc = Racecar()
 
 def start():
     print("start")
 
 def update():
-    if rc.controller.is_down(rc.controller.Button.A):
-        rc.drive.set_speed_angle(1, -0.5)
+    MAX_SPEED = 1.0  # The speed when the trigger is fully pressed
+    MAX_ANGLE = 1.0  # The angle when the joystick is fully moved
+
+    forwardSpeed = rc.controller.get_trigger(rc.controller.Trigger.RIGHT)
+    backSpeed = rc.controller.get_trigger(rc.controller.Trigger.LEFT)
+    speed = (forwardSpeed - backSpeed) * MAX_SPEED
+
+    # If both triggers are pressed, stop for safety
+    if forwardSpeed > 0 and backSpeed > 0:
+        speed = 0
+
+    angle = (
+        rc.controller.get_joystick(rc.controller.Joystick.LEFT)[0] * MAX_ANGLE
+    )
+
+    rc.drive.set_speed_angle(speed, angle)
+
+    if rc.controller.was_pressed(rc.controller.Button.A):
+        print("Kachow!")
 
     if rc.controller.was_pressed(rc.controller.Button.B):
-        print("kachow")
+        print(rc.lidar.get_ranges()[0])
 
 rc.set_start_update(start, update)
 rc.go()

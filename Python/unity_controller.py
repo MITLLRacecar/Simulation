@@ -57,5 +57,5 @@ class Controller:
                 trigger.value,
             )
         )
-        [value] = struct.unpack("f", self.__racecar.Racecar._Racecar__receive_data())
+        [value] = struct.unpack("f", self.__racecar._Racecar__receive_data())
         return value

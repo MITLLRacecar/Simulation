@@ -43,16 +43,6 @@ public class PythonInterface : MonoBehaviour
         lidar_get_ranges,
         physics_get_linear_acceleration,
         physics_get_angular_velocity,
-        sound_set_speaker,
-        sound_set_mic,
-        sound_set_output_stream,
-        sound_set_input_stream,
-        sound_play_audio,
-        sound_record_audio,
-        sound_play,
-        sound_rec,
-        sound_set_file,
-        sound_list_devices
     }
 
     public enum DataCode
@@ -191,6 +181,22 @@ public class PythonInterface : MonoBehaviour
 
                 case Header.lidar_get_length:
                     sendData = BitConverter.GetBytes(this.Racecar.Lidar.get_length());
+                    client.Send(sendData, sendData.Length);
+                    break;
+
+                case Header.lidar_get_ranges:
+                    float[] ranges = this.Racecar.Lidar.get_ranges();
+                    sendData = new byte[sizeof(float) * ranges.Length];
+                    Buffer.BlockCopy(ranges, 0, sendData, 0, sendData.Length);
+                    print($"float: {ranges[0]}");
+                    print(string.Format("bytes: {0:X} {1:X} {2:X} {3:X}", sendData[0], sendData[1], sendData[2], sendData[3]));
+                    client.Send(sendData, sendData.Length);
+                    break;
+
+                case Header.physics_get_linear_acceleration:
+                    Vector3 linearAcceleration = this.Racecar.Physics.get_linear_acceleration();
+                    sendData = new byte[sizeof(float) * 3];
+                    Buffer.BlockCopy(new float[] { linearAcceleration.x, linearAcceleration.y, linearAcceleration.z }, 0, sendData, 0, sendData.Length);
                     client.Send(sendData, sendData.Length);
                     break;
 

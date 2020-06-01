@@ -19,6 +19,7 @@ public class PhysicsModule : MonoBehaviour
 
     private void FixedUpdate()
     {
+        // TODO: project onto car's axis
         Vector3 curAcceleration = (this.rb.velocity - this.prevVelocity) / Time.deltaTime;
         this.averageAcceleration += (curAcceleration - this.averageAcceleration) / PhysicsModule.accelerationSamples;
         prevVelocity = this.rb.velocity;

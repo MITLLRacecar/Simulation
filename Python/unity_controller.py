@@ -23,7 +23,7 @@ class Controller:
     def is_down(self, button):
         self.__racecar._Racecar__send_data(
             struct.pack(
-                "BB", self.__racecar.FunctionCode.controller_is_down.value, button.value
+                "BB", self.__racecar.Header.controller_is_down.value, button.value
             )
         )
         return bool.from_bytes(self.__racecar._Racecar__receive_data())
@@ -32,7 +32,7 @@ class Controller:
         self.__racecar._Racecar__send_data(
             struct.pack(
                 "BB",
-                self.__racecar.FunctionCode.controller_was_pressed.value,
+                self.__racecar.Header.controller_was_pressed.value,
                 button.value,
             )
         )
@@ -42,7 +42,7 @@ class Controller:
         self.__racecar._Racecar__send_data(
             struct.pack(
                 "BB",
-                self.__racecar.FunctionCode.controller_was_pressed.value,
+                self.__racecar.Header.controller_was_pressed.value,
                 button.value,
             )
         )
@@ -52,7 +52,7 @@ class Controller:
         self.__racecar._Racecar__send_data(
             struct.pack(
                 "BB",
-                self.__racecar.FunctionCode.controller_was_pressed.value,
+                self.__racecar.Header.controller_was_pressed.value,
                 trigger.value,
             )
         )

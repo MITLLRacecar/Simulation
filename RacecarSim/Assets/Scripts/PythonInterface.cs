@@ -163,6 +163,20 @@ public class PythonInterface : MonoBehaviour
                     client.Send(sendData, sendData.Length);
                     break;
 
+                case Header.controller_get_trigger:
+                    Controller.Trigger trigger = (Controller.Trigger)data[1];
+                    sendData = BitConverter.GetBytes(this.Racecar.Controller.get_trigger(trigger));
+                    client.Send(sendData, sendData.Length);
+                    break;
+
+                case Header.controller_get_joystick:
+                    Controller.Joystick joystick = (Controller.Joystick)data[1];
+                    Vector2 joystickValues = this.Racecar.Controller.get_joystick(joystick);
+                    sendData = new byte[sizeof(float) * 2];
+                    Buffer.BlockCopy(new float[] { joystickValues.x, joystickValues.y }, 0, sendData, 0, sendData.Length);
+                    client.Send(sendData, sendData.Length);
+                    break;
+
                 case Header.drive_set_speed_angle:
                     float speed = BitConverter.ToSingle(data, 4);
                     float angle = BitConverter.ToSingle(data, 8);

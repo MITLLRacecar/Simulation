@@ -84,7 +84,7 @@ public class Racecar : MonoBehaviour
     {
         float forwardSpeed = this.Controller.get_trigger(Controller.Trigger.RIGHT);
         float backSpeed = this.Controller.get_trigger(Controller.Trigger.LEFT);
-        float angle = this.Controller.get_joystick(Controller.Joystick.LEFT).Item1;
+        float angle = this.Controller.get_joystick(Controller.Joystick.LEFT).x;
 
         this.Drive.set_speed_angle(forwardSpeed - backSpeed, angle);
 

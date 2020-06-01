@@ -83,7 +83,7 @@ public class Controller : MonoBehaviour
         return triggerValue;
     }
 
-    public Tuple<float, float> get_joystick(Joystick joystick)
+    public Vector2 get_joystick(Joystick joystick)
     {
         float xAxis = Input.GetAxis(joystickMap[joystick].Item1);
         float yAxis = Input.GetAxis(joystickMap[joystick].Item2);
@@ -95,6 +95,6 @@ public class Controller : MonoBehaviour
             yAxis = Input.GetAxis(joystickMap[joystick].Item2 + this.altCode);
         }
 
-        return new Tuple<float, float>(xAxis, yAxis);
+        return new Vector2(xAxis, yAxis);
     }
 }

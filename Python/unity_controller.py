@@ -18,6 +18,22 @@ class Controller:
         LJOY = 6  # Left joystick button
         RJOY = 7  # Right joystick button
 
+    class Trigger(IntEnum):
+        """
+        The triggers on the controller
+        """
+
+        LEFT = 0
+        RIGHT = 1
+
+    class Joystick(IntEnum):
+        """
+        The joysticks on the controller
+        """
+
+        LEFT = 0
+        RIGHT = 1
+
     def __init__(self, racecar):
         self.__racecar = racecar
 
@@ -53,9 +69,19 @@ class Controller:
         self.__racecar._Racecar__send_data(
             struct.pack(
                 "BB",
-                self.__racecar.Header.controller_was_pressed.value,
+                self.__racecar.Header.controller_get_trigger.value,
                 trigger.value,
             )
         )
         [value] = struct.unpack("f", self.__racecar._Racecar__receive_data())
         return value
+
+    def get_joystick(self, joystick):
+        self.__racecar._Racecar__send_data(
+            struct.pack(
+                "BB",
+                self.__racecar.Header.controller_get_joystick.value,
+                joystick.value,
+            )
+        )
+        return struct.unpack("ff", self.__racecar._Racecar__receive_data(8))

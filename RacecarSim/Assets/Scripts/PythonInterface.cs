@@ -128,7 +128,7 @@ public class PythonInterface : MonoBehaviour
                     break;
 
                 case Header.camera_get_image:
-                    client.Send(this.Racecar.Camera.ColorImageRaw, this.Racecar.Camera.ColorImageRaw.Length);
+                    this.SendFragmented(this.Racecar.Camera.ColorImageRaw, 32);
                     break;
 
                 case Header.camera_get_depth_image:
@@ -225,6 +225,19 @@ public class PythonInterface : MonoBehaviour
                     print($"The function {Header} is not supported by the RACECAR-MN Unity simulation");
                     break;
             }
+        }
+    }
+
+    private void SendFragmented(byte[] bytes, int numFragments)
+    {
+        int blockSize = bytes.Length / numFragments;
+        byte[] sendData = new byte[blockSize];
+        for (int i = 0; i < numFragments; i++)
+        {
+            Buffer.BlockCopy(bytes, i * blockSize, sendData, 0, blockSize);
+            client.Send(sendData, sendData.Length);
+            print($"packet sent number {i}");
+            Thread.Sleep(1);
         }
     }
 }

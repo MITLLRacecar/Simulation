@@ -41,9 +41,10 @@ public class CameraModule : MonoBehaviour
         {
             if (!isColorImageRawValid)
             {
-                Texture2D dest = new Texture2D(this.ColorImage.width, this.ColorImage.height);
+                Texture2D dest = new Texture2D(this.ColorImage.width, this.ColorImage.height, TextureFormat.BGRA32, false);
                 Graphics.CopyTexture(this.ColorImage, dest);
                 this.colorImageRaw = dest.GetRawTextureData();
+                this.isColorImageRawValid = true;
             }
             return this.colorImageRaw;
         }

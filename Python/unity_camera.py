@@ -62,7 +62,9 @@ class Camera:
             raw_bytes += self.__racecar._Racecar__receive_data(
                 self.__WIDTH * self.__HEIGHT * 4 // 32
             )
-            print("Packet received number:", i)
+            self.__racecar._Racecar__send_header(
+                self.__racecar.Header.python_send_next
+            )
 
         print(len(raw_bytes))
         self.__color_image = np.frombuffer(raw_bytes, dtype=np.uint8)

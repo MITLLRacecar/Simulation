@@ -20,6 +20,7 @@ public class PythonInterface : MonoBehaviour
         unity_update,
         unity_exit,
         python_finished,
+        python_send_next,
         racecar_go,
         racecar_set_start_update,
         racecar_get_delta_time,
@@ -94,29 +95,15 @@ public class PythonInterface : MonoBehaviour
 
         while (!pythonFinished)
         {
-            byte[] data;
-            try
+            byte[] data = this.SafeRecieve();
+            if (data == null)
             {
-                data = client.Receive(ref this.pythonEndpoint);
-            }
-            catch (SocketException e)
-            {
-                if (e.SocketErrorCode == SocketError.TimedOut)
-                {
-                    print(">> Error: No message received from Python within the alloted time.  Returning to default drive mode.");
-                }
-                else
-                {
-                    print(">> Error: An error occured when attempting to receive data from Python.  Returning to default drive mode.");
-                }
-                this.Racecar.EnterDefaultDrive();
                 break;
             }
 
-            Header Header = (Header)data[0];
-
+            Header header = (Header)data[0];
             byte[] sendData;
-            switch (Header)
+            switch (header)
             {
                 case Header.python_finished:
                     pythonFinished = true;
@@ -222,7 +209,7 @@ public class PythonInterface : MonoBehaviour
                     break;
 
                 default:
-                    print($"The function {Header} is not supported by the RACECAR-MN Unity simulation");
+                    print($"The function {header} is not supported by the RACECAR-MN Unity simulation");
                     break;
             }
         }
@@ -236,8 +223,39 @@ public class PythonInterface : MonoBehaviour
         {
             Buffer.BlockCopy(bytes, i * blockSize, sendData, 0, blockSize);
             client.Send(sendData, sendData.Length);
-            print($"packet sent number {i}");
-            Thread.Sleep(1);
+
+            byte[] response = this.SafeRecieve();
+            if (response == null)
+            {
+                break;
+            }
+            else if ((Header)response[0] != Header.python_send_next)
+            {
+                print(">> Error: Unity and Python became out of sync when sending a block message.  Returning to default drive mode.");
+                this.Racecar.EnterDefaultDrive();
+                break;
+            }
         }
+    }
+
+    private byte[] SafeRecieve()
+    {
+        try
+        {
+            return client.Receive(ref this.pythonEndpoint);
+        }
+        catch (SocketException e)
+        {
+            if (e.SocketErrorCode == SocketError.TimedOut)
+            {
+                print(">> Error: No message received from Python within the alloted time.  Returning to default drive mode.");
+            }
+            else
+            {
+                print(">> Error: An error occured when attempting to receive data from Python.  Returning to default drive mode.");
+            }
+            this.Racecar.EnterDefaultDrive();
+        }
+        return null;
     }
 }

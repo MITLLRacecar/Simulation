@@ -27,11 +27,14 @@ public class CameraModule : MonoBehaviour
     private byte[] depthImageRaw;
     private bool isDepthImageRawValid = false;
 
+    private Camera colorCamera;
+    private Camera depthCamera;
+
     public RenderTexture ColorImage
     {
         get
         {
-            return this.GetComponent<Camera>().targetTexture;
+            return this.colorCamera.targetTexture;
         }
     }
 
@@ -47,6 +50,39 @@ public class CameraModule : MonoBehaviour
                 this.isColorImageRawValid = true;
             }
             return this.colorImageRaw;
+        }
+    }
+
+    public float[] DepthImageRendered
+    {
+        get
+        {
+            RenderTexture cur = this.depthCamera.targetTexture;
+
+            Texture2D dest = new Texture2D(cur.width, cur.height, TextureFormat.RHalf, false);
+            Graphics.CopyTexture(cur, dest);
+            return dest.GetRawTextureData<float>().ToArray();
+
+
+            //for (int i = 0; i < 30; i++)
+            //{
+            //    TextureFormat format = (TextureFormat)i;
+            //    try
+            //    {
+            //        Texture2D dest = new Texture2D(cur.width, cur.height, format, false);
+            //        Graphics.CopyTexture(cur, dest);
+            //        dest.Apply();
+            //        print($">> SUCCESS: {format}");
+            //        System.Threading.Thread.Sleep(1);
+            //    }
+            //    catch (Exception e)
+            //    {
+            //        print($"Failure: {format}");
+            //    }
+            //}
+
+
+            return null;
         }
     }
 
@@ -112,8 +148,12 @@ public class CameraModule : MonoBehaviour
 
     private void Start()
     {
-        this.GetComponent<Camera>().fieldOfView = CameraModule.fieldOfView[0];
-        this.GetComponent<Camera>().aspect = (float)CameraModule.ColorWidth / CameraModule.ColorHeight;
+        Camera[] cameras = this.GetComponentsInChildren<Camera>();
+        this.colorCamera = cameras[0];
+        this.depthCamera = cameras[1];
+
+        //this.GetComponent<Camera>().fieldOfView = CameraModule.fieldOfView[0];
+        //this.GetComponent<Camera>().aspect = (float)CameraModule.ColorWidth / CameraModule.ColorHeight;
 
         this.depthImage = new float[CameraModule.DepthHeight][];
         for (int r = 0; r < CameraModule.DepthHeight; r++)
@@ -161,5 +201,10 @@ public class CameraModule : MonoBehaviour
         }
 
         this.isDepthImageValid = true;
+    }
+
+    public void TakeNewDepthImage()
+    {
+        // LinearEyeDepth
     }
 }

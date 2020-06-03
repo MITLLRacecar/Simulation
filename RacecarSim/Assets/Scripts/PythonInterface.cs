@@ -52,6 +52,8 @@ public class PythonInterface : MonoBehaviour
     private static readonly IPAddress ipAddress = IPAddress.Parse("127.0.0.1");
 
     private const int timeoutTime = 1000;
+
+    private const int maxPacketSize = 65507;
     #endregion
 
     private UdpClient client;

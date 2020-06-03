@@ -6,7 +6,7 @@ RenderTexture:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: HudCamera
+  m_Name: DepthImage
   m_ImageContentsHash:
     serializedVersion: 2
     Hash: 00000000000000000000000000000000
@@ -16,7 +16,7 @@ RenderTexture:
   m_Height: 480
   m_AntiAliasing: 1
   m_DepthFormat: 2
-  m_ColorFormat: 20
+  m_ColorFormat: 1
   m_MipMap: 0
   m_GenerateMips: 1
   m_SRGB: 0

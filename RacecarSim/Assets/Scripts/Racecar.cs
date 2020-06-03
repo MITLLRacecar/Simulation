@@ -26,7 +26,7 @@ public class Racecar : MonoBehaviour
     private void Start()
     {
         // Find submodules
-        this.Camera = this.GetComponentInChildren<CameraModule>();
+        this.Camera = this.GetComponent<CameraModule>();
         this.Controller = this.GetComponent<Controller>();
         this.Drive = this.GetComponent<Drive>();
         this.Lidar = this.GetComponentInChildren<Lidar>();
@@ -91,6 +91,12 @@ public class Racecar : MonoBehaviour
         if (this.Controller.was_pressed(Controller.Button.A))
         {
             Debug.Log("Kachow!");
+        }
+
+        if (this.Controller.was_pressed(Controller.Button.B))
+        {
+            print($"ray cast: {this.Camera.DepthImage[CameraModule.DepthHeight / 2][CameraModule.DepthWidth / 3]}");
+            print($"rendered: {this.Camera.DepthImageRendered[CameraModule.ColorHeight / 2 + CameraModule.ColorWidth / 2]}");
         }
     }
 

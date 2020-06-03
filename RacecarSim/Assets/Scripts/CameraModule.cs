@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
 public class CameraModule : MonoBehaviour
@@ -44,10 +45,40 @@ public class CameraModule : MonoBehaviour
         {
             if (!isColorImageRawValid)
             {
-                Texture2D dest = new Texture2D(this.ColorImage.width, this.ColorImage.height, TextureFormat.BGRA32, false);
-                Graphics.CopyTexture(this.ColorImage, dest);
-                this.colorImageRaw = dest.GetRawTextureData();
-                this.isColorImageRawValid = true;
+                RenderTexture activeRenderTexture = RenderTexture.active;
+                RenderTexture.active = this.ColorImage;
+
+                this.colorCamera.Render();
+
+                Texture2D image = new Texture2D(this.ColorImage.width, this.ColorImage.height);
+                image.ReadPixels(new Rect(0, 0, this.ColorImage.width, this.ColorImage.height), 0, 0);
+                image.Apply();
+                RenderTexture.active = activeRenderTexture;
+
+                byte[] bytes = image.GetRawTextureData();
+                this.colorImageRaw = bytes;
+
+                print(bytes[0]);
+
+                byte[] fileBytes = image.EncodeToPNG();
+                File.WriteAllBytes("C:/Users/matth/OneDrive/_MetaFolder/Code/Racecar/Simulation/test.png", fileBytes);
+
+
+                Destroy(image);
+
+
+
+
+
+
+                //Texture2D dest = new Texture2D(this.ColorImage.width, this.ColorImage.height, TextureFormat.BGRA32, false);
+                //dest.Apply();
+                //Graphics.CopyTexture(this.ColorImage, dest);
+                //dest.Apply();
+                //this.colorImageRaw = dest.GetRawTextureData();
+                //this.isColorImageRawValid = true;
+
+                //print(this.colorImageRaw[0]);
             }
             return this.colorImageRaw;
         }

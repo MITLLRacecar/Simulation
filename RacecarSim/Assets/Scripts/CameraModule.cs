@@ -13,7 +13,7 @@ public class CameraModule : MonoBehaviour
     public const int DepthWidth = CameraModule.ColorWidth / 8;
     public const int DepthHeight = CameraModule.ColorHeight / 8;
 
-    private static readonly float[] fieldOfView = { 69.4f, 42.5f };
+    private static readonly Vector2 fieldOfView = new Vector2(69.4f, 42.5f);
 
     private static float minRange = 0.105f;
     private static float minCode = 0.0f;
@@ -76,8 +76,8 @@ public class CameraModule : MonoBehaviour
         {
             if (!isDepthImageValid)
             {
-                float imageWidth = Mathf.Tan(CameraModule.fieldOfView[0] * Mathf.PI / 180);
-                float imageHeight = Mathf.Tan(CameraModule.fieldOfView[1] * Mathf.PI / 180);
+                float imageHeight = Mathf.Tan(CameraModule.fieldOfView.y * Mathf.PI / 180);
+                float imageWidth = imageHeight * CameraModule.DepthWidth / CameraModule.DepthHeight;
 
                 for (int r = 0; r < CameraModule.DepthHeight; r++)
                 {
@@ -158,8 +158,8 @@ public class CameraModule : MonoBehaviour
         this.colorCamera = cameras[0];
         this.depthCamera = cameras[1];
 
-        this.colorCamera.fieldOfView = CameraModule.fieldOfView[0];
-        this.depthCamera.fieldOfView = CameraModule.fieldOfView[0];
+        this.colorCamera.fieldOfView = CameraModule.fieldOfView.y;
+        this.depthCamera.fieldOfView = CameraModule.fieldOfView.y;
 
         this.depthImage = new float[CameraModule.DepthHeight][];
         for (int r = 0; r < CameraModule.DepthHeight; r++)

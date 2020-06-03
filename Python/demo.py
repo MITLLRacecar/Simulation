@@ -11,6 +11,7 @@ Demo RACECAR program
 ################################################################################
 
 import sys
+import cv2 as cv
 
 # sys.path.insert(0, "../library")
 from unity_racecar import Racecar
@@ -47,6 +48,9 @@ def start():
 
     # This tells the car to begin at a standstill
     rc.drive.stop()
+
+    # image = cv.imread("../test.png")
+    # rc.display.show_image(image)
 
 
 def update():
@@ -96,7 +100,7 @@ def update():
         # else:
         #     print("Error: No image was captured")
 
-        print(image[280][280])
+        print(image[0][0])
         rc.display.show_image(image)
 
 

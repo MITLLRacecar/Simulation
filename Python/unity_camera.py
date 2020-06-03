@@ -1,5 +1,6 @@
 import sys
 import numpy as np
+import cv2 as cv
 
 
 class Camera:
@@ -70,3 +71,4 @@ class Camera:
         self.__color_image = np.reshape(
             self.__color_image, (self.__HEIGHT, self.__WIDTH, 4), "C"
         )
+        self.__color_image = cv.cvtColor(self.__color_image, cv.COLOR_RGB2BGR)

@@ -56,13 +56,14 @@ public class CameraModule : MonoBehaviour
                 RenderTexture.active = activeRenderTexture;
 
                 byte[] bytes = image.GetRawTextureData();
-                this.colorImageRaw = bytes;
 
-                print(bytes[0]);
+                int bytesPerRow = CameraModule.ColorWidth * sizeof(float);
+                for (int r = 0; r < CameraModule.ColorHeight; r++)
+                {
+                    Buffer.BlockCopy(bytes, (CameraModule.ColorHeight - r - 1) * bytesPerRow, this.colorImageRaw, r * bytesPerRow, bytesPerRow);
+                }
 
-                byte[] fileBytes = image.EncodeToPNG();
-                File.WriteAllBytes("C:/Users/matth/OneDrive/_MetaFolder/Code/Racecar/Simulation/test.png", fileBytes);
-
+                print($"{this.colorImageRaw[0]} {this.colorImageRaw[1]} {this.colorImageRaw[2]} {this.colorImageRaw[3]}");
 
                 Destroy(image);
 
@@ -193,6 +194,7 @@ public class CameraModule : MonoBehaviour
         }
 
         this.depthImageRaw = new byte[sizeof(float) * CameraModule.DepthHeight * CameraModule.DepthWidth];
+        this.colorImageRaw = new byte[sizeof(float) * CameraModule.ColorWidth * CameraModule.ColorHeight];
     }
 
     private void LateUpdate()

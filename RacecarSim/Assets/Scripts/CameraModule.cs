@@ -63,58 +63,10 @@ public class CameraModule : MonoBehaviour
                     Buffer.BlockCopy(bytes, (CameraModule.ColorHeight - r - 1) * bytesPerRow, this.colorImageRaw, r * bytesPerRow, bytesPerRow);
                 }
 
-                print($"{this.colorImageRaw[0]} {this.colorImageRaw[1]} {this.colorImageRaw[2]} {this.colorImageRaw[3]}");
-
                 Destroy(image);
-
-
-
-
-
-
-                //Texture2D dest = new Texture2D(this.ColorImage.width, this.ColorImage.height, TextureFormat.BGRA32, false);
-                //dest.Apply();
-                //Graphics.CopyTexture(this.ColorImage, dest);
-                //dest.Apply();
-                //this.colorImageRaw = dest.GetRawTextureData();
-                //this.isColorImageRawValid = true;
-
-                //print(this.colorImageRaw[0]);
+                this.isColorImageRawValid = true;
             }
             return this.colorImageRaw;
-        }
-    }
-
-    public float[] DepthImageRendered
-    {
-        get
-        {
-            RenderTexture cur = this.depthCamera.targetTexture;
-
-            Texture2D dest = new Texture2D(cur.width, cur.height, TextureFormat.RHalf, false);
-            Graphics.CopyTexture(cur, dest);
-            return dest.GetRawTextureData<float>().ToArray();
-
-
-            //for (int i = 0; i < 30; i++)
-            //{
-            //    TextureFormat format = (TextureFormat)i;
-            //    try
-            //    {
-            //        Texture2D dest = new Texture2D(cur.width, cur.height, format, false);
-            //        Graphics.CopyTexture(cur, dest);
-            //        dest.Apply();
-            //        print($">> SUCCESS: {format}");
-            //        System.Threading.Thread.Sleep(1);
-            //    }
-            //    catch (Exception e)
-            //    {
-            //        print($"Failure: {format}");
-            //    }
-            //}
-
-
-            return null;
         }
     }
 
@@ -124,7 +76,29 @@ public class CameraModule : MonoBehaviour
         {
             if (!isDepthImageValid)
             {
-                this.TakeDepthImage();
+                float imageWidth = Mathf.Tan(CameraModule.fieldOfView[0] * Mathf.PI / 180);
+                float imageHeight = Mathf.Tan(CameraModule.fieldOfView[1] * Mathf.PI / 180);
+
+                for (int r = 0; r < CameraModule.DepthHeight; r++)
+                {
+                    for (int c = 0; c < CameraModule.DepthWidth; c++)
+                    {
+                        Vector3 direction = this.transform.forward
+                            + this.transform.up * imageHeight * -((float)r / CameraModule.DepthHeight - 0.5f)
+                            + this.transform.right * imageWidth * ((float)c / CameraModule.DepthWidth - 0.5f);
+
+                        if (Physics.Raycast(this.transform.position, direction, out RaycastHit raycastHit, CameraModule.maxRange))
+                        {
+                            this.depthImage[r][c] = raycastHit.distance > CameraModule.minRange ? raycastHit.distance * 100 : CameraModule.minCode;
+                        }
+                        else
+                        {
+                            this.depthImage[r][c] = CameraModule.maxCode;
+                        }
+                    }
+                }
+
+                this.isDepthImageValid = true;
             }
 
             return this.depthImage;
@@ -170,7 +144,7 @@ public class CameraModule : MonoBehaviour
             {
                 if (this.DepthImage[r][c] != CameraModule.minCode && this.DepthImage[r][c] != CameraModule.maxCode)
                 {
-                    rawData[r * texture.width + c] = Color.Lerp(Color.red, Color.blue, DepthImage[r][c] / 100 / CameraModule.maxRange);
+                    rawData[(CameraModule.DepthHeight - r - 1) * texture.width + c] = Color.Lerp(Color.red, Color.blue, DepthImage[r][c] / 100 / CameraModule.maxRange);
                 }
             }
         }
@@ -184,8 +158,8 @@ public class CameraModule : MonoBehaviour
         this.colorCamera = cameras[0];
         this.depthCamera = cameras[1];
 
-        //this.GetComponent<Camera>().fieldOfView = CameraModule.fieldOfView[0];
-        //this.GetComponent<Camera>().aspect = (float)CameraModule.ColorWidth / CameraModule.ColorHeight;
+        this.colorCamera.fieldOfView = CameraModule.fieldOfView[0];
+        this.depthCamera.fieldOfView = CameraModule.fieldOfView[0];
 
         this.depthImage = new float[CameraModule.DepthHeight][];
         for (int r = 0; r < CameraModule.DepthHeight; r++)
@@ -207,37 +181,5 @@ public class CameraModule : MonoBehaviour
         this.isColorImageRawValid = false;
         this.isDepthImageValid = false;
         this.isDepthImageRawValid = false;
-    }
-
-    private void TakeDepthImage()
-    {
-        float imageWidth = Mathf.Tan(CameraModule.fieldOfView[0] * Mathf.PI / 180);
-        float imageHeight = Mathf.Tan(CameraModule.fieldOfView[1] * Mathf.PI / 180);
-
-        for (int r = 0; r < CameraModule.DepthHeight; r++)
-        {
-            for (int c = 0; c < CameraModule.DepthWidth; c++)
-            {
-                Vector3 direction = this.transform.forward
-                    + this.transform.up * imageHeight * ((float)r / CameraModule.DepthHeight - 0.5f)
-                    + this.transform.right * imageWidth * ((float)c / CameraModule.DepthWidth - 0.5f);
-
-                if (Physics.Raycast(this.transform.position, direction, out RaycastHit raycastHit, CameraModule.maxRange))
-                {
-                    this.depthImage[r][c] = raycastHit.distance > CameraModule.minRange ? raycastHit.distance * 100 : CameraModule.minCode;
-                }
-                else
-                {
-                    this.depthImage[r][c] = CameraModule.maxCode;
-                }               
-            }
-        }
-
-        this.isDepthImageValid = true;
-    }
-
-    public void TakeNewDepthImage()
-    {
-        // LinearEyeDepth
     }
 }

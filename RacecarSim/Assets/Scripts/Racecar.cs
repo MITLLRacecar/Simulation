@@ -92,12 +92,6 @@ public class Racecar : MonoBehaviour
         {
             Debug.Log("Kachow!");
         }
-
-        if (this.Controller.was_pressed(Controller.Button.B))
-        {
-            print($"ray cast: {this.Camera.DepthImage[CameraModule.DepthHeight / 2][CameraModule.DepthWidth / 3]}");
-            print($"rendered: {this.Camera.DepthImageRendered[CameraModule.ColorHeight / 2 + CameraModule.ColorWidth / 2]}");
-        }
     }
 
     public void EnterDefaultDrive()

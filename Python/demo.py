@@ -90,18 +90,14 @@ def update():
     # Take and display a photo every time the X button is pressed on the
     # controller
     if rc.controller.was_pressed(rc.controller.Button.X):
-        # Capture an image from the RACECAR camera
-        image = rc.camera.get_image()
+        # Capture a depth image from the RACECAR camera
         depth_image = rc.camera.get_depth_image()
 
-        # If an image was captured, show it on the RACECAR monitor
-        # if image is not None:
-        #     rc.display.show_image(image)
-        # else:
-        #     print("Error: No image was captured")
+        print(depth_image[0][0])
+        rc.display.show_image(depth_image)
 
-        print(image[0][0])
-        rc.display.show_image(image)
+    # image = rc.camera.get_image()
+    # rc.display.show_image(image)
 
 
 # update_slow() is similar to update() but is called once per second by default.

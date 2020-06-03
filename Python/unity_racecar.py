@@ -12,6 +12,7 @@ import unity_drive
 import unity_lidar
 import unity_physics
 
+
 class Racecar:
     __IP = "127.0.0.1"
     __UNITY_PORT = 5065
@@ -22,6 +23,7 @@ class Racecar:
         """
         The buttons on the controller
         """
+
         error = 0
         unity_start = 1
         unity_update = 2
@@ -56,11 +58,9 @@ class Racecar:
         self.__send_data(struct.pack("B", function_code.value))
 
     def __send_data(self, data):
-        Racecar.__SOCKET.sendto(
-            data, (Racecar.__IP, Racecar.__UNITY_PORT)
-        )
+        Racecar.__SOCKET.sendto(data, (Racecar.__IP, Racecar.__UNITY_PORT))
 
-    def __receive_data(self, buffer_size=4):
+    def __receive_data(self, buffer_size=8):
         data, _ = Racecar.__SOCKET.recvfrom(buffer_size)
         return data
 
@@ -72,26 +72,27 @@ class Racecar:
         self.physics = unity_physics.Physics(self)
         self.lidar = unity_lidar.Lidar(self)
 
-        self.start = None
-        self.update = None
-        self.update_slow = None
-        self.update_slow_time = 1
+        self.__start = None
+        self.__update = None
+        self.__update_slow = None
+        self.__update_slow_time = 1
+        self.__update_slow_counter = 0
+        self.__delta_time = -1
 
         self.__SOCKET.bind((self.__IP, self.__PYTHON_PORT))
 
     def go(self):
         print(">> Python script loaded, please enter user program mode in Unity")
         while True:
-            data, _ = self.__SOCKET.recvfrom(256)
+            data, _ = self.__SOCKET.recvfrom(8)
             header = int.from_bytes(data, sys.byteorder)
 
             response = self.Header.error
             if header == self.Header.unity_start.value:
-                self.start()
+                self.__start()
                 response = self.Header.python_finished
             elif header == self.Header.unity_update.value:
-                self.update()
-                self.__update_modules()
+                self.__handle_update()
                 response = self.Header.python_finished
             elif header == self.Header.unity_exit.value:
                 print(">> Exit command received from Unity")
@@ -101,19 +102,28 @@ class Racecar:
 
             self.__send_header(response)
 
-    def set_start_update(self, start, update, update_slow = None):
-        self.start = start
-        self.update = update
-        self.update_slow = update_slow
+    def set_start_update(self, start, update, update_slow=None):
+        self.__start = start
+        self.__update = update
+        self.__update_slow = update_slow
 
     def get_delta_time(self):
-        self.__send_header(self.Header.racecar_get_delta_time)
-        [value] = struct.unpack("f", self.__receive_data())
-        return value
+        if self.__delta_time < 0:
+            self.__send_header(self.Header.racecar_get_delta_time)
+            [value] = struct.unpack("f", self.__receive_data())
+            self.__delta_time = value
+        return self.__delta_time
 
     def set_update_slow_time(self, update_slow_time):
-        self.update_slow_time = update_slow_time
+        self.__update_slow_time = update_slow_time
 
-    def __update_modules(self):
+    def __handle_update(self):
+        self.__update()
+
+        self.__update_slow_counter -= self.get_delta_time()
+        if self.__update_slow_counter < 0:
+            self.__update_slow()
+            self.__update_slow_counter = self.__update_slow_time
+
         self.camera._Camera__update()
         self.lidar._Lidar__update()

@@ -96,9 +96,6 @@ def update():
         print(depth_image[0][0])
         rc.display.show_image(depth_image)
 
-    # image = rc.camera.get_image()
-    # rc.display.show_image(image)
-
 
 # update_slow() is similar to update() but is called once per second by default.
 # It is especially useful for printing debug messages, since printing a message
@@ -113,6 +110,9 @@ def update_slow():
     # will print a message once per second
     if rc.controller.is_down(rc.controller.Button.RB):
         print("The right bumper is currently down (update_slow)")
+
+    image = rc.camera.get_image()
+    rc.display.show_image(image)
 
 
 ################################################################################

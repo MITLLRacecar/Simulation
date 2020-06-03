@@ -144,7 +144,7 @@ public class CameraModule : MonoBehaviour
             {
                 if (this.DepthImage[r][c] != CameraModule.minCode && this.DepthImage[r][c] != CameraModule.maxCode)
                 {
-                    rawData[(CameraModule.DepthHeight - r - 1) * texture.width + c] = Color.Lerp(Color.red, Color.blue, DepthImage[r][c] / 100 / CameraModule.maxRange);
+                    rawData[(CameraModule.DepthHeight - r - 1) * texture.width + c] = CameraModule.InterpolateDepthColor(DepthImage[r][c]);
                 }
             }
         }
@@ -181,5 +181,26 @@ public class CameraModule : MonoBehaviour
         this.isColorImageRawValid = false;
         this.isDepthImageValid = false;
         this.isDepthImageRawValid = false;
+    }
+
+    private static Color InterpolateDepthColor(float depth)
+    {
+        depth /= 100 * CameraModule.maxRange;
+        if (depth < 0.2f)
+        {
+            return Color.Lerp(Color.white, Color.yellow, depth / 0.2f);
+        }
+        else if (depth < 0.4f)
+        {
+            return Color.Lerp(Color.yellow, Color.red, (depth - 0.2f) / 0.2f);
+        }
+        else if (depth < 0.7f)
+        {
+            return Color.Lerp(Color.red, Color.blue, (depth - 0.4f) / 0.3f);
+        }
+        else
+        {
+            return Color.Lerp(Color.blue, Hud.SensorBackgroundColor, (depth - 0.7f) / 0.3f);
+        }
     }
 }

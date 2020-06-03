@@ -97,6 +97,7 @@ def update():
         #     print("Error: No image was captured")
 
         print(image[280][280])
+        rc.display.show_image(image)
 
 
 # update_slow() is similar to update() but is called once per second by default.

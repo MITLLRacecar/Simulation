@@ -66,9 +66,7 @@ class Camera:
                 self.__racecar.Header.python_send_next
             )
 
-        print(len(raw_bytes))
         self.__color_image = np.frombuffer(raw_bytes, dtype=np.uint8)
-        print(np.shape(self.__color_image))
         self.__color_image = np.reshape(
             self.__color_image, (self.__HEIGHT, self.__WIDTH, 4), "C"
         )

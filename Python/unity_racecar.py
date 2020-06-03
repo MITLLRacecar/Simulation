@@ -7,6 +7,7 @@ from enum import IntEnum
 
 import unity_camera
 import unity_controller
+import unity_display
 import unity_drive
 import unity_lidar
 import unity_physics
@@ -66,6 +67,7 @@ class Racecar:
     def __init__(self):
         self.camera = unity_camera.Camera(self)
         self.controller = unity_controller.Controller(self)
+        self.display = unity_display.Display()
         self.drive = unity_drive.Drive(self)
         self.physics = unity_physics.Physics(self)
         self.lidar = unity_lidar.Lidar(self)

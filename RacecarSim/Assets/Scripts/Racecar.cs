@@ -7,21 +7,39 @@ public class Racecar : MonoBehaviour
 
     #region Constants
     private static readonly Vector3 cameraOffset = new Vector3(0, 0.4f, -0.8f);
-    private const float cameraSpeed = 2;
-
+    private const float cameraSpeed = 4;
     #endregion
 
-    private Action curUpdate;
-    private Action curUpdateSlow;
-
-    private float updateSlowTime = 1;
-    private float updateSlowCounter = 0;
-
+    #region Public Interface
     public CameraModule Camera { get; private set; }
     public Controller Controller { get; private set; }
     public Drive Drive { get; private set; }
     public Lidar Lidar { get; private set; }
     public PhysicsModule Physics { get; private set; }
+
+    public void EnterDefaultDrive()
+    {
+        Debug.Log(">> Entering default drive mode");
+        this.isDefaultDrive = true;
+        this.DefaultDriveStart();
+    }
+
+    private void EnterUserProgram()
+    {
+        Debug.Log(">> Entering user program mode");
+        PythonInterface.Instance.PythonStart();
+        this.isDefaultDrive = false;
+    }
+
+    private void HandleExit()
+    {
+        Debug.Log(">> Goodbye!");
+        PythonInterface.Instance.HandleExit();
+        Application.Quit();
+    }
+    #endregion
+
+    private bool isDefaultDrive = true;
 
     private void Start()
     {
@@ -32,7 +50,6 @@ public class Racecar : MonoBehaviour
         this.Lidar = this.GetComponentInChildren<Lidar>();
         this.Physics = this.GetComponent<PhysicsModule>();
 
-        this.Lidar.SetCarTransform(this.transform);
         this.GetComponent<Rigidbody>().centerOfMass = new Vector3(0, -0.1f, -0.05f);
 
         this.EnterDefaultDrive();
@@ -40,16 +57,13 @@ public class Racecar : MonoBehaviour
 
     private void Update()
     {
-        this.curUpdate();
-
-        if (this.curUpdateSlow != null)
+        if (isDefaultDrive)
         {
-            this.updateSlowCounter -= Time.deltaTime;
-            if (this.updateSlowCounter <= 0)
-            {
-                this.updateSlowCounter = this.updateSlowTime;
-                this.curUpdateSlow();
-            }
+            this.DefaultDriveUpdate();
+        }
+        else
+        {
+            PythonInterface.Instance.PythonUpdate();
         }
 
         if (Input.GetButton("Start") && Input.GetButton("Back"))
@@ -75,62 +89,22 @@ public class Racecar : MonoBehaviour
         this.ThirdPersonCamera.transform.LookAt(this.transform.position);
     }
 
-    private void defaultStart()
+    private void DefaultDriveStart()
     {
-        this.Drive.stop();
+        this.Drive.Stop();
     }
 
-    private void defaultUpdate()
+    private void DefaultDriveUpdate()
     {
         float forwardSpeed = this.Controller.get_trigger(Controller.Trigger.RIGHT);
         float backSpeed = this.Controller.get_trigger(Controller.Trigger.LEFT);
-        float angle = this.Controller.get_joystick(Controller.Joystick.LEFT).x;
+        this.Drive.Angle = this.Controller.get_joystick(Controller.Joystick.LEFT).x;
 
-        this.Drive.set_speed_angle(forwardSpeed - backSpeed, angle);
+        this.Drive.Speed = forwardSpeed - backSpeed;
 
         if (this.Controller.was_pressed(Controller.Button.A))
         {
             Debug.Log("Kachow!");
         }
     }
-
-    public void EnterDefaultDrive()
-    {
-        Debug.Log(">> Entering default drive mode");
-        this.defaultStart();
-        this.curUpdate = this.defaultUpdate;
-        this.curUpdateSlow = null;
-    }
-
-    private void EnterUserProgram()
-    {
-        Debug.Log(">> Entering user program mode");
-        PythonInterface.Instance.PythonStart();
-        this.curUpdate = PythonInterface.Instance.PythonUpdate;
-        this.curUpdateSlow = null;
-    }
-
-    private void HandleExit()
-    {
-        Debug.Log(">> Goodbye!");
-        PythonInterface.Instance.HandleExit();
-        Application.Quit();
-    }
-
-    #region Python Interface
-    void set_start_update(Action start, Action update, Action update_slow = null)
-    {
-        // What to do about this method?
-    }
-
-    double get_delta_time()
-    {
-        return Time.deltaTime;
-    }
-
-    void set_update_slow_time(float time)
-    {
-        this.updateSlowTime = time;
-    }
-    #endregion
 }

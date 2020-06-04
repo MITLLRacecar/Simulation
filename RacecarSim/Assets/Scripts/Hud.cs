@@ -28,7 +28,6 @@ public class Hud : MonoBehaviour
 
     #region Constants
     public static readonly Color SensorBackgroundColor = new Color(0.2f, 0.2f, 0.2f);
-
     private const int lidarMapScale = 4;
     #endregion
 
@@ -47,7 +46,7 @@ public class Hud : MonoBehaviour
         this.texts[Texts.LinearAcceleration.GetHashCode()].text = FormatVector3(this.Racecar.Physics.get_linear_acceleration());
         this.texts[Texts.AngularVelocity.GetHashCode()].text = FormatVector3(this.Racecar.Physics.get_angular_velocity());
 
-        this.Racecar.Lidar.UpdateMap((Texture2D)this.images[Images.LidarMap.GetHashCode()].texture);
+        this.Racecar.Lidar.VisualizeLidar((Texture2D)this.images[Images.LidarMap.GetHashCode()].texture);
         this.Racecar.Camera.VisualizeDepth((Texture2D)this.images[Images.DepthFeed.GetHashCode()].texture);
     }
 

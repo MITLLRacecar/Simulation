@@ -25,7 +25,7 @@ public class PythonInterface : MonoBehaviour
         racecar_set_start_update,
         racecar_get_delta_time,
         racecar_set_update_slow_time,
-        camera_get_image,
+        camera_get_color_image,
         camera_get_depth_image,
         camera_get_width,
         camera_get_height,
@@ -37,11 +37,9 @@ public class PythonInterface : MonoBehaviour
         display_show_image,
         drive_set_speed_angle,
         drive_stop,
-        drive_set_max_speed_scale_factor,
-        gpio_pin_mode,
-        gpio_pin_write,
-        lidar_get_length,
-        lidar_get_ranges,
+        drive_set_max_speed,
+        lidar_get_num_samples,
+        lidar_get_samples,
         physics_get_linear_acceleration,
         physics_get_angular_velocity,
     }
@@ -116,7 +114,7 @@ public class PythonInterface : MonoBehaviour
                     client.Send(sendData, sendData.Length);
                     break;
 
-                case Header.camera_get_image:
+                case Header.camera_get_color_image:
                     this.SendFragmented(this.Racecar.Camera.ColorImageRaw, 32);
                     break;
 
@@ -167,32 +165,26 @@ public class PythonInterface : MonoBehaviour
                     break;
 
                 case Header.drive_set_speed_angle:
-                    float speed = BitConverter.ToSingle(data, 4);
-                    float angle = BitConverter.ToSingle(data, 8);
-                    this.Racecar.Drive.set_speed_angle(speed, angle);
+                    this.Racecar.Drive.Speed = BitConverter.ToSingle(data, 4);
+                    this.Racecar.Drive.Angle = BitConverter.ToSingle(data, 8);
                     break;
 
                 case Header.drive_stop:
-                    this.Racecar.Drive.stop();
+                    this.Racecar.Drive.Stop();
                     break;
 
-                case Header.drive_set_max_speed_scale_factor:
-                    float forwardFactor = BitConverter.ToSingle(data, 4);
-                    float backFactor = BitConverter.ToSingle(data, 8);
-                    this.Racecar.Drive.set_max_speed_scale_factor(new float[] { forwardFactor, backFactor });
+                case Header.drive_set_max_speed:
+                    this.Racecar.Drive.MaxSpeed = BitConverter.ToSingle(data, 4);
                     break;
 
-                case Header.lidar_get_length:
-                    sendData = BitConverter.GetBytes(this.Racecar.Lidar.get_length());
+                case Header.lidar_get_num_samples:
+                    sendData = BitConverter.GetBytes(Lidar.NumSamples);
                     client.Send(sendData, sendData.Length);
                     break;
 
-                case Header.lidar_get_ranges:
-                    float[] ranges = this.Racecar.Lidar.get_ranges();
-                    sendData = new byte[sizeof(float) * ranges.Length];
-                    Buffer.BlockCopy(ranges, 0, sendData, 0, sendData.Length);
-                    print($"float: {ranges[0]}");
-                    print(string.Format("bytes: {0:X} {1:X} {2:X} {3:X}", sendData[0], sendData[1], sendData[2], sendData[3]));
+                case Header.lidar_get_samples:
+                    sendData = new byte[sizeof(float) * Lidar.NumSamples];
+                    Buffer.BlockCopy(this.Racecar.Lidar.Samples, 0, sendData, 0, sendData.Length);
                     client.Send(sendData, sendData.Length);
                     break;
 

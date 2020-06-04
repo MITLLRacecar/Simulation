@@ -3,9 +3,10 @@
 public class Lidar : MonoBehaviour
 {
     #region Constants
-    private const int numSamples = 720;
+    public const int NumSamples = 720;
+
     private const int motorFrequency = 6;
-    private const int samplesPerSecond = Lidar.numSamples * Lidar.motorFrequency;
+    private const int samplesPerSecond = Lidar.NumSamples * Lidar.motorFrequency;
 
     private const float minRange = 0.12f;
     private const float minCode = 0.0f;
@@ -14,25 +15,27 @@ public class Lidar : MonoBehaviour
     #endregion
 
     // samples are stored in cm
-    private float[] samples = new float[Lidar.numSamples];
+    public float[] Samples { get; private set; }
+
     private int curSample = 0;
 
     private Transform carTransform;
 
-    void Start()
+    private void Start()
     {
-        
+        this.Samples = new float[Lidar.NumSamples];
+        this.carTransform = this.GetComponentInParent<Transform>();
     }
 
     void FixedUpdate()
     {
-        int lastSample = (curSample + Mathf.RoundToInt(Lidar.samplesPerSecond * Time.deltaTime)) % numSamples;
+        int lastSample = (curSample + Mathf.RoundToInt(Lidar.samplesPerSecond * Time.deltaTime)) % NumSamples;
 
         while (curSample != lastSample)
         {
-            this.transform.rotation = Quaternion.Euler(0, this.carTransform.rotation.eulerAngles.y + 360 * curSample / Lidar.numSamples, 0);
-            this.samples[curSample] = TakeSample();
-            curSample = (curSample + 1) % numSamples;
+            this.transform.localRotation = Quaternion.Euler(0, (float)curSample / Lidar.NumSamples, 0);
+            this.Samples[curSample] = TakeSample();
+            curSample = (curSample + 1) % NumSamples;
         }
     }
 
@@ -46,9 +49,9 @@ public class Lidar : MonoBehaviour
         return Lidar.maxCode;
     }
 
-    public void UpdateMap(Texture2D map)
+    public void VisualizeLidar(Texture2D texture)
     {
-        Unity.Collections.NativeArray<Color32> rawData = map.GetRawTextureData<Color32>();
+        Unity.Collections.NativeArray<Color32> rawData = texture.GetRawTextureData<Color32>();
 
         // Set background color
         for (int i = 0; i < rawData.Length; i++)
@@ -57,35 +60,18 @@ public class Lidar : MonoBehaviour
         }
 
         // Render samples
-        Vector2 center = new Vector2(map.width / 2, map.height / 2);
-        float length = Mathf.Min(map.width / 2.0f, map.height / 2.0f);
-        for (int i = 0; i < this.samples.Length; i++)
+        Vector2 center = new Vector2(texture.width / 2, texture.height / 2);
+        float length = Mathf.Min(texture.width / 2.0f, texture.height / 2.0f);
+        for (int i = 0; i < this.Samples.Length; i++)
         {
-            if (this.samples[i] != Lidar.minCode && this.samples[i] != Lidar.maxCode)
+            if (this.Samples[i] != Lidar.minCode && this.Samples[i] != Lidar.maxCode)
             {
-                float angle = 2 * Mathf.PI * i / Lidar.numSamples;
-                Vector2 point = center + samples[i] / 100 / Lidar.maxRange * length * new Vector2(Mathf.Sin(angle), Mathf.Cos(angle));
-                rawData[(int)point.y * map.width + (int)point.x] = Color.red;
+                float angle = 2 * Mathf.PI * i / Lidar.NumSamples;
+                Vector2 point = center + this.Samples[i] / 100 / Lidar.maxRange * length * new Vector2(Mathf.Sin(angle), Mathf.Cos(angle));
+                rawData[(int)point.y * texture.width + (int)point.x] = Color.red;
             }
         }
 
-        map.Apply();
+        texture.Apply();
     }
-
-    public void SetCarTransform(Transform transform)
-    {
-        this.carTransform = transform;
-    }
-
-    #region Python Interface
-    public int get_length(float? timeout=null)
-    {
-        return Lidar.numSamples;
-    }
-
-    public float[] get_ranges(float? timeout=null)
-    {
-        return this.samples;
-    }
-    #endregion
 }

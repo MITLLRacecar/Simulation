@@ -14,12 +14,20 @@ public class Drive : MonoBehaviour
     public GameObject[] Wheels = new GameObject[4];
     public WheelCollider[] WheelColliders = new WheelCollider[4];
 
-    private static readonly float[] unitySpeedScaleFactor = { 400f / 0.25f, 400f / 0.33f };
+    private static readonly float[] unitySpeedScaleFactor = { 0.15f / 0.25f, 0.15f / 0.33f };
     public const float unityMaxAngle = 20;
 
     private float[] userSpeedScaleFactor = { 0.25f, 0.33f };
     private float curSpeed = 0;
     private float curAngle = 0;
+
+    private void Start()
+    {
+        foreach (WheelCollider wheel in this.WheelColliders)
+        {
+            wheel.ConfigureVehicleSubsteps(0.5f, 15, 20);
+        }
+    }
 
     private void FixedUpdate()
     {

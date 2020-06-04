@@ -87,7 +87,7 @@ public class CameraModule : MonoBehaviour
                             + this.transform.up * imageHeight * -((float)r / CameraModule.DepthHeight - 0.5f)
                             + this.transform.right * imageWidth * ((float)c / CameraModule.DepthWidth - 0.5f);
 
-                        if (Physics.Raycast(this.transform.position, direction, out RaycastHit raycastHit, CameraModule.maxRange))
+                        if (Physics.Raycast(this.depthCamera.transform.position, direction, out RaycastHit raycastHit, CameraModule.maxRange))
                         {
                             this.depthImage[r][c] = raycastHit.distance > CameraModule.minRange ? raycastHit.distance * 100 : CameraModule.minCode;
                         }
@@ -186,13 +186,13 @@ public class CameraModule : MonoBehaviour
     private static Color InterpolateDepthColor(float depth)
     {
         depth /= 100 * CameraModule.maxRange;
-        if (depth < 0.2f)
+        if (depth < 0.1f)
         {
-            return Color.Lerp(Color.white, Color.yellow, depth / 0.2f);
+            return Color.Lerp(Color.white, Color.yellow, depth / 0.1f);
         }
-        else if (depth < 0.4f)
+        else if (depth < 0.3f)
         {
-            return Color.Lerp(Color.yellow, Color.red, (depth - 0.2f) / 0.2f);
+            return Color.Lerp(Color.yellow, Color.red, (depth - 0.1f) / 0.2f);
         }
         else if (depth < 0.7f)
         {

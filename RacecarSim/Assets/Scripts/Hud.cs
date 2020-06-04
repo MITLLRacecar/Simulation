@@ -43,7 +43,7 @@ public class Hud : MonoBehaviour
 
     private void Update()
     {
-        this.texts[Texts.TrueSpeed.GetHashCode()].text = this.Racecar.GetComponent<Rigidbody>().velocity.magnitude.ToString("F1");
+        this.texts[Texts.TrueSpeed.GetHashCode()].text = this.Racecar.GetComponent<Rigidbody>().velocity.magnitude.ToString("F2");
         this.texts[Texts.LinearAcceleration.GetHashCode()].text = FormatVector3(this.Racecar.Physics.get_linear_acceleration());
         this.texts[Texts.AngularVelocity.GetHashCode()].text = FormatVector3(this.Racecar.Physics.get_angular_velocity());
 

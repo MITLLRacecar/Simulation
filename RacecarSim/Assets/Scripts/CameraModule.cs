@@ -15,9 +15,9 @@ public class CameraModule : MonoBehaviour
 
     private static readonly Vector2 fieldOfView = new Vector2(69.4f, 42.5f);
 
-    private static float minRange = 0.105f;
+    private static float minRange = 1.05f;
     private static float minCode = 0.0f;
-    private static float maxRange = 10f;
+    private static float maxRange = 100f;
     private static float maxCode = 0.0f;
     #endregion
 
@@ -87,7 +87,7 @@ public class CameraModule : MonoBehaviour
 
                         if (Physics.Raycast(ray, out RaycastHit raycastHit, CameraModule.maxRange))
                         {
-                            this.depthImage[r][c] = raycastHit.distance > CameraModule.minRange ? raycastHit.distance * 100 : CameraModule.minCode;
+                            this.depthImage[r][c] = raycastHit.distance > CameraModule.minRange ? raycastHit.distance * 10 : CameraModule.minCode;
                         }
                         else
                         {
@@ -183,22 +183,22 @@ public class CameraModule : MonoBehaviour
 
     private static Color InterpolateDepthColor(float depth)
     {
-        depth /= 100 * CameraModule.maxRange;
-        if (depth < 0.1f)
+        depth /= 10 * CameraModule.maxRange;
+        if (depth < 0.05f)
         {
-            return Color.Lerp(Color.white, Color.yellow, depth / 0.1f);
+            return Color.Lerp(Color.white, Color.yellow, depth / 0.05f);
         }
-        else if (depth < 0.3f)
+        else if (depth < 0.2f)
         {
-            return Color.Lerp(Color.yellow, Color.red, (depth - 0.1f) / 0.2f);
+            return Color.Lerp(Color.yellow, Color.red, (depth - 0.05f) / 0.15f);
         }
-        else if (depth < 0.7f)
+        else if (depth < 0.6f)
         {
-            return Color.Lerp(Color.red, Color.blue, (depth - 0.4f) / 0.3f);
+            return Color.Lerp(Color.red, Color.blue, (depth - 0.2f) / 0.4f);
         }
         else
         {
-            return Color.Lerp(Color.blue, Hud.SensorBackgroundColor, (depth - 0.7f) / 0.3f);
+            return Color.Lerp(Color.blue, Hud.SensorBackgroundColor, (depth - 0.6f) / 0.4f);
         }
     }
 }

@@ -486,7 +486,7 @@ WheelCollider:
     targetPosition: 0.5
   m_SuspensionDistance: 0.01
   m_ForceAppPointDistance: 0.02
-  m_Mass: 0.02
+  m_Mass: 0.2
   m_WheelDampingRate: 0.002
   m_ForwardFriction:
     m_ExtremumSlip: 0.4
@@ -581,7 +581,7 @@ WheelCollider:
     targetPosition: 0.5
   m_SuspensionDistance: 0.01
   m_ForceAppPointDistance: 0.02
-  m_Mass: 0.02
+  m_Mass: 0.2
   m_WheelDampingRate: 0.002
   m_ForwardFriction:
     m_ExtremumSlip: 0.4
@@ -723,7 +723,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8915845285973543969}
   serializedVersion: 2
-  m_Mass: 1.08
+  m_Mass: 2
   m_Drag: 0
   m_AngularDrag: 0
   m_UseGravity: 1
@@ -882,7 +882,7 @@ WheelCollider:
     targetPosition: 0.5
   m_SuspensionDistance: 0.01
   m_ForceAppPointDistance: 0.02
-  m_Mass: 0.02
+  m_Mass: 0.2
   m_WheelDampingRate: 0.002
   m_ForwardFriction:
     m_ExtremumSlip: 0.4
@@ -1174,7 +1174,7 @@ WheelCollider:
     targetPosition: 0.5
   m_SuspensionDistance: 0.01
   m_ForceAppPointDistance: 0.02
-  m_Mass: 0.02
+  m_Mass: 0.2
   m_WheelDampingRate: 0.002
   m_ForwardFriction:
     m_ExtremumSlip: 0.4

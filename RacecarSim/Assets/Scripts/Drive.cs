@@ -9,8 +9,13 @@ public class Drive : MonoBehaviour
     #endregion
 
     #region Constants
-    private const float torqueScale = 0.6f;
+    private const float torqueScale = 10000.0f;
+    private const float brakeTorqueScale = 1f;
     private const float maxDriveAngle = 20;
+
+    private const int vehicalSubsteps = 20;
+
+    private static readonly Vector3 centerOfMass = new Vector3(0, -0.2f, -0.5f);
     #endregion
 
     #region Public Interface
@@ -27,6 +32,8 @@ public class Drive : MonoBehaviour
     }
     #endregion
 
+    private Rigidbody rBody;
+
     private enum WheelPosition
     {
         FrontLeft,
@@ -39,12 +46,21 @@ public class Drive : MonoBehaviour
     {
         foreach (WheelCollider wheel in this.WheelColliders)
         {
-            wheel.ConfigureVehicleSubsteps(0.5f, 15, 20);
+            wheel.ConfigureVehicleSubsteps(1, Drive.vehicalSubsteps, Drive.vehicalSubsteps);
         }
+        
+        this.rBody = this.GetComponent<Rigidbody>();
+        this.rBody.centerOfMass = Drive.centerOfMass;
     }
 
     private void FixedUpdate()
     {
+        float brakeTorque = this.Speed == 0 ? Mathf.Pow(this.rBody.velocity.magnitude, 2) * Drive.brakeTorqueScale : 0;
+        foreach (WheelCollider wheel in this.WheelColliders)
+        {
+            wheel.brakeTorque = brakeTorque;
+        }
+
         float torque = this.Speed * this.MaxSpeed * Drive.torqueScale;
         this.WheelColliders[WheelPosition.BackLeft.GetHashCode()].motorTorque = torque;
         this.WheelColliders[WheelPosition.BackRight.GetHashCode()].motorTorque = torque;

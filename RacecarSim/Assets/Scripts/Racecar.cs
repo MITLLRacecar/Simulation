@@ -6,7 +6,7 @@ public class Racecar : MonoBehaviour
     public Camera ThirdPersonCamera;
 
     #region Constants
-    private static readonly Vector3 cameraOffset = new Vector3(0, 0.4f, -0.8f);
+    private static readonly Vector3 cameraOffset = new Vector3(0, 4.0f, -8.0f);
     private const float cameraSpeed = 4;
     #endregion
 
@@ -49,8 +49,6 @@ public class Racecar : MonoBehaviour
         this.Drive = this.GetComponent<Drive>();
         this.Lidar = this.GetComponentInChildren<Lidar>();
         this.Physics = this.GetComponent<PhysicsModule>();
-
-        this.GetComponent<Rigidbody>().centerOfMass = new Vector3(0, -0.1f, -0.05f);
 
         this.EnterDefaultDrive();
     }

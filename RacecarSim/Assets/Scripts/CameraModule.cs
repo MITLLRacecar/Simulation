@@ -76,18 +76,16 @@ public class CameraModule : MonoBehaviour
         {
             if (!isDepthImageValid)
             {
-                float imageHeight = Mathf.Tan(CameraModule.fieldOfView.y * Mathf.PI / 180);
-                float imageWidth = imageHeight * CameraModule.DepthWidth / CameraModule.DepthHeight;
-
                 for (int r = 0; r < CameraModule.DepthHeight; r++)
                 {
                     for (int c = 0; c < CameraModule.DepthWidth; c++)
                     {
-                        Vector3 direction = this.transform.forward
-                            + this.transform.up * imageHeight * -((float)r / CameraModule.DepthHeight - 0.5f)
-                            + this.transform.right * imageWidth * ((float)c / CameraModule.DepthWidth - 0.5f);
+                        Ray ray = this.depthCamera.ViewportPointToRay(new Vector3(
+                            (float)c / (CameraModule.DepthWidth - 1),
+                            (CameraModule.DepthHeight - r - 1.0f) / (CameraModule.DepthHeight - 1),
+                            0));
 
-                        if (Physics.Raycast(this.depthCamera.transform.position, direction, out RaycastHit raycastHit, CameraModule.maxRange))
+                        if (Physics.Raycast(ray, out RaycastHit raycastHit, CameraModule.maxRange))
                         {
                             this.depthImage[r][c] = raycastHit.distance > CameraModule.minRange ? raycastHit.distance * 100 : CameraModule.minCode;
                         }

@@ -94,11 +94,8 @@ public class Racecar : MonoBehaviour
 
     private void DefaultDriveUpdate()
     {
-        float forwardSpeed = this.Controller.get_trigger(Controller.Trigger.RIGHT);
-        float backSpeed = this.Controller.get_trigger(Controller.Trigger.LEFT);
+        this.Drive.Speed = this.Controller.get_trigger(Controller.Trigger.RIGHT) - this.Controller.get_trigger(Controller.Trigger.LEFT);
         this.Drive.Angle = this.Controller.get_joystick(Controller.Joystick.LEFT).x;
-
-        this.Drive.Speed = forwardSpeed - backSpeed;
 
         if (this.Controller.was_pressed(Controller.Button.A))
         {

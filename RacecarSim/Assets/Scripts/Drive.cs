@@ -3,28 +3,64 @@ using UnityEngine;
 
 public class Drive : MonoBehaviour
 {
-    #region Set in Unity
+    #region Set in Unity Editor
+    /// <summary>
+    /// The models which visualize the car's wheels
+    /// </summary>
     public GameObject[] Wheels = new GameObject[4];
+
+    /// <summary>
+    /// The invisible colliders responsible for the physics of the car's wheels
+    /// </summary>
     public WheelCollider[] WheelColliders = new WheelCollider[4];
     #endregion
 
     #region Constants
+    /// <summary>
+    /// The scale factor applied to the Speed input provided by the user
+    /// </summary>
     private const float torqueScale = 10000.0f;
-    private const float brakeTorqueScale = 1f;
+
+    /// <summary>
+    /// The natural braking torque applied to all wheels when no input torque is given
+    /// </summary>
+    private const float brakeTorqueScale = 1.0f;
+
+    /// <summary>
+    /// The maximum angle that the front wheels can turn
+    /// </summary>
     private const float maxDriveAngle = 20;
 
+    /// <summary>
+    /// The number of substeps used in wheel physics calculations
+    /// </summary>
     private const int vehicalSubsteps = 20;
 
+    /// <summary>
+    /// The center of mass of the vehicle relative to its physical center
+    /// </summary>
     private static readonly Vector3 centerOfMass = new Vector3(0, -0.2f, -0.5f);
     #endregion
 
     #region Public Interface
+    /// <summary>
+    /// The input torque applied to the rear wheels, ranging from -1 (full reverse) to 1 (full forward)
+    /// </summary>
     public float Speed { get; set; } = 0;
     
+    /// <summary>
+    /// The current angle of the car's front wheels, ranging from -1 (full left) to 1 (full right)
+    /// </summary>
     public float Angle { get; set; } = 0;
 
+    /// <summary>
+    /// The max speed set by the user, ranging from 0 to 1 (Default = 0.25)
+    /// </summary>
     public float MaxSpeed { get; set; } = 0.25f;
 
+    /// <summary>
+    /// Stops the car (equivalent to setting Speed and Angle to 0)
+    /// </summary>
     public void Stop()
     {
         this.Speed = 0;
@@ -32,8 +68,14 @@ public class Drive : MonoBehaviour
     }
     #endregion
 
+    /// <summary>
+    /// The rigidbody of the car
+    /// </summary>
     private Rigidbody rBody;
 
+    /// <summary>
+    /// The four wheel positions in the order they appear in the car prefab
+    /// </summary>
     private enum WheelPosition
     {
         FrontLeft,
@@ -68,5 +110,12 @@ public class Drive : MonoBehaviour
         float driveAngle = this.Angle * Drive.maxDriveAngle;
         this.WheelColliders[WheelPosition.FrontLeft.GetHashCode()].steerAngle = driveAngle;
         this.WheelColliders[WheelPosition.FrontRight.GetHashCode()].steerAngle = driveAngle;
+
+        foreach(WheelPosition wheelPosition in Enum.GetValues(typeof(WheelPosition)))
+        {
+            this.WheelColliders[wheelPosition.GetHashCode()].GetWorldPose(out Vector3 position, out Quaternion rotation);
+            this.Wheels[wheelPosition.GetHashCode()].transform.rotation = rotation;
+            this.Wheels[wheelPosition.GetHashCode()].transform.position = position;
+        }
     }
 }

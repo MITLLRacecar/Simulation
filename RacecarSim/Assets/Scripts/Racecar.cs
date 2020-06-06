@@ -26,6 +26,11 @@ public class Racecar : MonoBehaviour
 
     #region Public Interface
     /// <summary>
+    /// The settings applied to this car/user.
+    /// </summary>
+    public Settings Settings { get; private set; }
+
+    /// <summary>
     /// Exposes the RealSense D435i color and depth channels.
     /// </summary>
     public CameraModule Camera { get; private set; }
@@ -66,7 +71,7 @@ public class Racecar : MonoBehaviour
     public void EnterUserProgram()
     {
         Debug.Log(">> Entering user program mode");
-        PythonInterface.Instance.PythonStart();
+        this.pythonInterface.PythonStart();
         this.isDefaultDrive = false;
     }
 
@@ -76,10 +81,15 @@ public class Racecar : MonoBehaviour
     public void HandleExit()
     {
         Debug.Log(">> Goodbye!");
-        PythonInterface.Instance.HandleExit();
+        this.pythonInterface.HandleExit();
         Application.Quit();
     }
     #endregion
+
+    /// <summary>
+    /// The UDP interface to the Python script controlling this car.
+    /// </summary>
+    private PythonInterface pythonInterface;
 
     /// <summary>
     /// True if the car is currently in default drive mode.
@@ -88,6 +98,9 @@ public class Racecar : MonoBehaviour
 
     private void Start()
     {
+        this.Settings = new Settings();
+        this.pythonInterface = new PythonInterface(this);
+
         // Find submodules
         this.Camera = this.GetComponent<CameraModule>();
         this.Controller = this.GetComponent<Controller>();
@@ -106,7 +119,7 @@ public class Racecar : MonoBehaviour
         }
         else
         {
-            PythonInterface.Instance.PythonUpdate();
+            this.pythonInterface.PythonUpdate();
         }
 
         if (Input.GetButton("Start") && Input.GetButton("Back"))

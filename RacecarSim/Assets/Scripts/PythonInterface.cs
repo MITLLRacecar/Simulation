@@ -6,7 +6,7 @@ using UnityEngine;
 /// <summary>
 /// Manages UDP communication with the user's Python script.
 /// </summary>
-public class PythonInterface : MonoBehaviour
+public class PythonInterface
 {
     #region Constants
     /// <summary>
@@ -36,6 +36,20 @@ public class PythonInterface : MonoBehaviour
     #endregion
 
     #region Public Interface
+    /// <summary>
+    /// Creates a Python Interface for a player.
+    /// </summary>
+    /// <param name="racecar">The car which the python interface will control.</param>
+    public PythonInterface(Racecar racecar)
+    {
+        this.racecar = racecar;
+
+        // Establish and configure a UDP port
+        this.pythonEndpoint = new IPEndPoint(PythonInterface.ipAddress, PythonInterface.pythonPort);
+        this.client = new UdpClient(new IPEndPoint(PythonInterface.ipAddress, PythonInterface.unityPort));
+        this.client.Connect(this.pythonEndpoint);
+        this.client.Client.ReceiveTimeout = PythonInterface.timeoutTime;
+    }
     /// <summary>
     /// Tells Python that the simulation has ended.
     /// </summary>
@@ -109,17 +123,6 @@ public class PythonInterface : MonoBehaviour
     /// The racecar controlled by the user's Python script.
     /// </summary>
     private Racecar racecar;
-
-    private void Start()
-    {
-        this.racecar = this.GetComponentInChildren<Racecar>();
-
-        // Establish and configure a UDP port
-        this.pythonEndpoint = new IPEndPoint(PythonInterface.ipAddress, PythonInterface.pythonPort);
-        this.client = new UdpClient(new IPEndPoint(PythonInterface.ipAddress, PythonInterface.unityPort));
-        this.client.Connect(this.pythonEndpoint);
-        this.client.Client.ReceiveTimeout = PythonInterface.timeoutTime;
-    }
 
     /// <summary>
     /// Handles a call to a Python function.
@@ -244,7 +247,7 @@ public class PythonInterface : MonoBehaviour
                     break;
 
                 default:
-                    print($"The function {header} is not supported by RacecarSim");
+                    Debug.LogError($">> Error: The function {header} is not supported by RacecarSim");
                     break;
             }
         }
@@ -271,7 +274,7 @@ public class PythonInterface : MonoBehaviour
             }
             else if ((Header)response[0] != Header.python_send_next)
             {
-                print(">> Error: Unity and Python became out of sync while sending a block message. Returning to default drive mode.");
+                Debug.LogError(">> Error: Unity and Python became out of sync while sending a block message. Returning to default drive mode.");
                 this.racecar.EnterDefaultDrive();
                 break;
             }
@@ -292,8 +295,8 @@ public class PythonInterface : MonoBehaviour
         {
             if (e.SocketErrorCode == SocketError.TimedOut)
             {
-                print(">> Error: No message received from Python within the alloted time. Returning to default drive mode.");
-                print(">> Troubleshooting:" +
+                Debug.LogError(">> Error: No message received from Python within the alloted time. Returning to default drive mode." +
+                    "\n>> Troubleshooting:" +
                     "\n1. Make sure that your Python program does not block or wait. For example, your program should never call time.sleep()." +
                     "\n2. Make sure that your program is not too computationally intensive. Your start and update functions should be able to run in under 10 milliseconds." +
                     "\n3. Make sure that your Python program did not crash or close unexpectedly." +
@@ -301,9 +304,10 @@ public class PythonInterface : MonoBehaviour
             }
             else
             {
-                print(">> Error: An error occurred when attempting to receive data from Python. Returning to default drive mode.");
+                Debug.LogError(">> Error: An error occurred when attempting to receive data from Python. Returning to default drive mode.");
             }
             this.racecar.EnterDefaultDrive();
         }
         return null;
     }
+}

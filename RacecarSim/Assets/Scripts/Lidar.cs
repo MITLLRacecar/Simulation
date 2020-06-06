@@ -46,6 +46,12 @@ public class Lidar : MonoBehaviour
     private const float maxCode = 0.0f;
 
     /// <summary>
+    /// The average relative error of distance measurements.
+    /// Based on the YDLIDAR X4 datasheet.
+    /// </summary>
+    private const float averageErrorFactor = 0.02f;
+
+    /// <summary>
     /// The maximum range displayed in the LIDAR visualization (in dm).
     /// </summary>
     private const float visualizationRange = 50;
@@ -95,12 +101,18 @@ public class Lidar : MonoBehaviour
     #endregion
 
     /// <summary>
+    /// The parent racecar to which this module belongs.
+    /// </summary>
+    private Racecar racecar;
+
+    /// <summary>
     /// The index of the most recently captured sample.
     /// </summary>
     private int curSample = 0;
 
     private void Start()
     {
+        this.racecar = this.GetComponentInParent<Racecar>();
         this.Samples = new float[Lidar.NumSamples];
     }
 
@@ -125,7 +137,10 @@ public class Lidar : MonoBehaviour
     {
         if(Physics.Raycast(this.transform.position, this.transform.forward, out RaycastHit raycastHit, Lidar.maxRange))
         {
-            return raycastHit.distance > Lidar.minRange ? raycastHit.distance * 10 : Lidar.minCode;
+            float distance = this.racecar.Settings.isRealism 
+                ? raycastHit.distance * NormalDist.Random(1, Lidar.averageErrorFactor) 
+                : raycastHit.distance;
+            return distance > Lidar.minRange ? distance * 10 : Lidar.minCode;
         }
 
         return Lidar.maxCode;

@@ -54,6 +54,12 @@ public class CameraModule : MonoBehaviour
     /// The value recorded for a depth sample greater than maxRange.
     /// </summary>
     private static float maxCode = 0.0f;
+
+    /// <summary>
+    /// The average relative error of distance measurements.
+    /// Based on the YDLIDAR X4 datasheet.
+    /// </summary>
+    private const float averageErrorFactor = 0.02f;
     #endregion
 
     #region Public Interface
@@ -159,7 +165,12 @@ public class CameraModule : MonoBehaviour
     #endregion
 
     /// <summary>
-    /// Private member for the ColorImageRaw accessor
+    /// The parent racecar to which this module belongs.
+    /// </summary>
+    private Racecar racecar;
+
+    /// <summary>
+    /// Private member for the ColorImageRaw accessor.
     /// </summary>
     private byte[] colorImageRaw;
 
@@ -169,7 +180,7 @@ public class CameraModule : MonoBehaviour
     private bool isColorImageRawValid = false;
 
     /// <summary>
-    /// Private member for the DepthImage accessor
+    /// Private member for the DepthImage accessor.
     /// </summary>
     private float[][] depthImage;
 
@@ -179,7 +190,7 @@ public class CameraModule : MonoBehaviour
     private bool isDepthImageValid = false;
 
     /// <summary>
-    /// Private member for the DepthImageRaw accessor
+    /// Private member for the DepthImageRaw accessor.
     /// </summary>
     private byte[] depthImageRaw;
 
@@ -195,11 +206,14 @@ public class CameraModule : MonoBehaviour
 
     /// <summary>
     /// The depth camera on the car.
+    /// This is currently unused, but a future goal is to use this instead of raycasts.
     /// </summary>
     private Camera depthCamera;
 
     private void Start()
     {
+        this.racecar = this.GetComponent<Racecar>();
+
         Camera[] cameras = this.GetComponentsInChildren<Camera>();
         this.colorCamera = cameras[0];
         this.depthCamera = cameras[1];
@@ -302,7 +316,10 @@ public class CameraModule : MonoBehaviour
 
                 if (Physics.Raycast(ray, out RaycastHit raycastHit, CameraModule.maxRange))
                 {
-                    this.depthImage[r][c] = raycastHit.distance > CameraModule.minRange ? raycastHit.distance * 10 : CameraModule.minCode;
+                    float distance = this.racecar.Settings.isRealism 
+                        ? raycastHit.distance * NormalDist.Random(1, CameraModule.averageErrorFactor) 
+                        : raycastHit.distance;
+                    this.depthImage[r][c] = distance > CameraModule.minRange ? distance * 10 : CameraModule.minCode;
                 }
                 else
                 {

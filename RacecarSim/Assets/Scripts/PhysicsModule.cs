@@ -42,6 +42,11 @@ public class PhysicsModule : MonoBehaviour
     #endregion
 
     /// <summary>
+    /// The parent racecar to which this module belongs.
+    /// </summary>
+    private Racecar racecar;
+
+    /// <summary>
     /// The rigidbody of the car.
     /// </summary>
     private Rigidbody rBody;
@@ -53,6 +58,7 @@ public class PhysicsModule : MonoBehaviour
 
     private void Start()
     {
+        this.racecar = this.GetComponent<Racecar>();
         this.rBody = this.GetComponent<Rigidbody>();
         this.prevVelocity = this.LinearVelocity;
     }

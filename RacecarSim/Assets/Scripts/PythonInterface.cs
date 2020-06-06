@@ -87,7 +87,7 @@ public class PythonInterface : MonoBehaviour
 
     private void PythonCall(Header function)
     {
-        // Tell Python what fuction to call
+        // Tell Python what function to call
         this.client.Send(new byte[] { (byte)function.GetHashCode() }, 1);
 
         // Respond to API calls until we receive a Header.python_finished
@@ -134,13 +134,13 @@ public class PythonInterface : MonoBehaviour
 
                 case Header.controller_is_down:
                     Controller.Button buttonDown = (Controller.Button)data[1];
-                    sendData = BitConverter.GetBytes(this.Racecar.Controller.is_down(buttonDown));
+                    sendData = BitConverter.GetBytes(this.Racecar.Controller.IsDown(buttonDown));
                     client.Send(sendData, sendData.Length);
                     break;
 
                 case Header.controller_was_pressed:
                     Controller.Button buttonPressed = (Controller.Button)data[1];
-                    sendData = BitConverter.GetBytes(this.Racecar.Controller.was_pressed(buttonPressed));
+                    sendData = BitConverter.GetBytes(this.Racecar.Controller.WasPressed(buttonPressed));
                     client.Send(sendData, sendData.Length);
                     break;
 
@@ -152,13 +152,13 @@ public class PythonInterface : MonoBehaviour
 
                 case Header.controller_get_trigger:
                     Controller.Trigger trigger = (Controller.Trigger)data[1];
-                    sendData = BitConverter.GetBytes(this.Racecar.Controller.get_trigger(trigger));
+                    sendData = BitConverter.GetBytes(this.Racecar.Controller.GetTrigger(trigger));
                     client.Send(sendData, sendData.Length);
                     break;
 
                 case Header.controller_get_joystick:
                     Controller.Joystick joystick = (Controller.Joystick)data[1];
-                    Vector2 joystickValues = this.Racecar.Controller.get_joystick(joystick);
+                    Vector2 joystickValues = this.Racecar.Controller.GetJoystick(joystick);
                     sendData = new byte[sizeof(float) * 2];
                     Buffer.BlockCopy(new float[] { joystickValues.x, joystickValues.y }, 0, sendData, 0, sendData.Length);
                     client.Send(sendData, sendData.Length);
@@ -189,14 +189,14 @@ public class PythonInterface : MonoBehaviour
                     break;
 
                 case Header.physics_get_linear_acceleration:
-                    Vector3 linearAcceleration = this.Racecar.Physics.get_linear_acceleration();
+                    Vector3 linearAcceleration = this.Racecar.Physics.LinearAccceleration;
                     sendData = new byte[sizeof(float) * 3];
                     Buffer.BlockCopy(new float[] { linearAcceleration.x, linearAcceleration.y, linearAcceleration.z }, 0, sendData, 0, sendData.Length);
                     client.Send(sendData, sendData.Length);
                     break;
 
                 case Header.physics_get_angular_velocity:
-                    Vector3 angularVelocity = this.Racecar.Physics.get_angular_velocity();
+                    Vector3 angularVelocity = this.Racecar.Physics.AngularVelocity;
                     sendData = new byte[sizeof(float) * 3];
                     Buffer.BlockCopy(new float[] { angularVelocity.x, angularVelocity.y, angularVelocity.z }, 0, sendData, 0, sendData.Length);
                     client.Send(sendData, sendData.Length);
@@ -246,7 +246,7 @@ public class PythonInterface : MonoBehaviour
             }
             else
             {
-                print(">> Error: An error occured when attempting to receive data from Python.  Returning to default drive mode.");
+                print(">> Error: An error occurred when attempting to receive data from Python.  Returning to default drive mode.");
             }
             this.Racecar.EnterDefaultDrive();
         }

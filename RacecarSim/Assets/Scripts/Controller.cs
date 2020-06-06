@@ -106,7 +106,7 @@ public class Controller : MonoBehaviour
     /// </summary>
     /// <param name="button">A button on an Xbox controller.</param>
     /// <returns>True if the provided button was released this frame.</returns>
-    public bool was_released(Button button)
+    public bool WasReleased(Button button)
     {
         return Input.GetButtonUp(buttonMap[button]);
     }

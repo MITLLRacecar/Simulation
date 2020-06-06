@@ -1,18 +1,69 @@
 ﻿using System;
 using System.Net;
 using System.Net.Sockets;
-using System.Runtime.InteropServices.ComTypes;
-using System.Text;
-using System.Threading;
 using UnityEngine;
-using UnityEngine.Experimental.UIElements;
 
+/// <summary>
+/// Manages UDP communication with the user's Python script.
+/// </summary>
 public class PythonInterface : MonoBehaviour
 {
-    public Racecar Racecar;
+    #region Constants
+    /// <summary>
+    /// The UDP port used by the Unity simulation (this program).
+    /// </summary>
+    private const int unityPort = 5065;
 
-    public static PythonInterface Instance;
+    /// <summary>
+    /// The UDP port used by the Python RACECAR library.
+    /// </summary>
+    private const int pythonPort = 5066;
 
+    /// <summary>
+    /// The IP address used for communication.
+    /// </summary>
+    private static readonly IPAddress ipAddress = IPAddress.Parse("127.0.0.1");
+
+    /// <summary>
+    /// The time (in ms) to wait for Python to respond.
+    /// </summary>
+    private const int timeoutTime = 1000;
+
+    /// <summary>
+    /// The maximum UDP packet size allowed on Windows.
+    /// </summary>
+    private const int maxPacketSize = 65507;
+    #endregion
+
+    #region Public Interface
+    /// <summary>
+    /// Tells Python that the simulation has ended.
+    /// </summary>
+    public void HandleExit()
+    {
+        this.client.Send(new byte[] { (byte)Header.unity_exit.GetHashCode() }, 1);
+    }
+
+    /// <summary>
+    /// Tells Python to run the user's start function.
+    /// </summary>
+    public void PythonStart()
+    {
+        this.PythonCall(Header.unity_start);
+    }
+
+    /// <summary>
+    /// Tells Python to run the user's update function.
+    /// </summary>
+    public void PythonUpdate()
+    {
+        this.PythonCall(Header.unity_update);
+    }
+    #endregion
+
+    /// <summary>
+    /// Header bytes used in our communication protocol.
+    /// </summary>
     private enum Header
     {
         error,
@@ -44,64 +95,54 @@ public class PythonInterface : MonoBehaviour
         physics_get_angular_velocity,
     }
 
-    #region Constants
-    private const int unityPort = 5065;
-    private const int pythonPort = 5066;
-    private static readonly IPAddress ipAddress = IPAddress.Parse("127.0.0.1");
-
-    private const int timeoutTime = 1000;
-
-    private const int maxPacketSize = 65507;
-    #endregion
-
+    /// <summary>
+    /// The UDI client used to send packets to Python.
+    /// </summary>
     private UdpClient client;
+
+    /// <summary>
+    /// The IP address and port of the Python RACECAR library.
+    /// </summary>
     private IPEndPoint pythonEndpoint;
-    private IPEndPoint unityEndpoint;
 
-    public void HandleExit()
-    {
-        this.client.Send(new byte[] { (byte)Header.unity_exit.GetHashCode() }, 1);
-    }
-
-    public void PythonStart()
-    {
-        this.PythonCall(Header.unity_start);
-    }
-
-    public void PythonUpdate()
-    {
-        this.PythonCall(Header.unity_update);
-    }
+    /// <summary>
+    /// The racecar controlled by the user's Python script.
+    /// </summary>
+    private Racecar racecar;
 
     private void Start()
     {
-        // QualitySettings.vSyncCount = 2;
+        this.racecar = this.GetComponentInChildren<Racecar>();
 
-        Instance = this;
-        this.unityEndpoint = new IPEndPoint(PythonInterface.ipAddress, PythonInterface.unityPort);
+        // Establish and configure a UDP port
         this.pythonEndpoint = new IPEndPoint(PythonInterface.ipAddress, PythonInterface.pythonPort);
-        this.client = new UdpClient(unityEndpoint);
+        this.client = new UdpClient(new IPEndPoint(PythonInterface.ipAddress, PythonInterface.unityPort));
         this.client.Connect(this.pythonEndpoint);
         this.client.Client.ReceiveTimeout = PythonInterface.timeoutTime;
     }
 
+    /// <summary>
+    /// Handles a call to a Python function.
+    /// </summary>
+    /// <param name="function">The Python function to call (start or update)</param>
     private void PythonCall(Header function)
     {
         // Tell Python what function to call
         this.client.Send(new byte[] { (byte)function.GetHashCode() }, 1);
 
-        // Respond to API calls until we receive a Header.python_finished
+        // Respond to API calls from Python until we receive a python_finished message
         bool pythonFinished = false;
-
         while (!pythonFinished)
         {
+            // Receive a response from Python
             byte[] data = this.SafeRecieve();
             if (data == null)
             {
                 break;
             }
-
             Header header = (Header)data[0];
+
+            // Send the appropriate response if it was an API call, or break if it was a python_finished message
             byte[] sendData;
             switch (header)
             {
@@ -115,11 +156,11 @@ public class PythonInterface : MonoBehaviour
                     break;
 
                 case Header.camera_get_color_image:
-                    this.SendFragmented(this.Racecar.Camera.ColorImageRaw, 32);
+                    this.SendFragmented(this.racecar.Camera.ColorImageRaw, 32);
                     break;
 
                 case Header.camera_get_depth_image:
-                    client.Send(this.Racecar.Camera.DepthImageRaw, this.Racecar.Camera.DepthImageRaw.Length);
+                    client.Send(this.racecar.Camera.DepthImageRaw, this.racecar.Camera.DepthImageRaw.Length);
                     break;
 
                 case Header.camera_get_width:
@@ -134,47 +175,47 @@ public class PythonInterface : MonoBehaviour
 
                 case Header.controller_is_down:
                     Controller.Button buttonDown = (Controller.Button)data[1];
-                    sendData = BitConverter.GetBytes(this.Racecar.Controller.IsDown(buttonDown));
+                    sendData = BitConverter.GetBytes(this.racecar.Controller.IsDown(buttonDown));
                     client.Send(sendData, sendData.Length);
                     break;
 
                 case Header.controller_was_pressed:
                     Controller.Button buttonPressed = (Controller.Button)data[1];
-                    sendData = BitConverter.GetBytes(this.Racecar.Controller.WasPressed(buttonPressed));
+                    sendData = BitConverter.GetBytes(this.racecar.Controller.WasPressed(buttonPressed));
                     client.Send(sendData, sendData.Length);
                     break;
 
                 case Header.controller_was_released:
                     Controller.Button buttonReleased = (Controller.Button)data[1];
-                    sendData = BitConverter.GetBytes(this.Racecar.Controller.was_released(buttonReleased));
+                    sendData = BitConverter.GetBytes(this.racecar.Controller.WasReleased(buttonReleased));
                     client.Send(sendData, sendData.Length);
                     break;
 
                 case Header.controller_get_trigger:
                     Controller.Trigger trigger = (Controller.Trigger)data[1];
-                    sendData = BitConverter.GetBytes(this.Racecar.Controller.GetTrigger(trigger));
+                    sendData = BitConverter.GetBytes(this.racecar.Controller.GetTrigger(trigger));
                     client.Send(sendData, sendData.Length);
                     break;
 
                 case Header.controller_get_joystick:
                     Controller.Joystick joystick = (Controller.Joystick)data[1];
-                    Vector2 joystickValues = this.Racecar.Controller.GetJoystick(joystick);
+                    Vector2 joystickValues = this.racecar.Controller.GetJoystick(joystick);
                     sendData = new byte[sizeof(float) * 2];
                     Buffer.BlockCopy(new float[] { joystickValues.x, joystickValues.y }, 0, sendData, 0, sendData.Length);
                     client.Send(sendData, sendData.Length);
                     break;
 
                 case Header.drive_set_speed_angle:
-                    this.Racecar.Drive.Speed = BitConverter.ToSingle(data, 4);
-                    this.Racecar.Drive.Angle = BitConverter.ToSingle(data, 8);
+                    this.racecar.Drive.Speed = BitConverter.ToSingle(data, 4);
+                    this.racecar.Drive.Angle = BitConverter.ToSingle(data, 8);
                     break;
 
                 case Header.drive_stop:
-                    this.Racecar.Drive.Stop();
+                    this.racecar.Drive.Stop();
                     break;
 
                 case Header.drive_set_max_speed:
-                    this.Racecar.Drive.MaxSpeed = BitConverter.ToSingle(data, 4);
+                    this.racecar.Drive.MaxSpeed = BitConverter.ToSingle(data, 4);
                     break;
 
                 case Header.lidar_get_num_samples:
@@ -184,36 +225,41 @@ public class PythonInterface : MonoBehaviour
 
                 case Header.lidar_get_samples:
                     sendData = new byte[sizeof(float) * Lidar.NumSamples];
-                    Buffer.BlockCopy(this.Racecar.Lidar.Samples, 0, sendData, 0, sendData.Length);
+                    Buffer.BlockCopy(this.racecar.Lidar.Samples, 0, sendData, 0, sendData.Length);
                     client.Send(sendData, sendData.Length);
                     break;
 
                 case Header.physics_get_linear_acceleration:
-                    Vector3 linearAcceleration = this.Racecar.Physics.LinearAccceleration;
+                    Vector3 linearAcceleration = this.racecar.Physics.LinearAccceleration;
                     sendData = new byte[sizeof(float) * 3];
                     Buffer.BlockCopy(new float[] { linearAcceleration.x, linearAcceleration.y, linearAcceleration.z }, 0, sendData, 0, sendData.Length);
                     client.Send(sendData, sendData.Length);
                     break;
 
                 case Header.physics_get_angular_velocity:
-                    Vector3 angularVelocity = this.Racecar.Physics.AngularVelocity;
+                    Vector3 angularVelocity = this.racecar.Physics.AngularVelocity;
                     sendData = new byte[sizeof(float) * 3];
                     Buffer.BlockCopy(new float[] { angularVelocity.x, angularVelocity.y, angularVelocity.z }, 0, sendData, 0, sendData.Length);
                     client.Send(sendData, sendData.Length);
                     break;
 
                 default:
-                    print($"The function {header} is not supported by the RACECAR-MN Unity simulation");
+                    print($"The function {header} is not supported by RacecarSim");
                     break;
             }
         }
     }
 
-    private void SendFragmented(byte[] bytes, int numFragments)
+    /// <summary>
+    /// Sends a large amount of data split across several packets.
+    /// </summary>
+    /// <param name="bytes">The bytes to send (must be divisible by numPackets).</param>
+    /// <param name="numPackets">The number of packets to split the data across.</param>
+    private void SendFragmented(byte[] bytes, int numPackets)
     {
-        int blockSize = bytes.Length / numFragments;
+        int blockSize = bytes.Length / numPackets;
         byte[] sendData = new byte[blockSize];
-        for (int i = 0; i < numFragments; i++)
+        for (int i = 0; i < numPackets; i++)
         {
             Buffer.BlockCopy(bytes, i * blockSize, sendData, 0, blockSize);
             client.Send(sendData, sendData.Length);
@@ -225,13 +271,17 @@ public class PythonInterface : MonoBehaviour
             }
             else if ((Header)response[0] != Header.python_send_next)
             {
-                print(">> Error: Unity and Python became out of sync when sending a block message.  Returning to default drive mode.");
-                this.Racecar.EnterDefaultDrive();
+                print(">> Error: Unity and Python became out of sync while sending a block message. Returning to default drive mode.");
+                this.racecar.EnterDefaultDrive();
                 break;
             }
         }
     }
 
+    /// <summary>
+    /// Receives a packet from Python and safely handles UDP exceptions (broken socket, timeout, etc.).
+    /// </summary>
+    /// <returns>The data in the packet, or null if an error occurred.</returns>
     private byte[] SafeRecieve()
     {
         try
@@ -242,14 +292,18 @@ public class PythonInterface : MonoBehaviour
         {
             if (e.SocketErrorCode == SocketError.TimedOut)
             {
-                print(">> Error: No message received from Python within the alloted time.  Returning to default drive mode.");
+                print(">> Error: No message received from Python within the alloted time. Returning to default drive mode.");
+                print(">> Troubleshooting:" +
+                    "\n1. Make sure that your Python program does not block or wait. For example, your program should never call time.sleep()." +
+                    "\n2. Make sure that your program is not too computationally intensive. Your start and update functions should be able to run in under 10 milliseconds." +
+                    "\n3. Make sure that your Python program did not crash or close unexpectedly." +
+                    "\n4. Unless you experience an error, do not force-quit your Python application (ctrl+c or ctrl+d).  Instead, end the simulation by pressing the start and back button simultaneously on your Xbox controller (escape and enter on keyboard).");
             }
             else
             {
-                print(">> Error: An error occurred when attempting to receive data from Python.  Returning to default drive mode.");
+                print(">> Error: An error occurred when attempting to receive data from Python. Returning to default drive mode.");
             }
-            this.Racecar.EnterDefaultDrive();
+            this.racecar.EnterDefaultDrive();
         }
         return null;
     }
-}

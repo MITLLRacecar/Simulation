@@ -10,6 +10,18 @@ public class PhysicsModule : MonoBehaviour
     /// The number of past samples to average for linear acceleration.
     /// </summary>
     private const int accelerationSamples = 4;
+
+    /// <summary>
+    /// The average relative error of linear acceleration measurements.
+    /// This value is made up (it is NOT specified in the Intel RealSense D435i datasheet).
+    /// </summary>
+    private const float averageLinearErrorFactor = 0.001f;
+
+    /// <summary>
+    /// The average relative error of angular velocity measurements.
+    /// This value is made up (it is NOT specified in the Intel RealSense D435i datasheet).
+    /// </summary>
+    private const float averageAngularErrorFactor = 0.02f;
     #endregion
 
     #region Public Interface
@@ -19,24 +31,36 @@ public class PhysicsModule : MonoBehaviour
     public Vector3 LinearAccceleration { get; private set; } = Vector3.zero;
 
     /// <summary>
-    /// The angular velocity of the car (in radians/second).
-    /// </summary>
-    public Vector3 AngularVelocity
-    {
-        get
-        {
-            return this.rBody.angularVelocity;
-        }
-    }
-
-    /// <summary>
     /// The linear velocity of the car relative to the car's transform (in meters/second)
     /// </summary>
     public Vector3 LinearVelocity
     {
         get
         {
-            return this.transform.InverseTransformDirection(this.rBody.velocity) / 10;
+            if (!this.linearVelocity.HasValue)
+            {
+                this.linearVelocity = this.racecar.Settings.isRealism
+                    ? this.transform.InverseTransformDirection(this.rBody.velocity) * NormalDist.Random(1, PhysicsModule.averageLinearErrorFactor) / 10
+                    : this.transform.InverseTransformDirection(this.rBody.velocity) / 10;
+            }
+            return this.linearVelocity.Value;
+        }
+    }
+
+    /// <summary>
+    /// The angular velocity of the car (in radians/second).
+    /// </summary>
+    public Vector3 AngularVelocity
+    {
+        get
+        {
+            if (!this.angularVelocity.HasValue)
+            {
+                this.angularVelocity = this.racecar.Settings.isRealism
+                    ? this.rBody.angularVelocity * NormalDist.Random(1, PhysicsModule.averageAngularErrorFactor)
+                    : this.rBody.angularVelocity;
+            }
+            return this.angularVelocity.Value;
         }
     }
     #endregion
@@ -56,6 +80,16 @@ public class PhysicsModule : MonoBehaviour
     /// </summary>
     private Vector3 prevVelocity;
 
+    /// <summary>
+    /// Private member for the LinearVelocity accessor
+    /// </summary>
+    private Vector3? linearVelocity = null;
+
+    /// <summary>
+    /// Private member for the AngularVelocity accessor
+    /// </summary>
+    private Vector3? angularVelocity = null;
+
     private void Start()
     {
         this.racecar = this.GetComponent<Racecar>();
@@ -69,5 +103,11 @@ public class PhysicsModule : MonoBehaviour
         this.LinearAccceleration += (curAcceleration - this.LinearAccceleration) / PhysicsModule.accelerationSamples;
 
         prevVelocity = this.LinearVelocity;
+    }
+
+    private void LateUpdate()
+    {
+        this.linearVelocity = null;
+        this.angularVelocity = null;
     }
 }

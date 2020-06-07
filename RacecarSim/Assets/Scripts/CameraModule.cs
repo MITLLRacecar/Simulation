@@ -29,13 +29,13 @@ public class CameraModule : MonoBehaviour
 
     /// <summary>
     /// The field of view (in degrees) of the camera.
-    /// Based on the RealSense D435i datasheet.
+    /// Based on the Intel RealSense D435i datasheet.
     /// </summary>
     private static readonly Vector2 fieldOfView = new Vector2(69.4f, 42.5f);
 
     /// <summary>
     /// The minimum distance (in dm) that can be detected by the depth channel.
-    /// Based on the RealSense D435i datasheet.
+    /// Based on the Intel RealSense D435i datasheet.
     /// </summary>
     private static float minRange = 1.05f;
 
@@ -46,7 +46,7 @@ public class CameraModule : MonoBehaviour
 
     /// <summary>
     /// The maximum distance (in dm) that can be detected by the depth channel.
-    /// Based on the RealSense D435i datasheet.
+    /// Based on the Intel RealSense D435i datasheet.
     /// </summary>
     private static float maxRange = 100f;
 
@@ -57,7 +57,7 @@ public class CameraModule : MonoBehaviour
 
     /// <summary>
     /// The average relative error of distance measurements.
-    /// Based on the YDLIDAR X4 datasheet.
+    /// Based on the Intel RealSense D435i datasheet.
     /// </summary>
     private const float averageErrorFactor = 0.02f;
     #endregion

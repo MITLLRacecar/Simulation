@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Threading;
+using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
@@ -16,6 +18,32 @@ public class Hud : MonoBehaviour
     /// The number of times the LIDAR map is smaller than the color and depth visualizations.
     /// </summary>
     private const int lidarMapScale = 4;
+
+    /// <summary>
+    /// The background color of the mode label when the car is in default drive mode.
+    /// </summary>
+    private static readonly Color defaultDriveColor = new Color(0, 0.5f, 1);
+
+    /// <summary>
+    /// The background color of the mode label when the car is in user program mode.
+    /// </summary>
+    private static readonly Color userProgramColor = new Color(0.75f, 0, 0.25f);
+    #endregion
+
+    #region Public Interface
+    public void UpdateMode(bool isDefaultDrive)
+    {
+        if (isDefaultDrive)
+        {
+            this.texts[Texts.Mode.GetHashCode()].text = "Default Drive";
+            this.images[Images.ModeBackground.GetHashCode()].color = Hud.defaultDriveColor;
+        }
+        else
+        {
+            this.texts[Texts.Mode.GetHashCode()].text = "User Program";
+            this.images[Images.ModeBackground.GetHashCode()].color = Hud.userProgramColor;
+        }
+    }
     #endregion
 
     /// <summary>
@@ -25,7 +53,8 @@ public class Hud : MonoBehaviour
     {
         TrueSpeed = 4,
         LinearAcceleration = 8,
-        AngularVelocity = 11
+        AngularVelocity = 11,
+        Mode = 13
     }
 
     /// <summary>
@@ -35,7 +64,8 @@ public class Hud : MonoBehaviour
     {
         ColorFeed = 2,
         DepthFeed = 4,
-        LidarMap = 6
+        LidarMap = 6,
+        ModeBackground = 8,
     }
 
     /// <summary>

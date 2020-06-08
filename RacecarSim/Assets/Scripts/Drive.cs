@@ -43,6 +43,11 @@ public class Drive : MonoBehaviour
     /// The center of mass of the vehicle relative to its physical center.
     /// </summary>
     private static readonly Vector3 centerOfMass = new Vector3(0, -0.2f, -0.5f);
+
+    /// <summary>
+    /// The distance the wheel model is offset from the wheel collider along the axle axis.
+    /// </summary>
+    private const float wheelOffset = 0.2f;
     #endregion
 
     #region Public Interface
@@ -50,7 +55,7 @@ public class Drive : MonoBehaviour
     /// The input torque applied to the rear wheels, ranging from -1 (full reverse) to 1 (full forward).
     /// </summary>
     public float Speed { get; set; } = 0;
-    
+
     /// <summary>
     /// The current angle of the car's front wheels, ranging from -1 (full left) to 1 (full right).
     /// </summary>
@@ -93,7 +98,7 @@ public class Drive : MonoBehaviour
         {
             wheel.ConfigureVehicleSubsteps(1, Drive.vehicalSubsteps, Drive.vehicalSubsteps);
         }
-        
+
         this.rBody = this.GetComponent<Rigidbody>();
         this.rBody.centerOfMass = Drive.centerOfMass;
     }
@@ -121,7 +126,9 @@ public class Drive : MonoBehaviour
         {
             this.WheelColliders[wheelPosition.GetHashCode()].GetWorldPose(out Vector3 position, out Quaternion rotation);
             this.Wheels[wheelPosition.GetHashCode()].transform.rotation = rotation;
-            this.Wheels[wheelPosition.GetHashCode()].transform.position = position;
+            this.Wheels[wheelPosition.GetHashCode()].transform.position = wheelPosition.GetHashCode() % 2 == 0 
+                ? position + this.Wheels[wheelPosition.GetHashCode()].transform.right * Drive.wheelOffset
+                : position - this.Wheels[wheelPosition.GetHashCode()].transform.right * Drive.wheelOffset;
         }
     }
 }

@@ -56,9 +56,10 @@ public class PhysicsModule : MonoBehaviour
         {
             if (!this.angularVelocity.HasValue)
             {
+                // Unity uses a left-handed coordinate system, but our IMU is right-handed
                 this.angularVelocity = this.racecar.Settings.isRealism
-                    ? this.rBody.angularVelocity * NormalDist.Random(1, PhysicsModule.averageAngularErrorFactor)
-                    : this.rBody.angularVelocity;
+                    ? -this.rBody.angularVelocity * NormalDist.Random(1, PhysicsModule.averageAngularErrorFactor)
+                    : -this.rBody.angularVelocity;
             }
             return this.angularVelocity.Value;
         }

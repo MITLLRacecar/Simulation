@@ -103,7 +103,7 @@ public class Racecar : MonoBehaviour
     /// </summary>
     private bool isDefaultDrive = true;
 
-    private void Start()
+    private void Awake()
     {
         this.Settings = new Settings();
         this.pythonInterface = new PythonInterface(this);
@@ -115,7 +115,10 @@ public class Racecar : MonoBehaviour
         this.Drive = this.GetComponent<Drive>();
         this.Lidar = this.GetComponentInChildren<Lidar>();
         this.Physics = this.GetComponent<PhysicsModule>();
+    }
 
+    private void Start()
+    {
         this.EnterDefaultDrive();
     }
 

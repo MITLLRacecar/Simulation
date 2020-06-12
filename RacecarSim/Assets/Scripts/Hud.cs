@@ -83,7 +83,7 @@ public class Hud : MonoBehaviour
     /// </summary>
     private Racecar racecar;
 
-    private void Start()
+    private void Awake()
     {
         // Find components
         this.texts = GetComponentsInChildren<Text>();

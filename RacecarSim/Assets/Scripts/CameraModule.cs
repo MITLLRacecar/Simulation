@@ -210,14 +210,17 @@ public class CameraModule : MonoBehaviour
     /// </summary>
     private Camera depthCamera;
 
-    private void Start()
+    private void Awake()
     {
         this.racecar = this.GetComponent<Racecar>();
 
         Camera[] cameras = this.GetComponentsInChildren<Camera>();
         this.colorCamera = cameras[0];
         this.depthCamera = cameras[1];
+    }
 
+    private void Start()
+    {
         this.colorCamera.fieldOfView = CameraModule.fieldOfView.y;
         this.depthCamera.fieldOfView = CameraModule.fieldOfView.y;
 

@@ -40,11 +40,6 @@ public class Drive : MonoBehaviour
     private const int vehicalSubsteps = 20;
 
     /// <summary>
-    /// The center of mass of the vehicle relative to its physical center.
-    /// </summary>
-    private static readonly Vector3 centerOfMass = new Vector3(0, -0.2f, -0.5f);
-
-    /// <summary>
     /// The distance the wheel model is offset from the wheel collider along the axle axis.
     /// </summary>
     private const float wheelOffset = 0.2f;
@@ -92,15 +87,17 @@ public class Drive : MonoBehaviour
         BackRight
     }
 
+    private void Awake()
+    {
+        this.rBody = this.GetComponent<Rigidbody>();
+    }
+
     private void Start()
     {
         foreach (WheelCollider wheel in this.WheelColliders)
         {
             wheel.ConfigureVehicleSubsteps(1, Drive.vehicalSubsteps, Drive.vehicalSubsteps);
         }
-
-        this.rBody = this.GetComponent<Rigidbody>();
-        this.rBody.centerOfMass = Drive.centerOfMass;
     }
 
     private void FixedUpdate()

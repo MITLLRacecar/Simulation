@@ -110,9 +110,13 @@ public class Lidar : MonoBehaviour
     /// </summary>
     private int curSample = 0;
 
-    private void Start()
+    private void Awake()
     {
         this.racecar = this.GetComponentInParent<Racecar>();
+    }
+
+    private void Start()
+    {
         this.Samples = new float[Lidar.NumSamples];
     }
 

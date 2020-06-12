@@ -90,10 +90,14 @@ public class PhysicsModule : MonoBehaviour
     /// </summary>
     private Vector3? angularVelocity = null;
 
-    private void Start()
+    private void Awake()
     {
         this.racecar = this.GetComponent<Racecar>();
         this.rBody = this.GetComponent<Rigidbody>();
+    }
+
+    private void Start()
+    {
         this.prevVelocity = this.LinearVelocity;
     }
 

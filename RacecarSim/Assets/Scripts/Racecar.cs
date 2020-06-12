@@ -161,6 +161,7 @@ public class Racecar : MonoBehaviour
     /// </summary>
     private void DefaultDriveStart()
     {
+        this.Drive.MaxSpeed = Drive.DefaultMaxSpeed;
         this.Drive.Stop();
     }
 

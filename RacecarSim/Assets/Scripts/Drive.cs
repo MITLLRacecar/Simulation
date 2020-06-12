@@ -20,6 +20,11 @@ public class Drive : MonoBehaviour
 
     #region Constants
     /// <summary>
+    /// The default value of MaxSpeed.
+    /// </summary>
+    public const float DefaultMaxSpeed = 0.25f;
+
+    /// <summary>
     /// The scale factor applied to the Speed input provided by the user.
     /// </summary>
     private const float torqueScale = 10000.0f;
@@ -57,9 +62,9 @@ public class Drive : MonoBehaviour
     public float Angle { get; set; } = 0;
 
     /// <summary>
-    /// The max speed set by the user, ranging from 0 to 1 (Default = 0.25).
+    /// The max speed set by the user, ranging from 0 to 1.
     /// </summary>
-    public float MaxSpeed { get; set; } = 0.25f;
+    public float MaxSpeed { get; set; } = Drive.DefaultMaxSpeed;
 
     /// <summary>
     /// Stops the car (equivalent to setting Speed and Angle to 0).

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -31,6 +30,18 @@ public class Hud : MonoBehaviour
     #endregion
 
     #region Public Interface
+    /// <summary>
+    /// Sets the message text at the bottom of the screen.
+    /// </summary>
+    /// <param name="message">The text to show.</param>
+    public void SetMessage(string message, float persistTime = -1, float fadeTime = 1.0f)
+    {
+        this.texts[Texts.Message.GetHashCode()].text = message;
+        this.messageCounter = 0;
+        this.messagePersistTime = persistTime;
+        this.messageFadeTime = fadeTime;
+    }
+
     public void UpdateMode(bool isDefaultDrive)
     {
         if (isDefaultDrive)
@@ -54,7 +65,8 @@ public class Hud : MonoBehaviour
         TrueSpeed = 4,
         LinearAcceleration = 8,
         AngularVelocity = 11,
-        Mode = 13
+        Mode = 13,
+        Message = 14
     }
 
     /// <summary>
@@ -84,6 +96,12 @@ public class Hud : MonoBehaviour
     /// </summary>
     private Racecar racecar;
 
+    private float messageCounter;
+
+    private float messagePersistTime = -1;
+
+    private float messageFadeTime;
+
     private void Awake()
     {
         // Find components
@@ -107,6 +125,22 @@ public class Hud : MonoBehaviour
         this.racecar.Camera.VisualizeDepth((Texture2D)this.images[Images.DepthFeed.GetHashCode()].texture);
 
         this.UpdateController();
+
+        // Handle message persistence and fadeout
+        if (this.messagePersistTime > 0)
+        {
+            this.messageCounter += Time.deltaTime;
+            if (this.messageCounter > this.messagePersistTime)
+            {
+                this.messagePersistTime = 0;
+                this.messageCounter = 0;
+            }
+        }
+        else if (this.messagePersistTime == 0 && this.messageCounter < this.messageFadeTime)
+        {
+            this.messageCounter += Time.deltaTime;
+            this.texts[Texts.Message.GetHashCode()].color = Color.Lerp(Color.white, Color.clear, this.messageCounter / this.messageFadeTime);
+        }
     }
 
     /// <summary>

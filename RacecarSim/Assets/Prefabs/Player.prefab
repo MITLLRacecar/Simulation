@@ -232,11 +232,6 @@ PrefabInstance:
       propertyPath: m_Pivot.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5036299379929913023, guid: 83edf10bfca08844487aa6ca89035791,
-        type: 3}
-      propertyPath: Racecar
-      value: 
-      objectReference: {fileID: 8484895050265334610}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 83edf10bfca08844487aa6ca89035791, type: 3}
 --- !u!224 &7194399541456201055 stripped
@@ -325,15 +320,3 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 4388251412459741302}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &8484895050265334610 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 5270993318376764196, guid: 9106752eb1b84c44bb771ada0089f44b,
-    type: 3}
-  m_PrefabInstance: {fileID: 4388251412459741302}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cfb9e5d84232c1847ba48614dbd8f713, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 

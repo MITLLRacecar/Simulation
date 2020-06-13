@@ -133,15 +133,15 @@ public class Racecar : MonoBehaviour
             this.pythonInterface.PythonUpdate();
         }
 
-        if (Input.GetButton("Start") && Input.GetButton("Back"))
+        if (this.Controller.IsDown(Controller.Button.START) && this.Controller.IsDown(Controller.Button.BACK))
         {
             this.HandleExit();
         }
-        else if (Input.GetButtonDown("Start"))
+        else if (this.Controller.WasPressed(Controller.Button.START))
         {
             this.EnterUserProgram();
         }
-        else if (Input.GetButtonDown("Back"))
+        else if (this.Controller.WasPressed(Controller.Button.BACK))
         {
             this.EnterDefaultDrive();
         }

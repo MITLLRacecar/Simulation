@@ -20,7 +20,9 @@ public class Controller : MonoBehaviour
         { Button.LB, "LB" },
         { Button.RB, "RB" },
         { Button.LJOY, "LClick" },
-        { Button.RJOY, "RClick" }
+        { Button.RJOY, "RClick" },
+        { Button.START, "Start" },
+        { Button.BACK, "Back" },
     };
 
     /// <summary>
@@ -60,7 +62,9 @@ public class Controller : MonoBehaviour
         LB,
         RB,
         LJOY,
-        RJOY
+        RJOY,
+        START,
+        BACK
     }
 
     /// <summary>

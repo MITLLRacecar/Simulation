@@ -66,6 +66,7 @@ public class Hud : MonoBehaviour
         DepthFeed = 4,
         LidarMap = 6,
         ModeBackground = 8,
+        ControllerFirstButton = 10
     }
 
     /// <summary>
@@ -104,6 +105,37 @@ public class Hud : MonoBehaviour
 
         this.racecar.Lidar.VisualizeLidar((Texture2D)this.images[Images.LidarMap.GetHashCode()].texture);
         this.racecar.Camera.VisualizeDepth((Texture2D)this.images[Images.DepthFeed.GetHashCode()].texture);
+
+        this.UpdateController();
+    }
+
+    /// <summary>
+    /// Update the controller icon to show the current buttons, triggers, and joysticks being pressed.
+    /// </summary>
+    private void UpdateController()
+    {
+        // Update buttons
+        int index = Images.ControllerFirstButton.GetHashCode();
+        foreach (Controller.Button button in Enum.GetValues(typeof(Controller.Button)))
+        {
+            this.images[index].enabled = this.racecar.Controller.IsDown(button);
+            index++;
+        }
+
+        // Update triggers
+        foreach (Controller.Trigger trigger in Enum.GetValues(typeof(Controller.Trigger)))
+        {
+            this.images[index].enabled = this.racecar.Controller.GetTrigger(trigger) > 0;
+            index++;
+        }
+
+        // Update joysticks
+        foreach (Controller.Joystick joystick in Enum.GetValues(typeof(Controller.Joystick)))
+        {
+            Vector2 values = this.racecar.Controller.GetJoystick(joystick);
+            this.images[index].enabled = values.x * values.x + values.y * values.y > 0;
+            index++;
+        }
     }
 
     /// <summary>

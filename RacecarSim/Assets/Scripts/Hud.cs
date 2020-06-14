@@ -27,6 +27,11 @@ public class Hud : MonoBehaviour
     /// The background color of the mode label when the car is in user program mode.
     /// </summary>
     private static readonly Color userProgramColor = new Color(0.75f, 0, 0.25f);
+
+    /// <summary>
+    /// The factor that time slows down during time warp.
+    /// </summary>
+    private const float timeWarpScale = 0.1f;
     #endregion
 
     #region Public Interface
@@ -42,6 +47,10 @@ public class Hud : MonoBehaviour
         this.messageFadeTime = fadeTime;
     }
 
+    /// <summary>
+    /// Updates the icon showing the current driving mode.
+    /// </summary>
+    /// <param name="isDefaultDrive">Whether the car is currently in default drive mode.</param>
     public void UpdateMode(bool isDefaultDrive)
     {
         if (isDefaultDrive)
@@ -74,11 +83,12 @@ public class Hud : MonoBehaviour
     /// </summary>
     private enum Images
     {
-        ColorFeed = 2,
-        DepthFeed = 4,
-        LidarMap = 6,
-        ModeBackground = 8,
-        ControllerFirstButton = 10
+        TimeWarp = 0,
+        ColorFeed = 3,
+        DepthFeed = 5,
+        LidarMap = 7,
+        ModeBackground = 9,
+        ControllerFirstButton = 11
     }
 
     /// <summary>
@@ -96,11 +106,30 @@ public class Hud : MonoBehaviour
     /// </summary>
     private Racecar racecar;
 
+    /// <summary>
+    /// A counter used to track message persistence and fade out.
+    /// </summary>
     private float messageCounter;
 
-    private float messagePersistTime = -1;
+    /// <summary>
+    /// The time is seconds that the current message will persist.  If -1, the current message will persist indefinitely.
+    /// </summary>
+    private float messagePersistTime;
 
+    /// <summary>
+    /// The time in seconds that the current message will take to fade out.
+    /// </summary>
     private float messageFadeTime;
+
+    /// <summary>
+    /// The current factor at which time progresses.
+    /// </summary>
+    private float curTimeScale;
+
+    /// <summary>
+    /// The default value of Time.fixedDeltaTime.
+    /// </summary>
+    private float defaultFixedDeltaTime;
 
     private void Awake()
     {
@@ -114,6 +143,14 @@ public class Hud : MonoBehaviour
         this.racecar = this.transform.parent.GetComponentInChildren<Racecar>();
     }
 
+    private void Start()
+    {
+        this.messagePersistTime = -1;
+        this.curTimeScale = 1.0f;
+        this.defaultFixedDeltaTime = Time.fixedDeltaTime;
+        this.images[Images.TimeWarp.GetHashCode()].enabled = false;
+    }
+
     private void Update()
     {
         // Update mutable texts and images
@@ -125,6 +162,12 @@ public class Hud : MonoBehaviour
         this.racecar.Camera.VisualizeDepth((Texture2D)this.images[Images.DepthFeed.GetHashCode()].texture);
 
         this.UpdateController();
+
+        // Toggle time warp when the backspace alt key is pressed
+        if (Input.GetKeyDown(KeyCode.LeftAlt) || Input.GetKeyDown(KeyCode.RightAlt))
+        {
+            this.ToggleTimeWarp();
+        }
 
         // Handle message persistence and fadeout
         if (this.messagePersistTime > 0)
@@ -170,6 +213,18 @@ public class Hud : MonoBehaviour
             this.images[index].enabled = values.x * values.x + values.y * values.y > 0;
             index++;
         }
+    }
+
+    /// <summary>
+    /// Turns time warp on or off and updates the HUD accordingly.
+    /// </summary>
+    private void ToggleTimeWarp()
+    {
+        this.images[Images.TimeWarp.GetHashCode()].enabled = !this.images[Images.TimeWarp.GetHashCode()].enabled;
+
+        this.curTimeScale = this.curTimeScale < 1.0f ? 1.0f : Hud.timeWarpScale;
+        Time.timeScale = this.curTimeScale;
+        Time.fixedDeltaTime = this.defaultFixedDeltaTime * this.curTimeScale;
     }
 
     /// <summary>

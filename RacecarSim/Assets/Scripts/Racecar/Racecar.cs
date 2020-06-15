@@ -148,6 +148,13 @@ public class Racecar : MonoBehaviour
         {
             this.EnterDefaultDrive();
         }
+
+        // Return to main menu on escape
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            this.pythonInterface.HandleExit();
+            SceneManager.LoadScene(0);
+        }
     }
 
     private void LateUpdate()

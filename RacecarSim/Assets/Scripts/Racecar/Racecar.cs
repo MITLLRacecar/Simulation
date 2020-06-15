@@ -86,8 +86,9 @@ public class Racecar : MonoBehaviour
         Debug.Log(">> Goodbye!");
         this.pythonInterface.HandleExit();
 
-        // Reload current level
-        SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex, LoadSceneMode.Single);
+        // Reload current level with the ReloadBuffer
+        ReloadBuffer.BuildIndexToReload = SceneManager.GetActiveScene().buildIndex;
+        SceneManager.LoadSceneAsync(ReloadBuffer.BuildIndex, LoadSceneMode.Single);
     }
     #endregion
 

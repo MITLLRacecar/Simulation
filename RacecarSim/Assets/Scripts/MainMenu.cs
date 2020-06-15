@@ -24,6 +24,11 @@ public class MainMenu : MonoBehaviour
         "Phase 1 Challenge: Cone Slaloming",
         "Lab 6B: Sensor Fusion"
     };
+
+    /// <summary>
+    /// The number of levels in the Build Order before the first level in levelNames.
+    /// </summary>
+    private const int levelOffset = 2;
     #endregion
 
     #region Public Interface
@@ -32,7 +37,7 @@ public class MainMenu : MonoBehaviour
     /// </summary>
     public void BeginSimulation()
     {
-        SceneManager.LoadScene(this.dropdown.value + 1, LoadSceneMode.Single);
+        SceneManager.LoadScene(this.dropdown.value + MainMenu.levelOffset, LoadSceneMode.Single);
     }
     #endregion
 

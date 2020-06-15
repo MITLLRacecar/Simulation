@@ -12,6 +12,9 @@ EditorBuildSettings:
     path: Assets/Scenes/Main.unity
     guid: bb39323eda651834fab058c9af91e524
   - enabled: 1
+    path: Assets/Scenes/ReloadBuffer.unity
+    guid: 189eb9a44453224479ebcaecca5c505f
+  - enabled: 1
     path: Assets/Scenes/Demo.unity
     guid: 10ee3c59bb929db49a55a7478063f885
   - enabled: 1

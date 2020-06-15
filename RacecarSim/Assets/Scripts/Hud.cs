@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 /// <summary>
@@ -183,6 +184,12 @@ public class Hud : MonoBehaviour
         {
             this.messageCounter += Time.deltaTime;
             this.texts[Texts.Message.GetHashCode()].color = Color.Lerp(Color.white, Color.clear, this.messageCounter / this.messageFadeTime);
+        }
+
+        // Return to main menu on escape
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            SceneManager.LoadScene(0);
         }
     }
 

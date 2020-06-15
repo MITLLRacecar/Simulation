@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 /// <summary>
@@ -31,7 +32,7 @@ public class MainMenu : MonoBehaviour
     /// </summary>
     public void BeginSimulation()
     {
-        // Begin simulation
+        SceneManager.LoadScene(this.dropdown.value + 1, LoadSceneMode.Single);
     }
     #endregion
 

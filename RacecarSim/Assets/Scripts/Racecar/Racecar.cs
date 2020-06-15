@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// Encapsulates a RACECAR-MN.
@@ -84,7 +85,9 @@ public class Racecar : MonoBehaviour
     {
         Debug.Log(">> Goodbye!");
         this.pythonInterface.HandleExit();
-        Application.Quit();
+
+        // Reload current level
+        SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex, LoadSceneMode.Single);
     }
     #endregion
 

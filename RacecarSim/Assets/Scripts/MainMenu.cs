@@ -39,6 +39,14 @@ public class MainMenu : MonoBehaviour
     {
         SceneManager.LoadScene(this.dropdown.value + MainMenu.levelOffset, LoadSceneMode.Single);
     }
+
+    /// <summary>
+    /// Close the program.
+    /// </summary>
+    public void Exit()
+    {
+        Application.Quit(0);
+    }
     #endregion
 
     /// <summary>

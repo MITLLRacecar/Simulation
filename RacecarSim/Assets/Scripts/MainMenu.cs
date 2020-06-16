@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -12,17 +13,20 @@ public class MainMenu : MonoBehaviour
     /// <summary>
     /// The names of the simulation levels (in order).
     /// </summary>
-    private static readonly List<string> levelNames = new List<string>()
+    private static readonly Dictionary<string, int> levelNames = new Dictionary<string, int>()
     {
-        "Demo",
-        "Lab 1: Driving in Shapes",
-        "Lab 2A: Color tape following",
-        "Lab 2B: Color Cone following",
-        "Lab 3B: Depth Cone following",
-        "Lab 3C: Depth Wall parking",
-        "Lab 4B: LIDAR Wall following",
-        "Phase 1 Challenge: Cone Slaloming",
-        "Lab 6B: Sensor Fusion"
+        { "Demo", 2 },
+        { "Lab 1: Driving in Shapes", 3 },
+        { "Lab 2A: Color Image Line Following", 4 },
+        { "Lab 2B: Color Image Cone Parking", 5 },
+        { "Lab 3A: Depth Camera Safety Stop", 6 },
+        { "Lab 3B: Depth Camera Cone Parking", 7 },
+        { "Lab 3C: Depth Camera Wall Parking", 8 },
+        { "Lab 4: IMU Driving in Shapes", 3 },
+        { "Phase 1 Challenge: Cone Slaloming", 10 },
+        { "Lab 5A: LIDAR Safety Stop", 6 },
+        { "Lab 5B: LIDAR Wall Following", 9 },
+        { "Lab 6B: Sensor Fusion", 11 }
     };
 
     /// <summary>
@@ -62,6 +66,6 @@ public class MainMenu : MonoBehaviour
     private void Start()
     {
         this.dropdown.ClearOptions();
-        this.dropdown.AddOptions(MainMenu.levelNames);
+        this.dropdown.AddOptions(MainMenu.levelNames.Keys.ToList<string>());
     }
 }

@@ -181,6 +181,26 @@ PrefabInstance:
       propertyPath: m_LocalPosition.y
       value: 0.5
       objectReference: {fileID: 0}
+    - target: {fileID: 2077476667116161470, guid: 17243f7e049157d4b950695aacf25b36,
+        type: 3}
+      propertyPath: m_SuspensionDistance
+      value: 0.05
+      objectReference: {fileID: 0}
+    - target: {fileID: 4000533420012156134, guid: 17243f7e049157d4b950695aacf25b36,
+        type: 3}
+      propertyPath: m_SuspensionDistance
+      value: 0.05
+      objectReference: {fileID: 0}
+    - target: {fileID: 6677334748534853182, guid: 17243f7e049157d4b950695aacf25b36,
+        type: 3}
+      propertyPath: m_SuspensionDistance
+      value: 0.05
+      objectReference: {fileID: 0}
+    - target: {fileID: 6759240786059321072, guid: 17243f7e049157d4b950695aacf25b36,
+        type: 3}
+      propertyPath: m_SuspensionDistance
+      value: 0.05
+      objectReference: {fileID: 0}
     - target: {fileID: 6763771216156239461, guid: 17243f7e049157d4b950695aacf25b36,
         type: 3}
       propertyPath: Com.y

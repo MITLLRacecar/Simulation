@@ -27,17 +27,23 @@ EditorBuildSettings:
     path: Assets/Scenes/Lab2B.unity
     guid: 3cfcfea6ce6da6745b52c8ca6d5878ff
   - enabled: 1
+    path: Assets/Scenes/Lab3A.unity
+    guid: bdc04e137ca700143862e3c1e6f7d5ad
+  - enabled: 1
     path: Assets/Scenes/Lab3B.unity
     guid: 02787bd0d5a39fe4a9af517791797a95
   - enabled: 1
     path: Assets/Scenes/Lab3C.unity
     guid: 54ab88a43a4717e45abcb27d77a75591
   - enabled: 1
-    path: Assets/Scenes/Lab5B.unity
-    guid: 6afb13d8bf6d33a47947b9e96d5851d0
+    path: Assets/Scenes/Lab4A.unity
+    guid: b7f292a9490f60d499d2f260aada3b71
   - enabled: 1
     path: Assets/Scenes/Phase1.unity
     guid: bcf246b186421d14cb1aa25b9a51aa90
+  - enabled: 1
+    path: Assets/Scenes/Lab5B.unity
+    guid: 6afb13d8bf6d33a47947b9e96d5851d0
   - enabled: 1
     path: Assets/Scenes/Lab6B.unity
     guid: 61428b9256688c54b8ed1a256d7347bc

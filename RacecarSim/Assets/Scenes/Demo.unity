@@ -51,10 +51,10 @@ LightmapSettings:
     m_IndirectOutputScale: 1
     m_AlbedoBoost: 1
     m_EnvironmentLightingMode: 0
-    m_EnableBakedLightmaps: 1
+    m_EnableBakedLightmaps: 0
     m_EnableRealtimeLightmaps: 0
   m_LightmapEditorSettings:
-    serializedVersion: 10
+    serializedVersion: 12
     m_Resolution: 2
     m_BakeResolution: 10
     m_AtlasSize: 512
@@ -62,6 +62,7 @@ LightmapSettings:
     m_AOMaxDistance: 1
     m_CompAOExponent: 1
     m_CompAOExponentDirect: 0
+    m_ExtractAmbientOcclusion: 0
     m_Padding: 2
     m_LightmapParameters: {fileID: 0}
     m_LightmapsBakeMode: 1
@@ -76,10 +77,16 @@ LightmapSettings:
     m_PVRDirectSampleCount: 32
     m_PVRSampleCount: 256
     m_PVRBounces: 2
+    m_PVREnvironmentSampleCount: 256
+    m_PVREnvironmentReferencePointCount: 2048
+    m_PVRFilteringMode: 2
+    m_PVRDenoiserTypeDirect: 0
+    m_PVRDenoiserTypeIndirect: 0
+    m_PVRDenoiserTypeAO: 0
     m_PVRFilterTypeDirect: 0
     m_PVRFilterTypeIndirect: 0
     m_PVRFilterTypeAO: 0
-    m_PVRFilteringMode: 1
+    m_PVREnvironmentMIS: 0
     m_PVRCulling: 1
     m_PVRFilteringGaussRadiusDirect: 1
     m_PVRFilteringGaussRadiusIndirect: 5
@@ -87,7 +94,9 @@ LightmapSettings:
     m_PVRFilteringAtrousPositionSigmaDirect: 0.5
     m_PVRFilteringAtrousPositionSigmaIndirect: 2
     m_PVRFilteringAtrousPositionSigmaAO: 1
-    m_ShowResolutionOverlay: 1
+    m_ExportTrainingData: 0
+    m_TrainingDataDestination: TrainingData
+    m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
   m_UseShadowmask: 1
 --- !u!196 &4
@@ -194,11 +203,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 45324261}
     m_Modifications:
-    - target: {fileID: 7690868284879728198, guid: 76c7aa57684f0b84cb50ccfc6f5473c2,
-        type: 3}
-      propertyPath: m_Name
-      value: MondoBloxx (16)
-      objectReference: {fileID: 0}
     - target: {fileID: 7690868284879728196, guid: 76c7aa57684f0b84cb50ccfc6f5473c2,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -254,6 +258,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7690868284879728198, guid: 76c7aa57684f0b84cb50ccfc6f5473c2,
+        type: 3}
+      propertyPath: m_Name
+      value: MondoBloxx (16)
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 76c7aa57684f0b84cb50ccfc6f5473c2, type: 3}
 --- !u!1001 &103602640
@@ -263,11 +272,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 45324261}
     m_Modifications:
-    - target: {fileID: 7690868284879728198, guid: 76c7aa57684f0b84cb50ccfc6f5473c2,
-        type: 3}
-      propertyPath: m_Name
-      value: MondoBloxx (4)
-      objectReference: {fileID: 0}
     - target: {fileID: 7690868284879728196, guid: 76c7aa57684f0b84cb50ccfc6f5473c2,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -322,6 +326,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 7690868284879728198, guid: 76c7aa57684f0b84cb50ccfc6f5473c2,
+        type: 3}
+      propertyPath: m_Name
+      value: MondoBloxx (4)
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 76c7aa57684f0b84cb50ccfc6f5473c2, type: 3}
@@ -403,6 +412,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -414,6 +424,7 @@ MeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -509,11 +520,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 45324261}
     m_Modifications:
-    - target: {fileID: 7690868284879728198, guid: 76c7aa57684f0b84cb50ccfc6f5473c2,
-        type: 3}
-      propertyPath: m_Name
-      value: MondoBloxx (18)
-      objectReference: {fileID: 0}
     - target: {fileID: 7690868284879728196, guid: 76c7aa57684f0b84cb50ccfc6f5473c2,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -569,6 +575,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7690868284879728198, guid: 76c7aa57684f0b84cb50ccfc6f5473c2,
+        type: 3}
+      propertyPath: m_Name
+      value: MondoBloxx (18)
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 76c7aa57684f0b84cb50ccfc6f5473c2, type: 3}
 --- !u!1001 &322794561
@@ -578,11 +589,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 45324261}
     m_Modifications:
-    - target: {fileID: 7690868284879728198, guid: 76c7aa57684f0b84cb50ccfc6f5473c2,
-        type: 3}
-      propertyPath: m_Name
-      value: MondoBloxx (21)
-      objectReference: {fileID: 0}
     - target: {fileID: 7690868284879728196, guid: 76c7aa57684f0b84cb50ccfc6f5473c2,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -638,6 +644,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7690868284879728198, guid: 76c7aa57684f0b84cb50ccfc6f5473c2,
+        type: 3}
+      propertyPath: m_Name
+      value: MondoBloxx (21)
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 76c7aa57684f0b84cb50ccfc6f5473c2, type: 3}
 --- !u!1001 &344471805
@@ -647,6 +658,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 45324261}
     m_Modifications:
+    - target: {fileID: 7242918084978468782, guid: ad32e07662fb1ea439dc3f9c757f7e3c,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7242918086130519398, guid: ad32e07662fb1ea439dc3f9c757f7e3c,
         type: 3}
       propertyPath: m_Name
@@ -720,11 +736,6 @@ PrefabInstance:
     - target: {fileID: 7242918086130519399, guid: ad32e07662fb1ea439dc3f9c757f7e3c,
         type: 3}
       propertyPath: m_LocalScale.z
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7242918084978468782, guid: ad32e07662fb1ea439dc3f9c757f7e3c,
-        type: 3}
-      propertyPath: m_LocalPosition.z
       value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -820,11 +831,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 45324261}
     m_Modifications:
-    - target: {fileID: 7690868284879728198, guid: 76c7aa57684f0b84cb50ccfc6f5473c2,
-        type: 3}
-      propertyPath: m_Name
-      value: MondoBloxx (5)
-      objectReference: {fileID: 0}
     - target: {fileID: 7690868284879728196, guid: 76c7aa57684f0b84cb50ccfc6f5473c2,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -879,6 +885,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 7690868284879728198, guid: 76c7aa57684f0b84cb50ccfc6f5473c2,
+        type: 3}
+      propertyPath: m_Name
+      value: MondoBloxx (5)
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 76c7aa57684f0b84cb50ccfc6f5473c2, type: 3}
@@ -937,11 +948,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 45324261}
     m_Modifications:
-    - target: {fileID: 7690868284879728198, guid: 76c7aa57684f0b84cb50ccfc6f5473c2,
-        type: 3}
-      propertyPath: m_Name
-      value: MondoBloxx (8)
-      objectReference: {fileID: 0}
     - target: {fileID: 7690868284879728196, guid: 76c7aa57684f0b84cb50ccfc6f5473c2,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -997,6 +1003,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 90
       objectReference: {fileID: 0}
+    - target: {fileID: 7690868284879728198, guid: 76c7aa57684f0b84cb50ccfc6f5473c2,
+        type: 3}
+      propertyPath: m_Name
+      value: MondoBloxx (8)
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 76c7aa57684f0b84cb50ccfc6f5473c2, type: 3}
 --- !u!1001 &494621117
@@ -1006,11 +1017,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 45324261}
     m_Modifications:
-    - target: {fileID: 7690868284879728198, guid: 76c7aa57684f0b84cb50ccfc6f5473c2,
-        type: 3}
-      propertyPath: m_Name
-      value: MondoBloxx
-      objectReference: {fileID: 0}
     - target: {fileID: 7690868284879728196, guid: 76c7aa57684f0b84cb50ccfc6f5473c2,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1065,6 +1071,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 7690868284879728198, guid: 76c7aa57684f0b84cb50ccfc6f5473c2,
+        type: 3}
+      propertyPath: m_Name
+      value: MondoBloxx
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 76c7aa57684f0b84cb50ccfc6f5473c2, type: 3}
@@ -1128,6 +1139,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -1139,6 +1151,7 @@ MeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -1208,9 +1221,9 @@ MeshCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 3
+  serializedVersion: 4
   m_Convex: 1
-  m_CookingOptions: 14
+  m_CookingOptions: 30
   m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!23 &535478374
 MeshRenderer:
@@ -1226,6 +1239,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -1237,6 +1251,7 @@ MeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -1317,6 +1332,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -1328,6 +1344,7 @@ MeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -1361,11 +1378,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 45324261}
     m_Modifications:
-    - target: {fileID: 7690868284879728198, guid: 76c7aa57684f0b84cb50ccfc6f5473c2,
-        type: 3}
-      propertyPath: m_Name
-      value: MondoBloxx (19)
-      objectReference: {fileID: 0}
     - target: {fileID: 7690868284879728196, guid: 76c7aa57684f0b84cb50ccfc6f5473c2,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1421,6 +1433,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7690868284879728198, guid: 76c7aa57684f0b84cb50ccfc6f5473c2,
+        type: 3}
+      propertyPath: m_Name
+      value: MondoBloxx (19)
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 76c7aa57684f0b84cb50ccfc6f5473c2, type: 3}
 --- !u!4 &597935016 stripped
@@ -1472,9 +1489,9 @@ MeshCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 3
+  serializedVersion: 4
   m_Convex: 1
-  m_CookingOptions: 14
+  m_CookingOptions: 30
   m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!23 &657429388
 MeshRenderer:
@@ -1490,6 +1507,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -1501,6 +1519,7 @@ MeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -1528,11 +1547,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 45324261}
     m_Modifications:
-    - target: {fileID: 8704095207706917502, guid: 44606bbaf55acfe458de7b6f75d9c3aa,
-        type: 3}
-      propertyPath: m_Name
-      value: BlueCone
-      objectReference: {fileID: 0}
     - target: {fileID: 2029085356079716685, guid: 44606bbaf55acfe458de7b6f75d9c3aa,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1588,6 +1602,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8704095207706917502, guid: 44606bbaf55acfe458de7b6f75d9c3aa,
+        type: 3}
+      propertyPath: m_Name
+      value: BlueCone
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 44606bbaf55acfe458de7b6f75d9c3aa, type: 3}
 --- !u!1001 &738295925
@@ -1597,11 +1616,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 45324261}
     m_Modifications:
-    - target: {fileID: 7690868284879728198, guid: 76c7aa57684f0b84cb50ccfc6f5473c2,
-        type: 3}
-      propertyPath: m_Name
-      value: MondoBloxx (22)
-      objectReference: {fileID: 0}
     - target: {fileID: 7690868284879728196, guid: 76c7aa57684f0b84cb50ccfc6f5473c2,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1656,6 +1670,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7690868284879728198, guid: 76c7aa57684f0b84cb50ccfc6f5473c2,
+        type: 3}
+      propertyPath: m_Name
+      value: MondoBloxx (22)
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 76c7aa57684f0b84cb50ccfc6f5473c2, type: 3}
@@ -1719,6 +1738,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -1730,6 +1750,7 @@ MeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -1757,11 +1778,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 45324261}
     m_Modifications:
-    - target: {fileID: 7690868284879728198, guid: 76c7aa57684f0b84cb50ccfc6f5473c2,
-        type: 3}
-      propertyPath: m_Name
-      value: MondoBloxx (3)
-      objectReference: {fileID: 0}
     - target: {fileID: 7690868284879728196, guid: 76c7aa57684f0b84cb50ccfc6f5473c2,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1817,6 +1833,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 90
       objectReference: {fileID: 0}
+    - target: {fileID: 7690868284879728198, guid: 76c7aa57684f0b84cb50ccfc6f5473c2,
+        type: 3}
+      propertyPath: m_Name
+      value: MondoBloxx (3)
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 76c7aa57684f0b84cb50ccfc6f5473c2, type: 3}
 --- !u!4 &784999741 stripped
@@ -1832,11 +1853,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 45324261}
     m_Modifications:
-    - target: {fileID: 7690868284879728198, guid: 76c7aa57684f0b84cb50ccfc6f5473c2,
-        type: 3}
-      propertyPath: m_Name
-      value: MondoBloxx (15)
-      objectReference: {fileID: 0}
     - target: {fileID: 7690868284879728196, guid: 76c7aa57684f0b84cb50ccfc6f5473c2,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1892,6 +1908,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7690868284879728198, guid: 76c7aa57684f0b84cb50ccfc6f5473c2,
+        type: 3}
+      propertyPath: m_Name
+      value: MondoBloxx (15)
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 76c7aa57684f0b84cb50ccfc6f5473c2, type: 3}
 --- !u!4 &838695431 stripped
@@ -1919,11 +1940,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 45324261}
     m_Modifications:
-    - target: {fileID: 7690868284879728198, guid: 76c7aa57684f0b84cb50ccfc6f5473c2,
-        type: 3}
-      propertyPath: m_Name
-      value: MondoBloxx (9)
-      objectReference: {fileID: 0}
     - target: {fileID: 7690868284879728196, guid: 76c7aa57684f0b84cb50ccfc6f5473c2,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1979,6 +1995,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 90
       objectReference: {fileID: 0}
+    - target: {fileID: 7690868284879728198, guid: 76c7aa57684f0b84cb50ccfc6f5473c2,
+        type: 3}
+      propertyPath: m_Name
+      value: MondoBloxx (9)
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 76c7aa57684f0b84cb50ccfc6f5473c2, type: 3}
 --- !u!1001 &1020064784
@@ -1988,11 +2009,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 45324261}
     m_Modifications:
-    - target: {fileID: 6533420759896083678, guid: ce25e33f354cbdf428a2052cfbc81f0c,
-        type: 3}
-      propertyPath: m_Name
-      value: RedCone
-      objectReference: {fileID: 0}
     - target: {fileID: 4488036624786796525, guid: ce25e33f354cbdf428a2052cfbc81f0c,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -2047,6 +2063,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6533420759896083678, guid: ce25e33f354cbdf428a2052cfbc81f0c,
+        type: 3}
+      propertyPath: m_Name
+      value: RedCone
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ce25e33f354cbdf428a2052cfbc81f0c, type: 3}
@@ -2116,6 +2137,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -2127,6 +2149,7 @@ MeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -2160,11 +2183,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 45324261}
     m_Modifications:
-    - target: {fileID: 7690868284879728198, guid: 76c7aa57684f0b84cb50ccfc6f5473c2,
-        type: 3}
-      propertyPath: m_Name
-      value: MondoBloxx (13)
-      objectReference: {fileID: 0}
     - target: {fileID: 7690868284879728196, guid: 76c7aa57684f0b84cb50ccfc6f5473c2,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -2220,6 +2238,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 90
       objectReference: {fileID: 0}
+    - target: {fileID: 7690868284879728198, guid: 76c7aa57684f0b84cb50ccfc6f5473c2,
+        type: 3}
+      propertyPath: m_Name
+      value: MondoBloxx (13)
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 76c7aa57684f0b84cb50ccfc6f5473c2, type: 3}
 --- !u!1001 &1184925504
@@ -2229,11 +2252,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 45324261}
     m_Modifications:
-    - target: {fileID: 7690868284879728198, guid: 76c7aa57684f0b84cb50ccfc6f5473c2,
-        type: 3}
-      propertyPath: m_Name
-      value: MondoBloxx (10)
-      objectReference: {fileID: 0}
     - target: {fileID: 7690868284879728196, guid: 76c7aa57684f0b84cb50ccfc6f5473c2,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -2288,6 +2306,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 7690868284879728198, guid: 76c7aa57684f0b84cb50ccfc6f5473c2,
+        type: 3}
+      propertyPath: m_Name
+      value: MondoBloxx (10)
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 76c7aa57684f0b84cb50ccfc6f5473c2, type: 3}
@@ -2351,6 +2374,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -2362,6 +2386,7 @@ MeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -2389,6 +2414,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 45324261}
     m_Modifications:
+    - target: {fileID: 7242918084978468782, guid: ad32e07662fb1ea439dc3f9c757f7e3c,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7242918086130519398, guid: ad32e07662fb1ea439dc3f9c757f7e3c,
         type: 3}
       propertyPath: m_Name
@@ -2464,11 +2494,6 @@ PrefabInstance:
       propertyPath: m_LocalScale.z
       value: 2
       objectReference: {fileID: 0}
-    - target: {fileID: 7242918084978468782, guid: ad32e07662fb1ea439dc3f9c757f7e3c,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 1
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ad32e07662fb1ea439dc3f9c757f7e3c, type: 3}
 --- !u!4 &1242240424 stripped
@@ -2537,6 +2562,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -2548,6 +2574,7 @@ MeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -2593,11 +2620,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 45324261}
     m_Modifications:
-    - target: {fileID: 7690868284879728198, guid: 76c7aa57684f0b84cb50ccfc6f5473c2,
-        type: 3}
-      propertyPath: m_Name
-      value: MondoBloxx (20)
-      objectReference: {fileID: 0}
     - target: {fileID: 7690868284879728196, guid: 76c7aa57684f0b84cb50ccfc6f5473c2,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -2652,6 +2674,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7690868284879728198, guid: 76c7aa57684f0b84cb50ccfc6f5473c2,
+        type: 3}
+      propertyPath: m_Name
+      value: MondoBloxx (20)
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 76c7aa57684f0b84cb50ccfc6f5473c2, type: 3}
@@ -2721,6 +2748,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -2732,6 +2760,7 @@ MeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -2759,11 +2788,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 45324261}
     m_Modifications:
-    - target: {fileID: 7690868284879728198, guid: 76c7aa57684f0b84cb50ccfc6f5473c2,
-        type: 3}
-      propertyPath: m_Name
-      value: MondoBloxx (17)
-      objectReference: {fileID: 0}
     - target: {fileID: 7690868284879728196, guid: 76c7aa57684f0b84cb50ccfc6f5473c2,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -2819,6 +2843,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7690868284879728198, guid: 76c7aa57684f0b84cb50ccfc6f5473c2,
+        type: 3}
+      propertyPath: m_Name
+      value: MondoBloxx (17)
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 76c7aa57684f0b84cb50ccfc6f5473c2, type: 3}
 --- !u!4 &1481395337 stripped
@@ -2840,11 +2869,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 45324261}
     m_Modifications:
-    - target: {fileID: 7690868284879728198, guid: 76c7aa57684f0b84cb50ccfc6f5473c2,
-        type: 3}
-      propertyPath: m_Name
-      value: MondoBloxx (23)
-      objectReference: {fileID: 0}
     - target: {fileID: 7690868284879728196, guid: 76c7aa57684f0b84cb50ccfc6f5473c2,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -2900,6 +2924,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7690868284879728198, guid: 76c7aa57684f0b84cb50ccfc6f5473c2,
+        type: 3}
+      propertyPath: m_Name
+      value: MondoBloxx (23)
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 76c7aa57684f0b84cb50ccfc6f5473c2, type: 3}
 --- !u!1001 &1587449358
@@ -2909,11 +2938,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 45324261}
     m_Modifications:
-    - target: {fileID: 5055003768705663572, guid: d413bf112e931694a820fc7e101f0c0a,
-        type: 3}
-      propertyPath: m_Name
-      value: Cone
-      objectReference: {fileID: 0}
     - target: {fileID: 2505427725644112231, guid: d413bf112e931694a820fc7e101f0c0a,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -2969,6 +2993,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5055003768705663572, guid: d413bf112e931694a820fc7e101f0c0a,
+        type: 3}
+      propertyPath: m_Name
+      value: Cone
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d413bf112e931694a820fc7e101f0c0a, type: 3}
 --- !u!4 &1623406253 stripped
@@ -3006,9 +3035,9 @@ MeshCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 3
+  serializedVersion: 4
   m_Convex: 0
-  m_CookingOptions: 14
+  m_CookingOptions: 30
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!23 &1672963746
 MeshRenderer:
@@ -3024,6 +3053,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -3035,6 +3065,7 @@ MeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -3076,11 +3107,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 45324261}
     m_Modifications:
-    - target: {fileID: 7690868284879728198, guid: 76c7aa57684f0b84cb50ccfc6f5473c2,
-        type: 3}
-      propertyPath: m_Name
-      value: MondoBloxx (7)
-      objectReference: {fileID: 0}
     - target: {fileID: 7690868284879728196, guid: 76c7aa57684f0b84cb50ccfc6f5473c2,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -3136,6 +3162,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 90
       objectReference: {fileID: 0}
+    - target: {fileID: 7690868284879728198, guid: 76c7aa57684f0b84cb50ccfc6f5473c2,
+        type: 3}
+      propertyPath: m_Name
+      value: MondoBloxx (7)
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 76c7aa57684f0b84cb50ccfc6f5473c2, type: 3}
 --- !u!4 &1761480643 stripped
@@ -3151,11 +3182,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 45324261}
     m_Modifications:
-    - target: {fileID: 7690868284879728198, guid: 76c7aa57684f0b84cb50ccfc6f5473c2,
-        type: 3}
-      propertyPath: m_Name
-      value: MondoBloxx
-      objectReference: {fileID: 0}
     - target: {fileID: 7690868284879728196, guid: 76c7aa57684f0b84cb50ccfc6f5473c2,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -3211,6 +3237,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7690868284879728198, guid: 76c7aa57684f0b84cb50ccfc6f5473c2,
+        type: 3}
+      propertyPath: m_Name
+      value: MondoBloxx
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 76c7aa57684f0b84cb50ccfc6f5473c2, type: 3}
 --- !u!1001 &1777551119
@@ -3220,6 +3251,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 45324261}
     m_Modifications:
+    - target: {fileID: 7242918084978468782, guid: ad32e07662fb1ea439dc3f9c757f7e3c,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7242918086130519398, guid: ad32e07662fb1ea439dc3f9c757f7e3c,
         type: 3}
       propertyPath: m_Name
@@ -3295,11 +3331,6 @@ PrefabInstance:
       propertyPath: m_LocalScale.z
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 7242918084978468782, guid: ad32e07662fb1ea439dc3f9c757f7e3c,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 1
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ad32e07662fb1ea439dc3f9c757f7e3c, type: 3}
 --- !u!1001 &1779371787
@@ -3309,11 +3340,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 45324261}
     m_Modifications:
-    - target: {fileID: 7690868284879728198, guid: 76c7aa57684f0b84cb50ccfc6f5473c2,
-        type: 3}
-      propertyPath: m_Name
-      value: MondoBloxx (14)
-      objectReference: {fileID: 0}
     - target: {fileID: 7690868284879728196, guid: 76c7aa57684f0b84cb50ccfc6f5473c2,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -3369,6 +3395,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 90
       objectReference: {fileID: 0}
+    - target: {fileID: 7690868284879728198, guid: 76c7aa57684f0b84cb50ccfc6f5473c2,
+        type: 3}
+      propertyPath: m_Name
+      value: MondoBloxx (14)
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 76c7aa57684f0b84cb50ccfc6f5473c2, type: 3}
 --- !u!1001 &1792858969
@@ -3378,11 +3409,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 45324261}
     m_Modifications:
-    - target: {fileID: 7690868284879728198, guid: 76c7aa57684f0b84cb50ccfc6f5473c2,
-        type: 3}
-      propertyPath: m_Name
-      value: MondoBloxx (6)
-      objectReference: {fileID: 0}
     - target: {fileID: 7690868284879728196, guid: 76c7aa57684f0b84cb50ccfc6f5473c2,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -3438,6 +3464,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 90
       objectReference: {fileID: 0}
+    - target: {fileID: 7690868284879728198, guid: 76c7aa57684f0b84cb50ccfc6f5473c2,
+        type: 3}
+      propertyPath: m_Name
+      value: MondoBloxx (6)
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 76c7aa57684f0b84cb50ccfc6f5473c2, type: 3}
 --- !u!1001 &1803818220
@@ -3447,11 +3478,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 45324261}
     m_Modifications:
-    - target: {fileID: 7690868284879728198, guid: 76c7aa57684f0b84cb50ccfc6f5473c2,
-        type: 3}
-      propertyPath: m_Name
-      value: MondoBloxx (1)
-      objectReference: {fileID: 0}
     - target: {fileID: 7690868284879728196, guid: 76c7aa57684f0b84cb50ccfc6f5473c2,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -3507,6 +3533,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 90
       objectReference: {fileID: 0}
+    - target: {fileID: 7690868284879728198, guid: 76c7aa57684f0b84cb50ccfc6f5473c2,
+        type: 3}
+      propertyPath: m_Name
+      value: MondoBloxx (1)
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 76c7aa57684f0b84cb50ccfc6f5473c2, type: 3}
 --- !u!4 &1819674581 stripped
@@ -3534,11 +3565,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 45324261}
     m_Modifications:
-    - target: {fileID: 7690868284879728198, guid: 76c7aa57684f0b84cb50ccfc6f5473c2,
-        type: 3}
-      propertyPath: m_Name
-      value: MondoBloxx (12)
-      objectReference: {fileID: 0}
     - target: {fileID: 7690868284879728196, guid: 76c7aa57684f0b84cb50ccfc6f5473c2,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -3594,6 +3620,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 90
       objectReference: {fileID: 0}
+    - target: {fileID: 7690868284879728198, guid: 76c7aa57684f0b84cb50ccfc6f5473c2,
+        type: 3}
+      propertyPath: m_Name
+      value: MondoBloxx (12)
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 76c7aa57684f0b84cb50ccfc6f5473c2, type: 3}
 --- !u!4 &1912941864 stripped
@@ -3609,11 +3640,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 45324261}
     m_Modifications:
-    - target: {fileID: 7690868284879728198, guid: 76c7aa57684f0b84cb50ccfc6f5473c2,
-        type: 3}
-      propertyPath: m_Name
-      value: MondoBloxx (2)
-      objectReference: {fileID: 0}
     - target: {fileID: 7690868284879728196, guid: 76c7aa57684f0b84cb50ccfc6f5473c2,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -3669,6 +3695,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 90
       objectReference: {fileID: 0}
+    - target: {fileID: 7690868284879728198, guid: 76c7aa57684f0b84cb50ccfc6f5473c2,
+        type: 3}
+      propertyPath: m_Name
+      value: MondoBloxx (2)
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 76c7aa57684f0b84cb50ccfc6f5473c2, type: 3}
 --- !u!4 &1936879618 stripped
@@ -3702,11 +3733,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 45324261}
     m_Modifications:
-    - target: {fileID: 7690868284879728198, guid: 76c7aa57684f0b84cb50ccfc6f5473c2,
-        type: 3}
-      propertyPath: m_Name
-      value: MondoBloxx (11)
-      objectReference: {fileID: 0}
     - target: {fileID: 7690868284879728196, guid: 76c7aa57684f0b84cb50ccfc6f5473c2,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -3761,6 +3787,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 7690868284879728198, guid: 76c7aa57684f0b84cb50ccfc6f5473c2,
+        type: 3}
+      propertyPath: m_Name
+      value: MondoBloxx (11)
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 76c7aa57684f0b84cb50ccfc6f5473c2, type: 3}
@@ -3915,11 +3946,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 45324261}
     m_Modifications:
-    - target: {fileID: 6612905981543620654, guid: 4f408d10253fa534cb53328a012f4bec,
-        type: 3}
-      propertyPath: m_Name
-      value: Ball
-      objectReference: {fileID: 0}
     - target: {fileID: 6612905981543620624, guid: 4f408d10253fa534cb53328a012f4bec,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -3974,6 +4000,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6612905981543620654, guid: 4f408d10253fa534cb53328a012f4bec,
+        type: 3}
+      propertyPath: m_Name
+      value: Ball
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4f408d10253fa534cb53328a012f4bec, type: 3}

@@ -6,11 +6,18 @@ using UnityEngine.SceneManagement;
 /// </summary>
 public class Racecar : MonoBehaviour
 {
-    #region Set in the Unity Editor
+    #region Set in Unity Editor
     /// <summary>
     /// The third person camera through which the user observes the car.
     /// </summary>
-    public Camera ThirdPersonCamera;
+    [SerializeField]
+    private Camera ThirdPersonCamera;
+
+    /// <summary>
+    /// Cause the player to fail if they exceed this speed (in m/s).
+    /// </summary>
+    [SerializeField]
+    private float FailureSpeed = -1;
     #endregion
 
     #region Constants
@@ -128,6 +135,7 @@ public class Racecar : MonoBehaviour
 
     private void Update()
     {
+        // Call correct update function based on mode
         if (isDefaultDrive)
         {
             this.DefaultDriveUpdate();
@@ -137,6 +145,7 @@ public class Racecar : MonoBehaviour
             this.pythonInterface.PythonUpdate();
         }
 
+        // Handle START and BACK buttons
         if (this.Controller.IsDown(Controller.Button.START) && this.Controller.IsDown(Controller.Button.BACK))
         {
             this.HandleExit();
@@ -155,6 +164,12 @@ public class Racecar : MonoBehaviour
         {
             this.pythonInterface.HandleExit();
             SceneManager.LoadScene(0);
+        }
+
+        // Check if we have exceeded FailureSpeed
+        if (this.FailureSpeed > 0 && this.Physics.LinearVelocity.magnitude > this.FailureSpeed)
+        {
+            this.Hud.ShowFailureMessage($"The car exceeded {this.FailureSpeed} m/s");
         }
     }
 

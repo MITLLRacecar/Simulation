@@ -55,6 +55,11 @@ public class Lidar : MonoBehaviour
     /// The maximum range displayed in the LIDAR visualization (in dm).
     /// </summary>
     private const float visualizationRange = 50;
+
+    /// <summary>
+    /// The failure message to show when something hits the LIDAR.
+    /// </summary>
+    private const string collisionFailureMessage = "The LIDAR is expensive and fragile, please do not hit it!";
     #endregion
 
     #region Public Interface
@@ -131,6 +136,12 @@ public class Lidar : MonoBehaviour
             this.Samples[curSample] = TakeSample();
             curSample = (curSample + 1) % NumSamples;
         }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        print("collision");
+        this.racecar.Hud.ShowFailureMessage(Lidar.collisionFailureMessage);
     }
 
     /// <summary>

@@ -232,8 +232,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 2.1, y: 0.8, z: 3.6}
-  m_Center: {x: 0, y: 0.6, z: 0}
+  m_Size: {x: 2.1, y: 0.5, z: 3.6}
+  m_Center: {x: 0, y: 0.4, z: 0}
 --- !u!1 &1280362485296162747
 GameObject:
   m_ObjectHideFlags: 0
@@ -306,6 +306,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ThirdPersonCamera: {fileID: 0}
+  FailureSpeed: -1
 --- !u!114 &6847267400033205201
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -976,6 +977,8 @@ GameObject:
   m_Component:
   - component: {fileID: 5600782979884017783}
   - component: {fileID: 1190674054559305135}
+  - component: {fileID: 95109684973816702}
+  - component: {fileID: 4812073205958470604}
   m_Layer: 0
   m_Name: Lidar
   m_TagString: Untagged
@@ -1011,6 +1014,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 59d69689883aa1e4683a84a2492d85b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!65 &95109684973816702
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4368511473121570782}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.7, y: 0.32, z: 0.7}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!65 &4812073205958470604
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4368511473121570782}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.64, y: 0.3, z: 0.64}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &4996176314326466696
 GameObject:
   m_ObjectHideFlags: 0

@@ -22,6 +22,11 @@ public class Racecar : MonoBehaviour
 
     #region Constants
     /// <summary>
+    /// The radius of the car along the Z axis (in dm)
+    /// </summary>
+    public const float radius = 1.8f;
+
+    /// <summary>
     /// The distance from which the camera follows the car.
     /// </summary>
     private static readonly Vector3 cameraOffset = new Vector3(0, 4.0f, -8.0f);

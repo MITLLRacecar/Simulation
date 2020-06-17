@@ -58,15 +58,24 @@ public class ConeClick : MonoBehaviour
     private GameObject player;
 
     /// <summary>
+    /// The radius of the cone (in dm)
+    /// </summary>
+    private float Radius
+    {
+        get
+        {
+            return 0.7f * this.curScale - 0.15f;
+        }
+    }
+
+    /// <summary>
     /// The distance between the cone and the car in cm.
     /// </summary>
     private float Distance
     {
         get
         {
-            return Vector3.Distance(this.transform.position, this.player.transform.position) * 10 
-                - 16                  // Account for car radius
-                - 7 * this.curScale;  // Account for cone radius
+            return Mathf.Max(0, 10 * (Vector3.Distance(this.transform.position, this.player.transform.position) - Racecar.radius - this.Radius));
         }
     }
 

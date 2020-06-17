@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Bill : MonoBehaviour
 {
@@ -8,7 +6,8 @@ public class Bill : MonoBehaviour
     /// <summary>
     /// The maximum speed allowed by Bill. Any car exceeding this speed will be hit.
     /// </summary>
-    public float maxSpeed = 0.5f;
+    [SerializeField]
+    private float MaxSpeed = 0.5f;
     #endregion
 
     #region Constants
@@ -40,7 +39,7 @@ public class Bill : MonoBehaviour
         {
             foreach (Racecar car in this.cars)
             {
-                if (car.Physics.LinearVelocity.magnitude > this.maxSpeed)
+                if (car.Physics.LinearVelocity.magnitude > this.MaxSpeed)
                 {
                     this.target = car.gameObject;
                     break;

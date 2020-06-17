@@ -8,7 +8,8 @@ public class CenterOfMass : MonoBehaviour
     /// <summary>
     /// Center of mass, set in Unity editor.
     /// </summary>
-    public Vector3 Com;
+    [SerializeField]
+    private Vector3 Com = Vector3.zero;
 
     void Start()
     {

@@ -3,7 +3,8 @@
 public class MessageManager : MonoBehaviour
 {
     #region Set in Unity Editor
-    public string Text = string.Empty;
+    [SerializeField]
+    private string Text = string.Empty;
     #endregion
 
     /// <summary>

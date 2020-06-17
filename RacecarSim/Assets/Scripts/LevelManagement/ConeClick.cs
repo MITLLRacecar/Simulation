@@ -11,7 +11,8 @@ public class ConeClick : MonoBehaviour
     /// <summary>
     /// If true, the cone can be resized by scrolling with the mouse.
     /// </summary>
-    public bool Resizable = false;
+    [SerializeField]
+    private bool Resizable = false;
     #endregion
 
     #region Constants

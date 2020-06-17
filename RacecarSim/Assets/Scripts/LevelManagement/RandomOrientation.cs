@@ -9,12 +9,14 @@ public class RandomOrientation : MonoBehaviour
     /// <summary>
     /// The maximum amount the object can translate along each axis (in dm).
     /// </summary>
-    public Vector3 MaxTranslation = Vector3.zero;
+    [SerializeField]
+    private Vector3 MaxTranslation = Vector3.zero;
 
     /// <summary>
     /// The maximum amount the object can rotate about each axis (in degrees).
     /// </summary>
-    public Vector3 MaxRotation = Vector3.zero;
+    [SerializeField]
+    private Vector3 MaxRotation = Vector3.zero;
     #endregion
 
     void Start()

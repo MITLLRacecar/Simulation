@@ -10,7 +10,8 @@ public class Drive : MonoBehaviour
     /// <summary>
     /// The models which visualize the car's wheels.
     /// </summary>
-    public GameObject[] Wheels = new GameObject[4];
+    [SerializeField]
+    private GameObject[] Wheels = new GameObject[4];
 
     /// <summary>
     /// The invisible colliders responsible for the physics of the car's wheels.

@@ -34,11 +34,6 @@ public class ConeClick : MonoBehaviour
     /// The rate at which the cone resizes when the mouse scroll wheel is turned.
     /// </summary>
     private const float scrollSpeed = 0.1f;
-
-    /// <summary>
-    /// Amount to subtract from cone-player distance (in cm) to account for object radii.
-    /// </summary>
-    private const float distanceOffset = 23;
     #endregion
 
     /// <summary>
@@ -60,6 +55,19 @@ public class ConeClick : MonoBehaviour
     /// The racecar from which the cone measures distance.
     /// </summary>
     private GameObject player;
+
+    /// <summary>
+    /// The distance between the cone and the car in cm.
+    /// </summary>
+    private float Distance
+    {
+        get
+        {
+            return Vector3.Distance(this.transform.position, this.player.transform.position) * 10 
+                - 16                  // Account for car radius
+                - 7 * this.curScale;  // Account for cone radius
+        }
+    }
 
     private void Awake()
     {
@@ -87,11 +95,8 @@ public class ConeClick : MonoBehaviour
             this.transform.localScale = Vector3.one * curScale;
         }
 
-        // Calculate distance to player and update UI text
-        float distance = Vector3.Distance(this.transform.position, this.player.transform.position) * 10 - ConeClick.distanceOffset;
-        this.text.text = $"{distance:F1} cm";
-
-        // Update UI to face main camera
+        // Update UI
+        this.text.text = $"{this.Distance:F1} cm";
         this.canvas.transform.LookAt(Camera.main.transform.position);
     }
 }

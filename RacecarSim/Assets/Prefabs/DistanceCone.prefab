@@ -84,6 +84,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Resizable: 0
+--- !u!114 &4599446484825791786
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 650117219234838040}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 336607bd27a25b24fbbb1a29f73349cc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6298943167762538397
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,6 +1,5 @@
 ﻿using System;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 /// <summary>
@@ -8,6 +7,14 @@ using UnityEngine.UI;
 /// </summary>
 public class Hud : MonoBehaviour
 {
+    #region Set in Unity Editor
+    /// <summary>
+    /// The textbox shown when the user fails an objective.
+    /// </summary>
+    [SerializeField]
+    private GameObject FailureMessage;
+    #endregion
+
     #region Constants
     /// <summary>
     /// The color used for the background of sensor visualizations.
@@ -65,6 +72,16 @@ public class Hud : MonoBehaviour
             this.images[Images.ModeBackground.GetHashCode()].color = Hud.userProgramColor;
         }
     }
+
+    /// <summary>
+    /// Show the failure textbox with the provided message.
+    /// </summary>
+    /// <param name="text">The reason the user failed.</param>
+    public void ShowFailureMessage(string text)
+    {
+        this.FailureMessage.SetActive(true);
+        this.texts[Texts.Failure.GetHashCode()].text = text;
+    }
     #endregion
 
     /// <summary>
@@ -76,7 +93,8 @@ public class Hud : MonoBehaviour
         LinearAcceleration = 8,
         AngularVelocity = 11,
         Mode = 13,
-        Message = 14
+        Message = 14,
+        Failure = 16
     }
 
     /// <summary>
@@ -150,6 +168,7 @@ public class Hud : MonoBehaviour
         this.curTimeScale = 1.0f;
         this.defaultFixedDeltaTime = Time.fixedDeltaTime;
         this.images[Images.TimeWarp.GetHashCode()].enabled = false;
+        this.FailureMessage.SetActive(false);
     }
 
     private void Update()

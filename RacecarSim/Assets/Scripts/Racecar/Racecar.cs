@@ -57,6 +57,11 @@ public class Racecar : MonoBehaviour
     public PhysicsModule Physics { get; private set; }
 
     /// <summary>
+    /// The heads-up display associated with this car.
+    /// </summary>
+    public Hud Hud { get; private set; }
+
+    /// <summary>
     /// Causes the car to enter default drive mode, allowing the user to drive around with the controller.
     /// </summary>
     public void EnterDefaultDrive()
@@ -64,7 +69,7 @@ public class Racecar : MonoBehaviour
         Debug.Log(">> Entering default drive mode");
         this.isDefaultDrive = true;
         this.DefaultDriveStart();
-        this.hud.UpdateMode(true);
+        this.Hud.UpdateMode(true);
     }
 
     /// <summary>
@@ -75,7 +80,7 @@ public class Racecar : MonoBehaviour
         Debug.Log(">> Entering user program mode");
         this.pythonInterface.PythonStart();
         this.isDefaultDrive = false;
-        this.hud.UpdateMode(false);
+        this.Hud.UpdateMode(false);
     }
 
     /// <summary>
@@ -98,11 +103,6 @@ public class Racecar : MonoBehaviour
     private PythonInterface pythonInterface;
 
     /// <summary>
-    /// The heads-up display associated with this car.
-    /// </summary>
-    private Hud hud;
-
-    /// <summary>
     /// True if the car is currently in default drive mode.
     /// </summary>
     private bool isDefaultDrive = true;
@@ -111,7 +111,7 @@ public class Racecar : MonoBehaviour
     {
         this.Settings = new Settings();
         this.pythonInterface = new PythonInterface(this);
-        this.hud = this.transform.parent.GetComponentInChildren<Hud>();
+        this.Hud = this.transform.parent.GetComponentInChildren<Hud>();
 
         // Find submodules
         this.Camera = this.GetComponent<CameraModule>();

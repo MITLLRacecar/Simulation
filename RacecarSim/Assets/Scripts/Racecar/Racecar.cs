@@ -81,7 +81,7 @@ public class Racecar : MonoBehaviour
         Debug.Log(">> Entering default drive mode");
         this.isDefaultDrive = true;
         this.DefaultDriveStart();
-        this.Hud.UpdateMode(true);
+        this.Hud.UpdateMode(this.isDefaultDrive, this.isValidRun);
     }
 
     /// <summary>
@@ -92,7 +92,7 @@ public class Racecar : MonoBehaviour
         Debug.Log(">> Entering user program mode");
         this.pythonInterface.PythonStart();
         this.isDefaultDrive = false;
-        this.Hud.UpdateMode(false);
+        this.Hud.UpdateMode(this.isDefaultDrive, this.isValidRun);
         this.startTime = Time.time;
     }
 
@@ -154,8 +154,8 @@ public class Racecar : MonoBehaviour
 
     private void Start()
     {
-        this.EnterDefaultDrive();
         this.isValidRun = true;
+        this.EnterDefaultDrive();
     }
 
     private void Update()
@@ -182,7 +182,11 @@ public class Racecar : MonoBehaviour
         else if (this.Controller.WasPressed(Controller.Button.BACK))
         {
             this.EnterDefaultDrive();
-            this.isValidRun = false;
+            if (this.isValidRun)
+            {
+                this.isValidRun = false;
+                this.Hud.UpdateMode(this.isDefaultDrive, this.isValidRun);
+            }
         }
 
         // Return to main menu on escape
@@ -231,6 +235,10 @@ public class Racecar : MonoBehaviour
         }
 
         // If the user moves in default drive mode, it is no longer a valid run
-        this.isValidRun &= this.Drive.Speed == 0;
+        if (this.isValidRun && this.Drive.Speed != 0)
+        {
+            this.isValidRun = false;
+            this.Hud.UpdateMode(this.isDefaultDrive, this.isValidRun);
+        }
     }
 }

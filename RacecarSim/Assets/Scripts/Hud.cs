@@ -65,7 +65,7 @@ public class Hud : MonoBehaviour
     /// Updates the icon showing the current driving mode.
     /// </summary>
     /// <param name="isDefaultDrive">Whether the car is currently in default drive mode.</param>
-    public void UpdateMode(bool isDefaultDrive)
+    public void UpdateMode(bool isDefaultDrive, bool isValid)
     {
         if (isDefaultDrive)
         {
@@ -77,6 +77,8 @@ public class Hud : MonoBehaviour
             this.texts[Texts.Mode.GetHashCode()].text = "User Program";
             this.images[Images.ModeBackground.GetHashCode()].color = Hud.userProgramColor;
         }
+        this.images[Images.Star.GetHashCode()].enabled = isValid;
+        print(isValid);
     }
 
     /// <summary>
@@ -124,7 +126,8 @@ public class Hud : MonoBehaviour
         DepthFeed = 5,
         LidarMap = 7,
         ModeBackground = 9,
-        ControllerFirstButton = 11
+        Star = 10,
+        ControllerFirstButton = 12
     }
 
     /// <summary>

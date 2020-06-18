@@ -9,11 +9,19 @@ using UnityEngine.UI;
 /// </summary>
 public class MainMenu : MonoBehaviour
 {
+    #region Set in Unity Editor
+    /// <summary>
+    /// Images and text showing the simulation controls.
+    /// </summary>
+    [SerializeField]
+    private GameObject Controlls;
+    #endregion
+
     #region Constants
     /// <summary>
-    /// The names of the simulation levels (in order).
+    /// Maps each level name to the build index of that level.
     /// </summary>
-    private static readonly Dictionary<string, int> levelNames = new Dictionary<string, int>()
+    private static readonly Dictionary<string, int> levelMap = new Dictionary<string, int>()
     {
         { "Demo", 2 },
         { "Lab 1: Driving in Shapes", 3 },
@@ -31,18 +39,26 @@ public class MainMenu : MonoBehaviour
     };
 
     /// <summary>
-    /// The number of levels in the Build Order before the first level in levelNames.
+    /// The names of the simulation levels (in the order).
     /// </summary>
-    private const int levelOffset = 2;
+    private static readonly List<string> levelNames = MainMenu.levelMap.Keys.ToList<string>();
     #endregion
 
     #region Public Interface
     /// <summary>
-    /// Begins the level selected in the dropdown menu.
+    /// Loads the level selected in the dropdown menu.
     /// </summary>
     public void BeginSimulation()
     {
-        SceneManager.LoadScene(this.dropdown.value + MainMenu.levelOffset, LoadSceneMode.Single);
+        SceneManager.LoadScene(levelMap[levelNames[dropdown.value]], LoadSceneMode.Single);
+    }
+
+    /// <summary>
+    /// Toggles whether the control information is shown.
+    /// </summary>
+    public void ToggleControls()
+    {
+        this.Controlls.SetActive(!this.Controlls.activeInHierarchy);
     }
 
     /// <summary>
@@ -67,6 +83,7 @@ public class MainMenu : MonoBehaviour
     private void Start()
     {
         this.dropdown.ClearOptions();
-        this.dropdown.AddOptions(MainMenu.levelNames.Keys.ToList<string>());
+        this.dropdown.AddOptions(MainMenu.levelNames);
+        this.Controlls.SetActive(false);
     }
 }

@@ -31,11 +31,11 @@ public class MainMenu : MonoBehaviour
         { "Lab 3B: Depth Camera Cone Parking", 7 },
         { "Lab 3C: Depth Camera Wall Parking", 8 },
         { "Lab 4A: IMU Roll Prevention", 9 },
-        { "Lab 4A: IMU Driving in Shapes", 3 },
+        { "Lab 4B: IMU Driving in Shapes", 3 },
         { "Phase 1 Challenge: Cone Slaloming", 10 },
         { "Lab 5A: LIDAR Safety Stop", 6 },
         { "Lab 5B: LIDAR Wall Following", 11 },
-        { "Lab 6B: Sensor Fusion", 12 }
+        { "Lab 6: Sensor Fusion", 12 }
     };
 
     /// <summary>

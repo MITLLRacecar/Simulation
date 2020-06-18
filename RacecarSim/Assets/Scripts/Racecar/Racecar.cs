@@ -114,13 +114,20 @@ public class Racecar : MonoBehaviour
     /// </summary>
     public void HandleFinish()
     {
-        print("one");
         if (this.isValidRun)
         {
-            print("two");
             this.Hud.ShowSuccessMessage(Time.time - this.startTime);
             this.isValidRun = false;
         }
+    }
+
+    /// <summary>
+    /// Tells the car that the current level has a winnable objective.
+    /// </summary>
+    public void SetIsWinable()
+    {
+        this.isValidRun = true;
+        this.Hud.UpdateMode(this.isDefaultDrive, this.isValidRun);
     }
     #endregion
 
@@ -140,6 +147,8 @@ public class Racecar : MonoBehaviour
 
     private void Awake()
     {
+        this.isValidRun = false;
+
         this.Settings = new Settings();
         this.pythonInterface = new PythonInterface(this);
         this.Hud = this.transform.parent.GetComponentInChildren<Hud>();
@@ -154,7 +163,6 @@ public class Racecar : MonoBehaviour
 
     private void Start()
     {
-        this.isValidRun = true;
         this.EnterDefaultDrive();
     }
 

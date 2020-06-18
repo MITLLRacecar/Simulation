@@ -78,7 +78,6 @@ public class Hud : MonoBehaviour
             this.images[Images.ModeBackground.GetHashCode()].color = Hud.userProgramColor;
         }
         this.images[Images.Star.GetHashCode()].enabled = isValid;
-        print(isValid);
     }
 
     /// <summary>

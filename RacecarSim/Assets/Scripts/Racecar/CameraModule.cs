@@ -155,7 +155,7 @@ public class CameraModule : MonoBehaviour
             {
                 if (this.DepthImage[r][c] != CameraModule.minCode && this.DepthImage[r][c] != CameraModule.maxCode)
                 {
-                    rawData[(CameraModule.DepthHeight - r - 1) * texture.width + c] = CameraModule.InterpolateDepthColor(DepthImage[r][c]);
+                    rawData[(CameraModule.DepthHeight - r) * texture.width + c] = CameraModule.InterpolateDepthColor(DepthImage[r][c]);
                 }
             }
         }

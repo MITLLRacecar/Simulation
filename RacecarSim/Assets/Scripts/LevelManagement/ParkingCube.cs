@@ -25,12 +25,24 @@ public class ParkingCube : MonoBehaviour
     /// </summary>
     private static readonly Vector3 canvasOffset = new Vector3(0, 2f, 0.01f);
 
+    /// <summary>
+    /// The angle that the car should attempt to reach with the wall
+    /// </summary>
     private const float goalAngle = 0;
 
+    /// <summary>
+    /// The threshold around goalAngle we will consider an acceptable angle.
+    /// </summary>
     private const float angleThreshold = 5;
 
+    /// <summary>
+    /// The distance that the car should attempt to reach from the wall.
+    /// </summary>
     private const float goalDistance = 20;
 
+    /// <summary>
+    /// The threshold around goalDistance we will consider an acceptable distance.
+    /// </summary>
     private const float distanceThreshold = 5;
     #endregion
 
@@ -55,6 +67,8 @@ public class ParkingCube : MonoBehaviour
             Random.Range(-this.MaxRotation.x, this.MaxRotation.x),
             Random.Range(-this.MaxRotation.y, this.MaxRotation.y),
             Random.Range(-this.MaxRotation.z, this.MaxRotation.z));
+
+        this.player.SetIsWinable();
     }
 
     private void Update()
@@ -74,10 +88,12 @@ public class ParkingCube : MonoBehaviour
 
         this.player.Hud.SetMessage($"Angle: {angle:F1} degrees\nDistance: {distance:F1} cm");
 
+        print(this.player.Physics.LinearVelocity.magnitude);
         if (Mathf.Abs(ParkingCube.goalAngle - angle) < ParkingCube.angleThreshold 
             && Mathf.Abs(ParkingCube.goalDistance - distance) < ParkingCube.distanceThreshold
-            && this.player.Physics.LinearVelocity.magnitude == 0)
+            && this.player.Physics.LinearVelocity.magnitude < 0.01f)
         {
+            print("one");
             this.player.HandleFinish();
         }
     }

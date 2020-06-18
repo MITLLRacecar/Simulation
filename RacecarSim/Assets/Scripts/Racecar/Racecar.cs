@@ -93,6 +93,7 @@ public class Racecar : MonoBehaviour
         this.pythonInterface.PythonStart();
         this.isDefaultDrive = false;
         this.Hud.UpdateMode(false);
+        this.startTime = Time.time;
     }
 
     /// <summary>
@@ -107,6 +108,20 @@ public class Racecar : MonoBehaviour
         ReloadBuffer.BuildIndexToReload = SceneManager.GetActiveScene().buildIndex;
         SceneManager.LoadSceneAsync(ReloadBuffer.BuildIndex, LoadSceneMode.Single);
     }
+
+    /// <summary>
+    /// Handles crossing the finish line.
+    /// </summary>
+    public void HandleFinish()
+    {
+        print("one");
+        if (this.isValidRun)
+        {
+            print("two");
+            this.Hud.ShowSuccessMessage(Time.time - this.startTime);
+            this.isValidRun = false;
+        }
+    }
     #endregion
 
     /// <summary>
@@ -118,6 +133,10 @@ public class Racecar : MonoBehaviour
     /// True if the car is currently in default drive mode.
     /// </summary>
     private bool isDefaultDrive = true;
+
+    private bool isValidRun;
+
+    private float startTime;
 
     private void Awake()
     {
@@ -136,6 +155,7 @@ public class Racecar : MonoBehaviour
     private void Start()
     {
         this.EnterDefaultDrive();
+        this.isValidRun = true;
     }
 
     private void Update()
@@ -162,6 +182,7 @@ public class Racecar : MonoBehaviour
         else if (this.Controller.WasPressed(Controller.Button.BACK))
         {
             this.EnterDefaultDrive();
+            this.isValidRun = false;
         }
 
         // Return to main menu on escape
@@ -208,5 +229,8 @@ public class Racecar : MonoBehaviour
         {
             print("Kachow!");
         }
+
+        // If the user moves in default drive mode, it is no longer a valid run
+        this.isValidRun &= this.Drive.Speed == 0;
     }
 }

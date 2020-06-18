@@ -25,10 +25,13 @@ public class ParkingCube : MonoBehaviour
     /// </summary>
     private static readonly Vector3 canvasOffset = new Vector3(0, 2f, 0.01f);
 
-    /// <summary>
-    /// Layer mask used to ignore UI objects.
-    /// </summary>
-    private const int noUiMask = ~(1 << 5);
+    private const float goalAngle = 0;
+
+    private const float angleThreshold = 5;
+
+    private const float goalDistance = 20;
+
+    private const float distanceThreshold = 5;
     #endregion
 
     /// <summary>
@@ -64,11 +67,18 @@ public class ParkingCube : MonoBehaviour
 
         // Cast a ray from the car to the wall to find the closest point on the wall
         float distance = -1;
-        if (Physics.Raycast(this.player.transform.position, this.transform.forward, out RaycastHit secondHit, 1000, ParkingCube.noUiMask))
+        if (Physics.Raycast(this.player.transform.position, this.transform.forward, out RaycastHit secondHit, 1000))
         {
             distance = (secondHit.distance - Racecar.radius) * 10;
         }
 
         this.player.Hud.SetMessage($"Angle: {angle:F1} degrees\nDistance: {distance:F1} cm");
+
+        if (Mathf.Abs(ParkingCube.goalAngle - angle) < ParkingCube.angleThreshold 
+            && Mathf.Abs(ParkingCube.goalDistance - distance) < ParkingCube.distanceThreshold
+            && this.player.Physics.LinearVelocity.magnitude == 0)
+        {
+            this.player.HandleFinish();
+        }
     }
 }

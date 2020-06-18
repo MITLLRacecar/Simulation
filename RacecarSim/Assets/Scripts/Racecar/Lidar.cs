@@ -140,8 +140,10 @@ public class Lidar : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        print("collision");
-        this.racecar.Hud.ShowFailureMessage(Lidar.collisionFailureMessage);
+        if (other.GetComponent<FinishLine>() == null)
+        {
+            this.racecar.Hud.ShowFailureMessage(Lidar.collisionFailureMessage);
+        }
     }
 
     /// <summary>

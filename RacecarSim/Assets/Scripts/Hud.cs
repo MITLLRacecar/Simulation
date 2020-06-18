@@ -13,6 +13,12 @@ public class Hud : MonoBehaviour
     /// </summary>
     [SerializeField]
     private GameObject FailureMessage;
+
+    /// <summary>
+    /// The textbox shown when the user successfully completes a lab.
+    /// </summary>
+    [SerializeField]
+    private GameObject SuccessMessage;
     #endregion
 
     #region Constants
@@ -82,6 +88,16 @@ public class Hud : MonoBehaviour
         this.FailureMessage.SetActive(true);
         this.texts[Texts.Failure.GetHashCode()].text = text;
     }
+
+    /// <summary>
+    /// Show the success textbox with the provided completion time.
+    /// </summary>
+    /// <param name="time">The time (in seconds) the player took to complete the lab.</param>
+    public void ShowSuccessMessage(float time)
+    {
+        this.SuccessMessage.SetActive(true);
+        this.texts[Texts.SuccessTime.GetHashCode()].text = $"Time: {time:F2} seconds";
+    }
     #endregion
 
     /// <summary>
@@ -94,7 +110,8 @@ public class Hud : MonoBehaviour
         AngularVelocity = 11,
         Mode = 13,
         Message = 14,
-        Failure = 16
+        Failure = 16,
+        SuccessTime = 19
     }
 
     /// <summary>
@@ -169,6 +186,7 @@ public class Hud : MonoBehaviour
         this.defaultFixedDeltaTime = Time.fixedDeltaTime;
         this.images[Images.TimeWarp.GetHashCode()].enabled = false;
         this.FailureMessage.SetActive(false);
+        this.SuccessMessage.SetActive(false);
     }
 
     private void Update()

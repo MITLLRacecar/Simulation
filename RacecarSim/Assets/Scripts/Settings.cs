@@ -25,11 +25,6 @@ public class Settings
     public bool isRealism = true;
 
     /// <summary>
-    /// If true, the car begins in user program mode and cannot enter default drive mode.
-    /// </summary>
-    public bool isEvaluation = false;
-
-    /// <summary>
     /// The quality level of the current simulation.
     /// </summary>
     public QualityLevel Quality

@@ -25,7 +25,7 @@ public class MessageManager : MonoBehaviour
     private void Start()
     {
         this.isActive = this.Text != string.Empty;
-        this.hud.SetMessage(this.Text);
+        this.hud.SetMessage(this.Text, Color.white);
     }
 
     // Update is called once per frame
@@ -35,7 +35,7 @@ public class MessageManager : MonoBehaviour
         {
             if (Input.GetMouseButtonDown(0))
             {
-                this.hud.SetMessage(this.Text, 0.5f);
+                this.hud.SetMessage(this.Text, Color.white, 0.5f);
                 this.isActive = false;
             }
         }

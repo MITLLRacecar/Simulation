@@ -78,7 +78,7 @@ public class Racecar : MonoBehaviour
     /// </summary>
     public void EnterDefaultDrive()
     {
-        Debug.Log(">> Entering default drive mode");
+        print(">> Entering default drive mode");
         this.isDefaultDrive = true;
         this.DefaultDriveStart();
         this.Hud.UpdateMode(this.isDefaultDrive, this.isValidRun);
@@ -89,7 +89,7 @@ public class Racecar : MonoBehaviour
     /// </summary>
     public void EnterUserProgram()
     {
-        Debug.Log(">> Entering user program mode");
+        print(">> Entering user program mode");
         this.pythonInterface.PythonStart();
         this.isDefaultDrive = false;
         this.Hud.UpdateMode(this.isDefaultDrive, this.isValidRun);
@@ -101,7 +101,7 @@ public class Racecar : MonoBehaviour
     /// </summary>
     public void HandleExit()
     {
-        Debug.Log(">> Goodbye!");
+        print(">> Goodbye!");
         this.pythonInterface.HandleExit();
 
         // Reload current level with the ReloadBuffer

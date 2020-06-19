@@ -274,7 +274,7 @@ public class PythonInterface
             }
             else if ((Header)response[0] != Header.python_send_next)
             {
-                Debug.LogError(">> Error: Unity and Python became out of sync while sending a block message. Returning to default drive mode.");
+                this.LogError("Unity and Python became out of sync while sending a block message. Returning to default drive mode.");
                 this.racecar.EnterDefaultDrive();
                 break;
             }
@@ -295,8 +295,8 @@ public class PythonInterface
         {
             if (e.SocketErrorCode == SocketError.TimedOut)
             {
-                Debug.LogError(">> Error: No message received from Python within the alloted time. Returning to default drive mode." +
-                    "\n>> Troubleshooting:" +
+                this.LogError("No message received from Python within the alloted time. Returning to default drive mode.");
+                Debug.LogError(">> Troubleshooting:" +
                     "\n1. Make sure that your Python program does not block or wait. For example, your program should never call time.sleep()." +
                     "\n2. Make sure that your program is not too computationally intensive. Your start and update functions should be able to run in under 10 milliseconds." +
                     "\n3. Make sure that your Python program did not crash or close unexpectedly." +
@@ -304,10 +304,20 @@ public class PythonInterface
             }
             else
             {
-                Debug.LogError(">> Error: An error occurred when attempting to receive data from Python. Returning to default drive mode.");
+                this.LogError("An error occurred when attempting to receive data from Python. Returning to default drive mode.");
             }
             this.racecar.EnterDefaultDrive();
         }
         return null;
+    }
+
+    /// <summary>
+    /// Logs an error to the HUD and Debug.LogError.
+    /// </summary>
+    /// <param name="errorText">The error text to show.</param>
+    private void LogError(string errorText)
+    {
+        Debug.LogError($">> Error: {errorText}");
+        this.racecar.Hud.SetMessage($"Error: {errorText}", Color.red, 5, 1);
     }
 }

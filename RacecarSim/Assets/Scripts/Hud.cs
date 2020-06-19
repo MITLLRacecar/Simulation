@@ -53,9 +53,12 @@ public class Hud : MonoBehaviour
     /// Sets the message text at the bottom of the screen.
     /// </summary>
     /// <param name="message">The text to show.</param>
-    public void SetMessage(string message, float persistTime = -1, float fadeTime = 1.0f)
+    public void SetMessage(string message, Color color, float persistTime = -1, float fadeTime = 1.0f)
     {
         this.texts[Texts.Message.GetHashCode()].text = message;
+        this.texts[Texts.Message.GetHashCode()].color = color;
+
+        this.messageColor = color;
         this.messageCounter = 0;
         this.messagePersistTime = persistTime;
         this.messageFadeTime = fadeTime;
@@ -160,6 +163,11 @@ public class Hud : MonoBehaviour
     private float messageFadeTime;
 
     /// <summary>
+    /// The color of the current message.
+    /// </summary>
+    private Color messageColor;
+
+    /// <summary>
     /// The current factor at which time progresses.
     /// </summary>
     private float curTimeScale;
@@ -225,7 +233,7 @@ public class Hud : MonoBehaviour
         else if (this.messagePersistTime == 0 && this.messageCounter < this.messageFadeTime)
         {
             this.messageCounter += Time.deltaTime;
-            this.texts[Texts.Message.GetHashCode()].color = Color.Lerp(Color.white, Color.clear, this.messageCounter / this.messageFadeTime);
+            this.texts[Texts.Message.GetHashCode()].color = Color.Lerp(this.messageColor, Color.clear, this.messageCounter / this.messageFadeTime);
         }
     }
 

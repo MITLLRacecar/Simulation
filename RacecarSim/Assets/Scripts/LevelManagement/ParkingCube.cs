@@ -86,7 +86,7 @@ public class ParkingCube : MonoBehaviour
             distance = (secondHit.distance - Racecar.radius) * 10;
         }
 
-        this.player.Hud.SetMessage($"Angle: {angle:F1} degrees\nDistance: {distance:F1} cm");
+        this.player.Hud.SetMessage($"Angle: {angle:F1} degrees\nDistance: {distance:F1} cm", Color.white);
 
         print(this.player.Physics.LinearVelocity.magnitude);
         if (Mathf.Abs(ParkingCube.goalAngle - angle) < ParkingCube.angleThreshold 

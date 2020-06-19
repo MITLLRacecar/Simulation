@@ -184,11 +184,14 @@ public class Hud : MonoBehaviour
     private void Start()
     {
         this.messagePersistTime = -1;
-        this.curTimeScale = 1.0f;
         this.defaultFixedDeltaTime = Time.fixedDeltaTime;
         this.images[Images.TimeWarp.GetHashCode()].enabled = false;
         this.FailureMessage.SetActive(false);
-        this.SuccessMessage.SetActive(false);
+        this.SuccessMessage.SetActive(false);        
+        
+        this.curTimeScale = 1.0f;
+        Time.timeScale = this.curTimeScale;
+        Time.fixedDeltaTime = this.defaultFixedDeltaTime * this.curTimeScale;
     }
 
     private void Update()

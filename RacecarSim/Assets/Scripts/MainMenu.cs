@@ -86,4 +86,12 @@ public class MainMenu : MonoBehaviour
         this.dropdown.AddOptions(MainMenu.levelNames);
         this.Controlls.SetActive(false);
     }
+
+    private void Update()
+    {
+        if (Input.anyKeyDown)
+        {
+            this.Controlls.SetActive(false);
+        }
+    }
 }

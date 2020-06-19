@@ -50,6 +50,7 @@ public class MainMenu : MonoBehaviour
     /// </summary>
     public void BeginSimulation()
     {
+        MainMenu.lastSelected = this.dropdown.value;
         SceneManager.LoadScene(levelMap[levelNames[dropdown.value]], LoadSceneMode.Single);
     }
 
@@ -75,6 +76,11 @@ public class MainMenu : MonoBehaviour
     /// </summary>
     private Dropdown dropdown;
 
+    /// <summary>
+    /// The previously selected dropdown value.
+    /// </summary>
+    private static int lastSelected;
+
     private void Awake()
     {
         this.dropdown = this.GetComponentInChildren<Dropdown>();
@@ -84,6 +90,7 @@ public class MainMenu : MonoBehaviour
     {
         this.dropdown.ClearOptions();
         this.dropdown.AddOptions(MainMenu.levelNames);
+        this.dropdown.value = MainMenu.lastSelected;
         this.Controlls.SetActive(false);
     }
 

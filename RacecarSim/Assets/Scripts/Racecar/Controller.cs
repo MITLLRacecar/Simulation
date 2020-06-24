@@ -92,6 +92,10 @@ public class Controller : MonoBehaviour
     /// <returns>True if the provided button is currently pressed.</returns>
     public bool IsDown(Button button)
     {
+        if (button == Button.BACK)
+        {
+            return Input.GetButton(buttonMap[button]) || Input.GetKey(KeyCode.Delete) || Input.GetKey(KeyCode.Backspace);
+        }
         return Input.GetButton(buttonMap[button]);
     }
 
@@ -102,6 +106,10 @@ public class Controller : MonoBehaviour
     /// <returns>True if the provided button was pressed this frame.</returns>
     public bool WasPressed(Button button)
     {
+        if (button == Button.BACK)
+        {
+            return Input.GetButtonDown(buttonMap[button]) || Input.GetKeyDown(KeyCode.Delete) || Input.GetKeyDown(KeyCode.Backspace);
+        }
         return Input.GetButtonDown(buttonMap[button]);
     }
 
@@ -112,6 +120,10 @@ public class Controller : MonoBehaviour
     /// <returns>True if the provided button was released this frame.</returns>
     public bool WasReleased(Button button)
     {
+        if (button == Button.BACK)
+        {
+            return Input.GetButtonUp(buttonMap[button]) || Input.GetKeyUp(KeyCode.Delete) || Input.GetKeyUp(KeyCode.Backspace);
+        }
         return Input.GetButtonUp(buttonMap[button]);
     }
 

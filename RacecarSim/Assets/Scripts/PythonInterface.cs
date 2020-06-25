@@ -58,7 +58,6 @@ public class PythonInterface
         this.udpClient.Client.ReceiveTimeout = PythonInterface.timeoutTime;
 
         // Initialize client to handle async calls
-        this.asyncClientIsRunning = true;
         this.asyncClientThread = new Thread(new ThreadStart(this.ProcessAsyncCalls))
         {
             IsBackground = true
@@ -70,8 +69,9 @@ public class PythonInterface
     /// </summary>
     public void HandleExit()
     {
-        this.asyncClientIsRunning = false;
         this.udpClient.Send(new byte[] { (byte)Header.unity_exit.GetHashCode() }, 1);
+        this.udpClient.Close();
+        this.udpClientAsync.Close();
     }
 
     /// <summary>
@@ -126,9 +126,14 @@ public class PythonInterface
     }
 
     /// <summary>
-    /// The UDI client used to send packets to Python.
+    /// The UDP client used to send packets to Python.
     /// </summary>
     private UdpClient udpClient;
+
+    /// <summary>
+    /// The UDP client used to handle async API calls from Python.
+    /// </summary>
+    private UdpClient udpClientAsync;
 
     /// <summary>
     /// The IP address and port used by the Python RACECAR library.
@@ -144,11 +149,6 @@ public class PythonInterface
     /// A thread containing a UDP client to process asynchronous API calls from Python.
     /// </summary>
     private Thread asyncClientThread;
-
-    /// <summary>
-    /// True if the async client thread should be running.
-    /// </summary>
-    private bool asyncClientIsRunning;
 
     /// <summary>
     /// Handles a call to a Python function.
@@ -351,43 +351,34 @@ public class PythonInterface
     /// <summary>
     /// Creates a UDP client to process asynchronous API calls from Python (for use by Jupyter).
     /// </summary>
-    private async void ProcessAsyncCalls()
+    private void ProcessAsyncCalls()
     {
-        UdpClient asyncClient = new UdpClient(new IPEndPoint(PythonInterface.ipAddress, PythonInterface.unityPortAsync));
-        asyncClient.Connect(this.pythonEndPoint);
-        while (this.asyncClientIsRunning)
+        this.udpClientAsync = new UdpClient(new IPEndPoint(PythonInterface.ipAddress, PythonInterface.unityPortAsync));
+        this.udpClientAsync.Connect(this.pythonEndPoint);
+        while (true)
         {
-            try
+            byte[] data = this.udpClientAsync.Receive(ref this.pythonEndPoint);
+            Header header = (Header)data[0];
+
+            switch (header)
             {
-                UdpReceiveResult result = await asyncClient.ReceiveAsync();
-                Debug.Log("Received some data");
-                Header header = (Header)result.Buffer[0];
+                case Header.camera_get_color_image:
+                    this.SendFragmented(this.racecar.Camera.ColorImageRaw, 32, this.udpClientAsync);
+                    break;
 
-                switch (header)
-                {
-                    case Header.camera_get_color_image:
-                        this.SendFragmented(this.racecar.Camera.ColorImageRaw, 32, asyncClient);
-                        break;
+                case Header.camera_get_depth_image:
+                    this.udpClientAsync.Send(this.racecar.Camera.DepthImageRaw, this.racecar.Camera.DepthImageRaw.Length);
+                    break;
 
-                    case Header.camera_get_depth_image:
-                        asyncClient.Send(this.racecar.Camera.DepthImageRaw, this.racecar.Camera.DepthImageRaw.Length);
-                        break;
+                case Header.lidar_get_samples:
+                    byte[] sendData = new byte[sizeof(float) * Lidar.NumSamples];
+                    Buffer.BlockCopy(this.racecar.Lidar.Samples, 0, sendData, 0, sendData.Length);
+                    this.udpClientAsync.Send(sendData, sendData.Length);
+                    break;
 
-                    case Header.lidar_get_samples:
-                        byte[] sendData = new byte[sizeof(float) * Lidar.NumSamples];
-                        Buffer.BlockCopy(this.racecar.Lidar.Samples, 0, sendData, 0, sendData.Length);
-                        asyncClient.Send(sendData, sendData.Length);
-                        break;
-
-                    default:
-                        Debug.LogError($">> Error: The function {header} is not supported by RacecarSim for async calls.");
-                        break;
-                }
-
-            }
-            catch (Exception e)
-            {
-                Debug.LogError(e.ToString());
+                default:
+                    Debug.LogError($">> Error: The function {header} is not supported by RacecarSim for async calls.");
+                    break;
             }
         }
     }

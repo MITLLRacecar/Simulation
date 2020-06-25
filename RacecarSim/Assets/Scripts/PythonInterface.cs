@@ -164,7 +164,7 @@ public class PythonInterface
         while (!pythonFinished)
         {
             // Receive a response from Python
-            byte[] data = this.SafeRecieve();
+            byte[] data = this.SafeRecieve(this.udpClient);
             if (data == null)
             {
                 break;
@@ -189,7 +189,8 @@ public class PythonInterface
                     break;
 
                 case Header.camera_get_depth_image:
-                    this.udpClient.Send(this.racecar.Camera.DepthImageRaw, this.racecar.Camera.DepthImageRaw.Length);
+                    sendData = this.racecar.Camera.DepthImageRaw;
+                    this.udpClient.Send(sendData, sendData.Length);
                     break;
 
                 case Header.camera_get_width:
@@ -294,12 +295,8 @@ public class PythonInterface
             Buffer.BlockCopy(bytes, i * blockSize, sendData, 0, blockSize);
             client.Send(sendData, sendData.Length);
 
-            byte[] response = this.SafeRecieve();
-            if (response == null)
-            {
-                break;
-            }
-            else if ((Header)response[0] != Header.python_send_next)
+            byte[] response = this.SafeRecieve(client);
+            if (response == null || (Header)response[0] != Header.python_send_next)
             {
                 this.LogError("Unity and Python became out of sync while sending a block message. Returning to default drive mode.");
                 this.racecar.EnterDefaultDrive();
@@ -311,12 +308,13 @@ public class PythonInterface
     /// <summary>
     /// Receives a packet from Python and safely handles UDP exceptions (broken socket, timeout, etc.).
     /// </summary>
+    /// <param name="client">The client from which to receive a packet.</param>
     /// <returns>The data in the packet, or null if an error occurred.</returns>
-    private byte[] SafeRecieve()
+    private byte[] SafeRecieve(UdpClient client)
     {
         try
         {
-            return udpClient.Receive(ref this.pythonEndPoint);
+            return client.Receive(ref this.pythonEndPoint);
         }
         catch (SocketException e)
         {
@@ -360,18 +358,20 @@ public class PythonInterface
             byte[] data = this.udpClientAsync.Receive(ref this.pythonEndPoint);
             Header header = (Header)data[0];
 
+            byte[] sendData;
             switch (header)
             {
                 case Header.camera_get_color_image:
-                    this.SendFragmented(this.racecar.Camera.ColorImageRaw, 32, this.udpClientAsync);
+                    this.SendFragmented(this.racecar.Camera.GetColorImageRawAsync(), 32, this.udpClientAsync);
                     break;
 
                 case Header.camera_get_depth_image:
-                    this.udpClientAsync.Send(this.racecar.Camera.DepthImageRaw, this.racecar.Camera.DepthImageRaw.Length);
+                    sendData = this.racecar.Camera.GetDepthImageRawAsync();
+                    this.udpClientAsync.Send(sendData, sendData.Length);
                     break;
 
                 case Header.lidar_get_samples:
-                    byte[] sendData = new byte[sizeof(float) * Lidar.NumSamples];
+                    sendData = new byte[sizeof(float) * Lidar.NumSamples];
                     Buffer.BlockCopy(this.racecar.Lidar.Samples, 0, sendData, 0, sendData.Length);
                     this.udpClientAsync.Send(sendData, sendData.Length);
                     break;

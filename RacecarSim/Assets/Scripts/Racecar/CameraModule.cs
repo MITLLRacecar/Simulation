@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using UnityEngine;
 
 /// <summary>
@@ -85,7 +86,6 @@ public class CameraModule : MonoBehaviour
             if (!isColorImageRawValid)
             {
                 this.UpdateColorImageRaw();
-                this.isColorImageRawValid = true;
             }
             return this.colorImageRaw;
         }
@@ -101,7 +101,6 @@ public class CameraModule : MonoBehaviour
             if (!isDepthImageValid)
             {
                 this.UpdateDepthImage();
-                this.isDepthImageValid = true;
             }
 
             return this.depthImage;
@@ -118,13 +117,7 @@ public class CameraModule : MonoBehaviour
         {
             if (!this.isDepthImageRawValid)
             {
-                for (int r = 0; r < CameraModule.DepthHeight; r++)
-                {
-                    Buffer.BlockCopy(this.DepthImage[r], 0,
-                                    this.depthImageRaw, r * CameraModule.DepthWidth * sizeof(float),
-                                    CameraModule.DepthWidth * sizeof(float));
-                }
-                this.isDepthImageRawValid = true;
+                this.UpdateDepthImageRaw();
             }
 
             return this.depthImageRaw;
@@ -161,6 +154,30 @@ public class CameraModule : MonoBehaviour
         }
 
         texture.Apply();
+    }
+
+    /// <summary>
+    /// Asynchronously updates and returns the color image captured by the camera.
+    /// Warning: This method blocks for around 50 ms to wait for the new image to load.
+    /// </summary>
+    /// <returns>The color image captured by the camera.</returns>
+    public byte[] GetColorImageRawAsync()
+    {
+        this.mustUpdateColorImageRaw = true;
+        Thread.Sleep(50);
+        return this.colorImageRaw;
+    }
+
+    /// <summary>
+    /// Asynchronously updates and returns the depth image captured by the camera.
+    /// Warning: This method blocks for around 50 ms to wait for the new image to load.
+    /// </summary>
+    /// <returns>The depth image captured by the camera.</returns>
+    public byte[] GetDepthImageRawAsync()
+    {
+        this.mustUpdateDepthImageRaw = true;
+        Thread.Sleep(50);
+        return this.depthImageRaw;
     }
     #endregion
 
@@ -210,6 +227,16 @@ public class CameraModule : MonoBehaviour
     /// </summary>
     private Camera depthCamera;
 
+    /// <summary>
+    /// If true, colorImageRaw is updated next frame.
+    /// </summary>
+    private bool mustUpdateColorImageRaw;
+
+    /// <summary>
+    /// If true, depthImageRaw is updated next frame.
+    /// </summary>
+    private bool mustUpdateDepthImageRaw;
+
     private void Awake()
     {
         this.racecar = this.GetComponent<Racecar>();
@@ -232,6 +259,21 @@ public class CameraModule : MonoBehaviour
 
         this.depthImageRaw = new byte[sizeof(float) * CameraModule.DepthHeight * CameraModule.DepthWidth];
         this.colorImageRaw = new byte[sizeof(float) * CameraModule.ColorWidth * CameraModule.ColorHeight];
+    }
+
+    private void Update()
+    {
+        if (this.mustUpdateColorImageRaw)
+        {
+            this.UpdateColorImageRaw();
+            this.mustUpdateColorImageRaw = false;
+        }
+
+        if (this.mustUpdateDepthImageRaw)
+        {
+            this.UpdateDepthImageRaw();
+            this.mustUpdateDepthImageRaw = false;
+        }
     }
 
     private void LateUpdate()
@@ -271,7 +313,7 @@ public class CameraModule : MonoBehaviour
     }
 
     /// <summary>
-    /// Update this.colorImageRaw by rendering the color camera on the GPU and copying to the CPU.
+    /// Update colorImageRaw by rendering the color camera on the GPU and copying to the CPU.
     /// Warning: this operation is very expensive.
     /// </summary>
     private void UpdateColorImageRaw()
@@ -300,10 +342,11 @@ public class CameraModule : MonoBehaviour
         }
 
         Destroy(image);
+        this.isColorImageRawValid = true;
     }
 
     /// <summary>
-    /// Update this.depthImage by performing a ray cast for each depth pixel.
+    /// Update depthImage by performing a ray cast for each depth pixel.
     /// Warning: this operation is very expensive.
     /// </summary>
     private void UpdateDepthImage()
@@ -330,5 +373,22 @@ public class CameraModule : MonoBehaviour
                 }
             }
         }
+
+        this.isDepthImageValid = true;
+    }
+
+    /// <summary>
+    /// Update depthImageRaw from DepthImage
+    /// </summary>
+    private void UpdateDepthImageRaw()
+    {
+        for (int r = 0; r < CameraModule.DepthHeight; r++)
+        {
+            Buffer.BlockCopy(this.DepthImage[r], 0,
+                            this.depthImageRaw, r * CameraModule.DepthWidth * sizeof(float),
+                            CameraModule.DepthWidth * sizeof(float));
+        }
+
+        this.isDepthImageRawValid = true;
     }
 }

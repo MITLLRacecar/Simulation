@@ -6,18 +6,39 @@ using UnityEngine.SceneManagement;
 /// </summary>
 public class ReloadBuffer : MonoBehaviour
 {
+    #region Constants
+    /// <summary>
+    /// The build index of the ReloadBuffer scene.
+    /// </summary>
+    public const int BuildIndex = 1;
+
+    /// <summary>
+    /// The time (in seconds) to wait in the reload buffer.
+    /// </summary>
+    private const float waitTime = 0.5f;
+    #endregion
+
     /// <summary>
     /// The build index of the scene to reload.
     /// </summary>
     public static int BuildIndexToReload = 0;
 
     /// <summary>
-    /// The build index of the ReloadBuffer scene.
+    /// The counter used to track time spent in the reload buffer.
     /// </summary>
-    public const int BuildIndex = 1;
+    private float counter;
 
-    void Start()
+    private void Start()
     {
-        SceneManager.LoadScene(ReloadBuffer.BuildIndexToReload, LoadSceneMode.Single);
+        this.counter = ReloadBuffer.waitTime;
+    }
+
+    private void Update()
+    {
+        this.counter -= Time.deltaTime;
+        if (this.counter <= 0)
+        {
+            SceneManager.LoadScene(ReloadBuffer.BuildIndexToReload, LoadSceneMode.Single);
+        }
     }
 }

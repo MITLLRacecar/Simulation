@@ -36,7 +36,7 @@ public class Settings
         set
         {
             this.quality = value;
-            QualitySettings.vSyncCount = Settings.vSyncCounts[value.GetHashCode()];
+            // QualitySettings.vSyncCount = Settings.vSyncCounts[value.GetHashCode()];
         }
     }
     #endregion Public Interface

@@ -61,6 +61,11 @@ public class CameraModule : MonoBehaviour
     /// Based on the Intel RealSense D435i datasheet.
     /// </summary>
     private const float averageErrorFactor = 0.02f;
+
+    /// <summary>
+    /// Time (in ms) to wait for the color or depth image to update during an async call.
+    /// </summary>
+    private const int asyncWaitTime = 200;
     #endregion
 
     #region Public Interface
@@ -158,25 +163,25 @@ public class CameraModule : MonoBehaviour
 
     /// <summary>
     /// Asynchronously updates and returns the color image captured by the camera.
-    /// Warning: This method blocks for around 50 ms to wait for the new image to load.
+    /// Warning: This method blocks for asyncWaitTime ms to wait for the new image to load.
     /// </summary>
     /// <returns>The color image captured by the camera.</returns>
     public byte[] GetColorImageRawAsync()
     {
         this.mustUpdateColorImageRaw = true;
-        Thread.Sleep(50);
+        Thread.Sleep(CameraModule.asyncWaitTime);
         return this.colorImageRaw;
     }
 
     /// <summary>
     /// Asynchronously updates and returns the depth image captured by the camera.
-    /// Warning: This method blocks for around 50 ms to wait for the new image to load.
+    /// Warning: This method blocks for asyncWaitTime ms to wait for the new image to load.
     /// </summary>
     /// <returns>The depth image captured by the camera.</returns>
     public byte[] GetDepthImageRawAsync()
     {
         this.mustUpdateDepthImageRaw = true;
-        Thread.Sleep(50);
+        Thread.Sleep(CameraModule.asyncWaitTime);
         return this.depthImageRaw;
     }
     #endregion

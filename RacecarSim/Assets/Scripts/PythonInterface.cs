@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading;
+using System.Threading.Tasks;
 using UnityEngine;
 
 /// <summary>
@@ -13,6 +15,11 @@ public class PythonInterface
     /// The UDP port used by the Unity simulation (this program).
     /// </summary>
     private const int unityPort = 5065;
+
+    /// <summary>
+    /// The UDP port used by the Unity simulation (this program) for async (Jupyter Notebook) calls.
+    /// </summary>
+    private const int unityPortAsync = 5064;
 
     /// <summary>
     /// The UDP port used by the Python RACECAR library.
@@ -45,17 +52,26 @@ public class PythonInterface
         this.racecar = racecar;
 
         // Establish and configure a UDP port
-        this.pythonEndpoint = new IPEndPoint(PythonInterface.ipAddress, PythonInterface.pythonPort);
-        this.client = new UdpClient(new IPEndPoint(PythonInterface.ipAddress, PythonInterface.unityPort));
-        this.client.Connect(this.pythonEndpoint);
-        this.client.Client.ReceiveTimeout = PythonInterface.timeoutTime;
+        this.pythonEndPoint = new IPEndPoint(PythonInterface.ipAddress, PythonInterface.pythonPort);
+        this.udpClient = new UdpClient(new IPEndPoint(PythonInterface.ipAddress, PythonInterface.unityPort));
+        this.udpClient.Connect(this.pythonEndPoint);
+        this.udpClient.Client.ReceiveTimeout = PythonInterface.timeoutTime;
+
+        // Initialize client to handle async calls
+        this.asyncClientIsRunning = true;
+        this.asyncClientThread = new Thread(new ThreadStart(this.ProcessAsyncCalls))
+        {
+            IsBackground = true
+        };
+        this.asyncClientThread.Start();
     }
     /// <summary>
     /// Tells Python that the simulation has ended.
     /// </summary>
     public void HandleExit()
     {
-        this.client.Send(new byte[] { (byte)Header.unity_exit.GetHashCode() }, 1);
+        this.asyncClientIsRunning = false;
+        this.udpClient.Send(new byte[] { (byte)Header.unity_exit.GetHashCode() }, 1);
     }
 
     /// <summary>
@@ -112,17 +128,27 @@ public class PythonInterface
     /// <summary>
     /// The UDI client used to send packets to Python.
     /// </summary>
-    private UdpClient client;
+    private UdpClient udpClient;
 
     /// <summary>
-    /// The IP address and port of the Python RACECAR library.
+    /// The IP address and port used by the Python RACECAR library.
     /// </summary>
-    private IPEndPoint pythonEndpoint;
+    private IPEndPoint pythonEndPoint;
 
     /// <summary>
     /// The racecar controlled by the user's Python script.
     /// </summary>
     private Racecar racecar;
+
+    /// <summary>
+    /// A thread containing a UDP client to process asynchronous API calls from Python.
+    /// </summary>
+    private Thread asyncClientThread;
+
+    /// <summary>
+    /// True if the async client thread should be running.
+    /// </summary>
+    private bool asyncClientIsRunning;
 
     /// <summary>
     /// Handles a call to a Python function.
@@ -131,7 +157,7 @@ public class PythonInterface
     private void PythonCall(Header function)
     {
         // Tell Python what function to call
-        this.client.Send(new byte[] { (byte)function.GetHashCode() }, 1);
+        this.udpClient.Send(new byte[] { (byte)function.GetHashCode() }, 1);
 
         // Respond to API calls from Python until we receive a python_finished message
         bool pythonFinished = false;
@@ -155,49 +181,49 @@ public class PythonInterface
 
                 case Header.racecar_get_delta_time:
                     sendData = BitConverter.GetBytes(Time.deltaTime);
-                    client.Send(sendData, sendData.Length);
+                    this.udpClient.Send(sendData, sendData.Length);
                     break;
 
                 case Header.camera_get_color_image:
-                    this.SendFragmented(this.racecar.Camera.ColorImageRaw, 32);
+                    this.SendFragmented(this.racecar.Camera.ColorImageRaw, 32, this.udpClient);
                     break;
 
                 case Header.camera_get_depth_image:
-                    client.Send(this.racecar.Camera.DepthImageRaw, this.racecar.Camera.DepthImageRaw.Length);
+                    this.udpClient.Send(this.racecar.Camera.DepthImageRaw, this.racecar.Camera.DepthImageRaw.Length);
                     break;
 
                 case Header.camera_get_width:
                     sendData = BitConverter.GetBytes(CameraModule.ColorWidth);
-                    client.Send(sendData, sendData.Length);
+                    this.udpClient.Send(sendData, sendData.Length);
                     break;
 
                 case Header.camera_get_height:
                     sendData = BitConverter.GetBytes(CameraModule.ColorHeight);
-                    client.Send(sendData, sendData.Length);
+                    this.udpClient.Send(sendData, sendData.Length);
                     break;
 
                 case Header.controller_is_down:
                     Controller.Button buttonDown = (Controller.Button)data[1];
                     sendData = BitConverter.GetBytes(this.racecar.Controller.IsDown(buttonDown));
-                    client.Send(sendData, sendData.Length);
+                    this.udpClient.Send(sendData, sendData.Length);
                     break;
 
                 case Header.controller_was_pressed:
                     Controller.Button buttonPressed = (Controller.Button)data[1];
                     sendData = BitConverter.GetBytes(this.racecar.Controller.WasPressed(buttonPressed));
-                    client.Send(sendData, sendData.Length);
+                    this.udpClient.Send(sendData, sendData.Length);
                     break;
 
                 case Header.controller_was_released:
                     Controller.Button buttonReleased = (Controller.Button)data[1];
                     sendData = BitConverter.GetBytes(this.racecar.Controller.WasReleased(buttonReleased));
-                    client.Send(sendData, sendData.Length);
+                    this.udpClient.Send(sendData, sendData.Length);
                     break;
 
                 case Header.controller_get_trigger:
                     Controller.Trigger trigger = (Controller.Trigger)data[1];
                     sendData = BitConverter.GetBytes(this.racecar.Controller.GetTrigger(trigger));
-                    client.Send(sendData, sendData.Length);
+                    this.udpClient.Send(sendData, sendData.Length);
                     break;
 
                 case Header.controller_get_joystick:
@@ -205,7 +231,7 @@ public class PythonInterface
                     Vector2 joystickValues = this.racecar.Controller.GetJoystick(joystick);
                     sendData = new byte[sizeof(float) * 2];
                     Buffer.BlockCopy(new float[] { joystickValues.x, joystickValues.y }, 0, sendData, 0, sendData.Length);
-                    client.Send(sendData, sendData.Length);
+                    this.udpClient.Send(sendData, sendData.Length);
                     break;
 
                 case Header.drive_set_speed_angle:
@@ -223,31 +249,31 @@ public class PythonInterface
 
                 case Header.lidar_get_num_samples:
                     sendData = BitConverter.GetBytes(Lidar.NumSamples);
-                    client.Send(sendData, sendData.Length);
+                    this.udpClient.Send(sendData, sendData.Length);
                     break;
 
                 case Header.lidar_get_samples:
                     sendData = new byte[sizeof(float) * Lidar.NumSamples];
                     Buffer.BlockCopy(this.racecar.Lidar.Samples, 0, sendData, 0, sendData.Length);
-                    client.Send(sendData, sendData.Length);
+                    this.udpClient.Send(sendData, sendData.Length);
                     break;
 
                 case Header.physics_get_linear_acceleration:
                     Vector3 linearAcceleration = this.racecar.Physics.LinearAccceleration;
                     sendData = new byte[sizeof(float) * 3];
                     Buffer.BlockCopy(new float[] { linearAcceleration.x, linearAcceleration.y, linearAcceleration.z }, 0, sendData, 0, sendData.Length);
-                    client.Send(sendData, sendData.Length);
+                    this.udpClient.Send(sendData, sendData.Length);
                     break;
 
                 case Header.physics_get_angular_velocity:
                     Vector3 angularVelocity = this.racecar.Physics.AngularVelocity;
                     sendData = new byte[sizeof(float) * 3];
                     Buffer.BlockCopy(new float[] { angularVelocity.x, angularVelocity.y, angularVelocity.z }, 0, sendData, 0, sendData.Length);
-                    client.Send(sendData, sendData.Length);
+                    this.udpClient.Send(sendData, sendData.Length);
                     break;
 
                 default:
-                    Debug.LogError($">> Error: The function {header} is not supported by RacecarSim");
+                    Debug.LogError($">> Error: The function {header} is not supported by RacecarSim.");
                     break;
             }
         }
@@ -258,7 +284,8 @@ public class PythonInterface
     /// </summary>
     /// <param name="bytes">The bytes to send (must be divisible by numPackets).</param>
     /// <param name="numPackets">The number of packets to split the data across.</param>
-    private void SendFragmented(byte[] bytes, int numPackets)
+    /// <param name="client">The client through which the packets are sent.</param>
+    private void SendFragmented(byte[] bytes, int numPackets, UdpClient client)
     {
         int blockSize = bytes.Length / numPackets;
         byte[] sendData = new byte[blockSize];
@@ -289,7 +316,7 @@ public class PythonInterface
     {
         try
         {
-            return client.Receive(ref this.pythonEndpoint);
+            return udpClient.Receive(ref this.pythonEndPoint);
         }
         catch (SocketException e)
         {
@@ -319,5 +346,49 @@ public class PythonInterface
     {
         Debug.LogError($">> Error: {errorText}");
         this.racecar.Hud.SetMessage($"Error: {errorText}", Color.red, 5, 1);
+    }
+
+    /// <summary>
+    /// Creates a UDP client to process asynchronous API calls from Python (for use by Jupyter).
+    /// </summary>
+    private async void ProcessAsyncCalls()
+    {
+        UdpClient asyncClient = new UdpClient(new IPEndPoint(PythonInterface.ipAddress, PythonInterface.unityPortAsync));
+        asyncClient.Connect(this.pythonEndPoint);
+        while (this.asyncClientIsRunning)
+        {
+            try
+            {
+                UdpReceiveResult result = await asyncClient.ReceiveAsync();
+                Debug.Log("Received some data");
+                Header header = (Header)result.Buffer[0];
+
+                switch (header)
+                {
+                    case Header.camera_get_color_image:
+                        this.SendFragmented(this.racecar.Camera.ColorImageRaw, 32, asyncClient);
+                        break;
+
+                    case Header.camera_get_depth_image:
+                        asyncClient.Send(this.racecar.Camera.DepthImageRaw, this.racecar.Camera.DepthImageRaw.Length);
+                        break;
+
+                    case Header.lidar_get_samples:
+                        byte[] sendData = new byte[sizeof(float) * Lidar.NumSamples];
+                        Buffer.BlockCopy(this.racecar.Lidar.Samples, 0, sendData, 0, sendData.Length);
+                        asyncClient.Send(sendData, sendData.Length);
+                        break;
+
+                    default:
+                        Debug.LogError($">> Error: The function {header} is not supported by RacecarSim for async calls.");
+                        break;
+                }
+
+            }
+            catch (Exception e)
+            {
+                Debug.LogError(e.ToString());
+            }
+        }
     }
 }

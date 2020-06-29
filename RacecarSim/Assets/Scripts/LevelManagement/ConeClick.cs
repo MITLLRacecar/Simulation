@@ -13,6 +13,12 @@ public class ConeClick : MonoBehaviour
     /// </summary>
     [SerializeField]
     private bool Resizable = false;
+
+    /// <summary>
+    /// If true, clicking on the screen will place the cone at that location.
+    /// </summary>
+    [SerializeField]
+    private bool ClickToPlace = true;
     #endregion
 
     #region Constants
@@ -89,7 +95,7 @@ public class ConeClick : MonoBehaviour
     private void Update()
     {
         // Place the cone at the position clicked on screen
-        if (Input.GetMouseButtonDown(0))
+        if (this.ClickToPlace && Input.GetMouseButtonDown(0))
         {
             if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out RaycastHit raycastHit, ConeClick.maxDistance))
             {

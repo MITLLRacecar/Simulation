@@ -34,7 +34,7 @@ public class PythonInterface
     /// <summary>
     /// The time (in ms) to wait for Python to respond.
     /// </summary>
-    private const int timeoutTime = 1000;
+    private const int timeoutTime = 5000;
 
     /// <summary>
     /// The maximum UDP packet size allowed on Windows.

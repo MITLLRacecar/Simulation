@@ -8,10 +8,10 @@ public class Racecar : MonoBehaviour
 {
     #region Set in Unity Editor
     /// <summary>
-    /// The third person camera through which the user observes the car.
+    /// The cameras through which the user can observe the car.
     /// </summary>
     [SerializeField]
-    private Camera ThirdPersonCamera;
+    private Camera[] PlayerCameras;
 
     /// <summary>
     /// Cause the player to fail if they exceed this speed (in m/s).
@@ -27,9 +27,14 @@ public class Racecar : MonoBehaviour
     public const float radius = 1.8f;
 
     /// <summary>
-    /// The distance from which the camera follows the car.
+    /// The distance from which each player camera follows the car.
     /// </summary>
-    private static readonly Vector3 cameraOffset = new Vector3(0, 4.0f, -8.0f);
+    private static readonly Vector3[] cameraOffsets =
+    {
+        new Vector3(0, 4, -8),
+        new Vector3(0, 20, -2),
+        new Vector3(0, 4, 8)
+    };
 
     /// <summary>
     /// The speed at which the camera follows the car.
@@ -141,13 +146,25 @@ public class Racecar : MonoBehaviour
     /// </summary>
     private bool isDefaultDrive = true;
 
+    /// <summary>
+    /// True if the current run has only been controlled by the user's program.
+    /// </summary>
     private bool isValidRun;
 
+    /// <summary>
+    /// The time at which the car entered user program mode.
+    /// </summary>
     private float startTime;
+
+    /// <summary>
+    /// The index in PlayerCameras of the current active camera.
+    /// </summary>
+    private int curCamera;
 
     private void Awake()
     {
         this.isValidRun = false;
+        this.curCamera = 0;
 
         this.Settings = new Settings();
         this.pythonInterface = new PythonInterface(this);
@@ -197,6 +214,14 @@ public class Racecar : MonoBehaviour
             }
         }
 
+        // Toggle camera when the space bar is pressed
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            this.PlayerCameras[this.curCamera].enabled = false;
+            this.curCamera = (this.curCamera + 1) % this.PlayerCameras.Length;
+            this.PlayerCameras[this.curCamera].enabled = true;
+        }
+
         // Return to main menu on escape
         if (Input.GetKeyDown(KeyCode.Escape))
         {
@@ -213,11 +238,17 @@ public class Racecar : MonoBehaviour
 
     private void LateUpdate()
     {
-        Vector3 followPoint = this.transform.forward * Racecar.cameraOffset.z;
-        Vector3 targetCameraPosition = this.transform.position + new Vector3(followPoint.x, Racecar.cameraOffset.y, followPoint.z);
-        this.ThirdPersonCamera.transform.position = Vector3.Lerp(this.ThirdPersonCamera.transform.position, targetCameraPosition, Racecar.cameraSpeed * Time.deltaTime);
+        for (int i = 0; i < this.PlayerCameras.Length; ++i)
+        {
+            Vector3 followPoint = this.transform.forward * Racecar.cameraOffsets[i].z;
+            Vector3 targetCameraPosition = this.transform.position + new Vector3(followPoint.x, Racecar.cameraOffsets[i].y, followPoint.z);
+            this.PlayerCameras[i].transform.position = Vector3.Lerp(
+                this.PlayerCameras[i].transform.position,
+                targetCameraPosition,
+                Racecar.cameraSpeed * Time.deltaTime);
 
-        this.ThirdPersonCamera.transform.LookAt(this.transform.position);
+            this.PlayerCameras[i].transform.LookAt(this.transform.position);
+        }
     }
 
     /// <summary>

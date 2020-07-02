@@ -56,19 +56,6 @@ public static class Settings
         }
     }
 
-    static Settings()
-    {
-        if (!(PlayerPrefs.HasKey("IsRealism") && PlayerPrefs.HasKey("DepthRes")))
-        {
-            Settings.RestoreDefaults();
-            Settings.SaveSettings();
-        }
-        else
-        {
-            Settings.LoadSettings();
-        }
-    }
-
     /// <summary>
     /// Restore all settings to the default values.
     /// </summary>
@@ -87,13 +74,17 @@ public static class Settings
         PlayerPrefs.SetInt("DepthRes", (int)Settings.DepthRes);
     }
     #endregion
+    static Settings()
+    {
+        Settings.LoadSettings();
+    }
 
     /// <summary>
     /// Load all settings from PlayerPrefs.
     /// </summary>
     private static void LoadSettings()
     {
-        Settings.IsRealism = System.Convert.ToBoolean(PlayerPrefs.GetInt("IsRealism"));
-        Settings.DepthRes = (DepthResolution)PlayerPrefs.GetInt("DepthRes");
+        Settings.IsRealism = System.Convert.ToBoolean(PlayerPrefs.GetInt("IsRealism", System.Convert.ToInt32(Settings.defaultIsRealism)));
+        Settings.DepthRes = (DepthResolution)PlayerPrefs.GetInt("DepthRes", (int)Settings.defaultDepthRes);
     }
 }

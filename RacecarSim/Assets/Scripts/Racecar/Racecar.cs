@@ -112,12 +112,19 @@ public class Racecar : MonoBehaviour
     /// <summary>
     /// Handles crossing the finish line.
     /// </summary>
-    public void HandleFinish()
+    /// <param name="level">The level entry to update in BestTimes (if time is recorded for this level).</param>
+    public void HandleFinish(BestTimes.Level level = BestTimes.Level.None)
     {
         if (this.isValidRun)
         {
-            this.Hud.ShowSuccessMessage(Time.time - this.startTime);
+            float time = Time.time - this.startTime;
+            this.Hud.ShowSuccessMessage(time);
             this.isValidRun = false;
+
+            if (level != BestTimes.Level.None)
+            {
+                BestTimes.UpdateBestTime(level, time);
+            }
         }
     }
 

@@ -1,5 +1,8 @@
 ﻿using UnityEngine;
 
+/// <summary>
+/// Manages the message shown on the HUD
+/// </summary>
 public class MessageManager : MonoBehaviour
 {
     #region Set in Unity Editor

@@ -11,10 +11,16 @@ public class MainMenu : MonoBehaviour
 {
     #region Set in Unity Editor
     /// <summary>
-    /// Images and text showing the simulation controls.
+    /// The screen which shows the simulation controls.
     /// </summary>
     [SerializeField]
-    private GameObject Controlls;
+    private GameObject ControllsPane;
+
+    /// <summary>
+    /// The screen which allows the user to adjust settings.
+    /// </summary>
+    [SerializeField]
+    private GameObject SettingsPane;
     #endregion
 
     #region Constants
@@ -52,16 +58,53 @@ public class MainMenu : MonoBehaviour
     /// </summary>
     public void BeginSimulation()
     {
-        MainMenu.lastSelected = this.dropdown.value;
-        SceneManager.LoadScene(levelMap[levelNames[dropdown.value]], LoadSceneMode.Single);
+        MainMenu.lastLevel = this.dropdowns[Dropdowns.LevelSelect.GetHashCode()].value;
+        SceneManager.LoadScene(levelMap[levelNames[MainMenu.lastLevel]], LoadSceneMode.Single);
     }
 
     /// <summary>
-    /// Toggles whether the control information is shown.
+    /// Shows the controls screen.
     /// </summary>
-    public void ToggleControls()
+    public void ShowControls()
     {
-        this.Controlls.SetActive(!this.Controlls.activeInHierarchy);
+        this.ControllsPane.SetActive(!this.ControllsPane.activeInHierarchy);
+    }
+
+    /// <summary>
+    /// Shows the settings screen.
+    /// </summary>
+    public void ShowSettings()
+    {
+        this.SettingsPane.SetActive(true);
+    }
+
+    /// <summary>
+    /// Restore the default settings.
+    /// </summary>
+    public void RestoreDefaultSetting()
+    {
+        Settings.RestoreDefaults();
+        this.UpdateSettingsUi();
+    }
+
+    /// <summary>
+    /// Save current settings and close the settings screen.
+    /// </summary>
+    public void SaveSettings()
+    {
+        Settings.IsRealism = this.toggles[Toggles.IsRealism.GetHashCode()].isOn;
+        Settings.DepthRes = (Settings.DepthResolution)this.dropdowns[Dropdowns.DepthRes.GetHashCode()].value;
+        Settings.SaveSettings();
+        this.SettingsPane.SetActive(false);
+    }
+
+    /// <summary>
+    /// Close the settings screen without saving any changes.
+    /// </summary>
+    public void CancelSettings()
+    {
+        this.UpdateSettingsUi();
+        this.SettingsPane.SetActive(false);
     }
 
     /// <summary>
@@ -74,33 +117,72 @@ public class MainMenu : MonoBehaviour
     #endregion
 
     /// <summary>
-    /// The dropdown menu used to select the simulation level.
+    /// The dropdown menus in the main menu.
     /// </summary>
-    private Dropdown dropdown;
+    private enum Dropdowns
+    {
+        LevelSelect,
+        DepthRes,
+    }
 
     /// <summary>
-    /// The previously selected dropdown value.
+    /// The toggles (check boxes) in the main menu.
     /// </summary>
-    private static int lastSelected;
+    private enum Toggles
+    {
+        IsRealism,
+    }
+
+    /// <summary>
+    /// The dropdown menus present in the main menu.
+    /// </summary>
+    private Dropdown[] dropdowns;
+
+    /// <summary>
+    /// The toggles (check boxes) present in the main menu.
+    /// </summary>
+    private Toggle[] toggles;
+
+    /// <summary>
+    /// The level previously selected with the level dropdown.
+    /// </summary>
+    private static int lastLevel;
 
     private void Awake()
     {
-        this.dropdown = this.GetComponentInChildren<Dropdown>();
+        this.dropdowns = this.GetComponentsInChildren<Dropdown>();
+        this.toggles = this.GetComponentsInChildren<Toggle>();
     }
 
     private void Start()
     {
-        this.dropdown.ClearOptions();
-        this.dropdown.AddOptions(MainMenu.levelNames);
-        this.dropdown.value = MainMenu.lastSelected;
-        this.Controlls.SetActive(false);
+        // Hide panes
+        this.ControllsPane.SetActive(false);
+        this.SettingsPane.SetActive(false);
+
+        // Populate level select dropdown
+        Dropdown levelSelect = this.dropdowns[Dropdowns.LevelSelect.GetHashCode()];
+        levelSelect.ClearOptions();
+        levelSelect.AddOptions(MainMenu.levelNames);
+        levelSelect.value = MainMenu.lastLevel;
+
+        this.UpdateSettingsUi();
     }
 
     private void Update()
     {
         if (Input.anyKeyDown)
         {
-            this.Controlls.SetActive(false);
+            this.ControllsPane.SetActive(false);
         }
+    }
+
+    /// <summary>
+    /// Update all UI elements on the settings screen with the current Settings.
+    /// </summary>
+    private void UpdateSettingsUi()
+    {
+        this.toggles[Toggles.IsRealism.GetHashCode()].isOn = Settings.IsRealism;
+        this.dropdowns[Dropdowns.DepthRes.GetHashCode()].value = Settings.DepthRes.GetHashCode();
     }
 }

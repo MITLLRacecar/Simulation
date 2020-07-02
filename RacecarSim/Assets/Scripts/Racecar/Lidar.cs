@@ -154,7 +154,7 @@ public class Lidar : MonoBehaviour
     {
         if(Physics.Raycast(this.transform.position, this.transform.forward, out RaycastHit raycastHit, Lidar.maxRange))
         {
-            float distance = this.racecar.Settings.isRealism 
+            float distance = Settings.IsRealism 
                 ? raycastHit.distance * NormalDist.Random(1, Lidar.averageErrorFactor) 
                 : raycastHit.distance;
             return distance > Lidar.minRange ? distance * 10 : Lidar.minCode;

@@ -19,16 +19,6 @@ public class CameraModule : MonoBehaviour
     public const int ColorHeight = 480;
 
     /// <summary>
-    /// The width (in pixels) of the depth images captured by the camera.
-    /// </summary>
-    public const int DepthWidth = CameraModule.ColorWidth / 8;
-
-    /// <summary>
-    /// The height (in pixels) of the depth images captured by the camera.
-    /// </summary>
-    public const int DepthHeight = CameraModule.ColorHeight / 8;
-
-    /// <summary>
     /// The field of view (in degrees) of the camera.
     /// Based on the Intel RealSense D435i datasheet.
     /// </summary>
@@ -69,6 +59,16 @@ public class CameraModule : MonoBehaviour
     #endregion
 
     #region Public Interface
+    /// <summary>
+    /// The width (in pixels) of the depth images captured by the camera.
+    /// </summary>
+    public static int DepthWidth { get { return CameraModule.ColorWidth / Settings.DepthDivideFactor; } }
+
+    /// <summary>
+    /// The height (in pixels) of the depth images captured by the camera.
+    /// </summary>
+    public static int DepthHeight { get { return CameraModule.ColorHeight / Settings.DepthDivideFactor; } }
+
     /// <summary>
     /// The GPU-side texture to which the color camera renders.
     /// </summary>
@@ -187,11 +187,6 @@ public class CameraModule : MonoBehaviour
     #endregion
 
     /// <summary>
-    /// The parent racecar to which this module belongs.
-    /// </summary>
-    private Racecar racecar;
-
-    /// <summary>
     /// Private member for the ColorImageRaw accessor.
     /// </summary>
     private byte[] colorImageRaw;
@@ -244,8 +239,6 @@ public class CameraModule : MonoBehaviour
 
     private void Awake()
     {
-        this.racecar = this.GetComponent<Racecar>();
-
         Camera[] cameras = this.GetComponentsInChildren<Camera>();
         this.colorCamera = cameras[0];
         this.depthCamera = cameras[1];
@@ -367,7 +360,7 @@ public class CameraModule : MonoBehaviour
 
                 if (Physics.Raycast(ray, out RaycastHit raycastHit, CameraModule.maxRange))
                 {
-                    float distance = this.racecar.Settings.isRealism 
+                    float distance = Settings.IsRealism 
                         ? raycastHit.distance * NormalDist.Random(1, CameraModule.averageErrorFactor) 
                         : raycastHit.distance;
                     this.depthImage[r][c] = distance > CameraModule.minRange ? distance * 10 : CameraModule.minCode;

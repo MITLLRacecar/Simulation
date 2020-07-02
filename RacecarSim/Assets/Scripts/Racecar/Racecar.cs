@@ -44,11 +44,6 @@ public class Racecar : MonoBehaviour
 
     #region Public Interface
     /// <summary>
-    /// The settings applied to this car/user.
-    /// </summary>
-    public Settings Settings { get; private set; }
-
-    /// <summary>
     /// Exposes the RealSense D435i color and depth channels.
     /// </summary>
     public CameraModule Camera { get; private set; }
@@ -166,7 +161,6 @@ public class Racecar : MonoBehaviour
         this.isValidRun = false;
         this.curCamera = 0;
 
-        this.Settings = new Settings();
         this.pythonInterface = new PythonInterface(this);
         this.Hud = this.transform.parent.GetComponentInChildren<Hud>();
 

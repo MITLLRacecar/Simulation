@@ -39,7 +39,7 @@ public class PhysicsModule : MonoBehaviour
         {
             if (!this.linearVelocity.HasValue)
             {
-                this.linearVelocity = this.racecar.Settings.isRealism
+                this.linearVelocity = Settings.IsRealism
                     ? this.transform.InverseTransformDirection(this.rBody.velocity) * NormalDist.Random(1, PhysicsModule.averageLinearErrorFactor) / 10
                     : this.transform.InverseTransformDirection(this.rBody.velocity) / 10;
             }
@@ -57,7 +57,7 @@ public class PhysicsModule : MonoBehaviour
             if (!this.angularVelocity.HasValue)
             {
                 // Unity uses a left-handed coordinate system, but our IMU is right-handed
-                this.angularVelocity = this.racecar.Settings.isRealism
+                this.angularVelocity = Settings.IsRealism
                     ? -this.rBody.angularVelocity * NormalDist.Random(1, PhysicsModule.averageAngularErrorFactor)
                     : -this.rBody.angularVelocity;
             }
@@ -65,11 +65,6 @@ public class PhysicsModule : MonoBehaviour
         }
     }
     #endregion
-
-    /// <summary>
-    /// The parent racecar to which this module belongs.
-    /// </summary>
-    private Racecar racecar;
 
     /// <summary>
     /// The rigidbody of the car.
@@ -93,7 +88,6 @@ public class PhysicsModule : MonoBehaviour
 
     private void Awake()
     {
-        this.racecar = this.GetComponent<Racecar>();
         this.rBody = this.GetComponent<Rigidbody>();
     }
 

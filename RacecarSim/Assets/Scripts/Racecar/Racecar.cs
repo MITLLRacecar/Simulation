@@ -181,6 +181,13 @@ public class Racecar : MonoBehaviour
 
     private void Start()
     {
+        // Begin with main player camera (0th camera)
+        this.PlayerCameras[0].enabled = true;
+        for (int i = 1; i < this.PlayerCameras.Length; i++)
+        {
+            this.PlayerCameras[i].enabled = false;
+        }
+
         this.EnterDefaultDrive();
     }
 

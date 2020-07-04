@@ -187,7 +187,7 @@ public class Racecar : MonoBehaviour
     private void Update()
     {
         // Call correct update function based on mode
-        if (isDefaultDrive)
+        if (this.isDefaultDrive)
         {
             this.DefaultDriveUpdate();
         }

@@ -2,7 +2,6 @@
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
-using System.Threading.Tasks;
 using UnityEngine;
 
 /// <summary>
@@ -50,6 +49,7 @@ public class PythonInterface
 
         // Establish and configure a UDP port
         this.udpClient = new UdpClient(new IPEndPoint(PythonInterface.ipAddress, PythonInterface.unityPort));
+        this.udpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
         this.udpClient.Client.ReceiveTimeout = PythonInterface.timeoutTime;
 
         // Initialize client to handle async calls
@@ -407,6 +407,7 @@ public class PythonInterface
     private void ProcessAsyncCalls()
     {
         this.udpClientAsync = new UdpClient(new IPEndPoint(PythonInterface.ipAddress, PythonInterface.unityPortAsync));
+        this.udpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
         while (true)
         {
             IPEndPoint receiveEndPoint = new IPEndPoint(PythonInterface.ipAddress, 0);

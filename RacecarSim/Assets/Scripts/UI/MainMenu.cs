@@ -27,9 +27,10 @@ public class MainMenu : MonoBehaviour
         { "Lab 4A: IMU Roll Prevention", 11 },
         { "Lab 4B: IMU Driving in Shapes", 3 },
         { "Phase 1 Challenge: Cone Slaloming", 12 },
+        { "Phase 1 Challenge: Cone Slaloming (Hard)", 13 },
         { "Lab 5A: LIDAR Safety Stop", 8 },
-        { "Lab 5B: LIDAR Wall Following", 13 },
-        { "Lab 6: Sensor Fusion", 14 }
+        { "Lab 5B: LIDAR Wall Following", 14 },
+        { "Lab 6: Sensor Fusion", 15 }
     };
 
     /// <summary>

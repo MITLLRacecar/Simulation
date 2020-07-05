@@ -45,7 +45,10 @@ EditorBuildSettings:
     path: Assets/Scenes/Lab4A.unity
     guid: b7f292a9490f60d499d2f260aada3b71
   - enabled: 1
-    path: Assets/Scenes/Phase1.unity
+    path: Assets/Scenes/Phase1Easy.unity
+    guid: 22c7f8ad16cf0e74eb355819a1ef6c79
+  - enabled: 1
+    path: Assets/Scenes/Phase1Hard.unity
     guid: bcf246b186421d14cb1aa25b9a51aa90
   - enabled: 1
     path: Assets/Scenes/Lab5B.unity

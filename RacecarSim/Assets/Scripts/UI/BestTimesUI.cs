@@ -7,12 +7,18 @@ using UnityEngine.UI;
 public class BestTimesUI : MonoBehaviour
 {
     #region Public Interface
+    /// <summary>
+    /// Update text objects displaying best times.
+    /// </summary>
     public void UpdateTexts()
     {
         this.texts[Texts.Names.GetHashCode()].text = BestTimes.GetFormattedNames();
         this.texts[Texts.Times.GetHashCode()].text = BestTimes.GetFormattedTimes();
     }
 
+    /// <summary>
+    /// Return to the main menu
+    /// </summary>
     public void Return()
     {
         this.gameObject.SetActive(false);
@@ -28,12 +34,18 @@ public class BestTimesUI : MonoBehaviour
     }
     #endregion
 
+    /// <summary>
+    /// The text objects in the best times pane.
+    /// </summary>
     private enum Texts
     {
         Names = 1,
         Times = 2
     }
 
+    /// <summary>
+    /// The text objects in the best times pane.
+    /// </summary>
     private Text[] texts;
 
     private void Awake()

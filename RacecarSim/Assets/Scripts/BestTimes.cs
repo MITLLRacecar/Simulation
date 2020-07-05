@@ -1,16 +1,30 @@
-﻿using UnityEngine;
+﻿using System.Runtime.InteropServices;
+using UnityEngine;
 
 public static class BestTimes
 {
-    #region Public Interface
+    #region Constants
+    /// <summary>
+    /// The full names of each level.
+    /// </summary>
+    private static readonly string[] fullNames =
+    {
+        "Phase 1 Challenge: Cone Slaloming",
+        "Phase 1 Challenge: Cone Slaloming (Hard)",
+        "Lab 5B: LIDAR Wall following",
+        "Lab 6: Sensor Fusion"
+    };
+    #endregion
 
+    #region Public Interface
     /// <summary>
     /// The levels for which best times are recorded.
     /// </summary>
     public enum Level
     {
-        Lab5B,
         P1Challenge,
+        P1ChallengeHard,
+        Lab5B,
         Lab6,
         None
     }
@@ -32,10 +46,10 @@ public static class BestTimes
     /// <returns>A string containing each level name on its own line.</returns>
     public static string GetFormattedNames()
     {
-        string output = fullNames[0];
-        for (int i = 1; i < fullNames.Length; i++)
+        string output = BestTimes.fullNames[0];
+        for (int i = 1; i < BestTimes.fullNames.Length; i++)
         {
-            output += $"\n{fullNames[i]}";
+            output += $"\n{BestTimes.fullNames[i]}";
         }
 
         return output;
@@ -65,20 +79,22 @@ public static class BestTimes
     }
 
     /// <summary>
-    /// The full names of each level.
+    /// Clear all recorded best times.
     /// </summary>
-    private static readonly string[] fullNames =
+    public static void Clear()
     {
-        "Lab 4B: LIDAR Wall following",
-        "Phase 1 Challenge: Cone Slaloming",
-        "Lab 6: Sensor Fusion"
-    };
+        for (int i = 0; i < times.Length; ++i)
+        {
+            PlayerPrefs.SetFloat(((Level)i).ToString(), float.MaxValue);
+            times[i] = float.MaxValue;
+        }
+    }
     #endregion
 
     /// <summary>
     /// The user's best time for each level.
     /// </summary>
-    private static float[] times = new float[3];
+    private static float[] times = new float[BestTimes.fullNames.Length];
 
     static BestTimes()
     {

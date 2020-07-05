@@ -12,6 +12,20 @@ public class BestTimesUI : MonoBehaviour
         this.texts[Texts.Names.GetHashCode()].text = BestTimes.GetFormattedNames();
         this.texts[Texts.Times.GetHashCode()].text = BestTimes.GetFormattedTimes();
     }
+
+    public void Return()
+    {
+        this.gameObject.SetActive(false);
+    }
+
+    /// <summary>
+    /// Clear all recorded best times.
+    /// </summary>
+    public void Clear()
+    {
+        BestTimes.Clear();
+        this.UpdateTexts();
+    }
     #endregion
 
     private enum Texts
@@ -25,13 +39,5 @@ public class BestTimesUI : MonoBehaviour
     private void Awake()
     {
         this.texts = this.GetComponentsInChildren<Text>();
-    }
-
-    private void Update()
-    {
-        if (Input.anyKeyDown)
-        {
-            this.gameObject.SetActive(false);
-        }
     }
 }

@@ -192,7 +192,7 @@ PrefabInstance:
     - target: {fileID: 7875668902781693995, guid: 17243f7e049157d4b950695aacf25b36,
         type: 3}
       propertyPath: Text
-      value: Left click with the mouse to move the cone.
+      value: 
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 17243f7e049157d4b950695aacf25b36, type: 3}

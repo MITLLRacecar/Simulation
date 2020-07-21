@@ -30,7 +30,8 @@ public class MainMenu : MonoBehaviour
         { "Phase 1 Challenge: Cone Slaloming (Hard)", 13 },
         { "Lab 5A: LIDAR Safety Stop", 8 },
         { "Lab 5B: LIDAR Wall Following", 14 },
-        { "Lab 6: Sensor Fusion", 15 }
+        { "Lab 6: Sensor Fusion", 15 },
+        { "Lab 7: AR Tags", 16 }
     };
 
     /// <summary>

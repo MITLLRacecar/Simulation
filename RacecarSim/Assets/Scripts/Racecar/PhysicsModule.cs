@@ -15,13 +15,25 @@ public class PhysicsModule : MonoBehaviour
     /// The average relative error of linear acceleration measurements.
     /// This value is made up (it is NOT specified in the Intel RealSense D435i datasheet).
     /// </summary>
-    private const float averageLinearErrorFactor = 0.001f;
+    private const float linearErrorFactor = 0.001f;
+
+    /// <summary>
+    /// The average fixed error applied to all linear acceleration measurements.
+    /// This value is made up (it is NOT specified in the Intel RealSense D435i datasheet).
+    /// </summary>
+    private const float linearErrorFixed = 0.05f;
 
     /// <summary>
     /// The average relative error of angular velocity measurements.
     /// This value is made up (it is NOT specified in the Intel RealSense D435i datasheet).
     /// </summary>
-    private const float averageAngularErrorFactor = 0.02f;
+    private const float angularErrorFactor = 0.001f;
+
+    /// <summary>
+    /// The average fixed error applied to all angular velocity measurements.
+    /// This value is made up (it is NOT specified in the Intel RealSense D435i datasheet).
+    /// </summary>
+    private const float angularErrorFixed = 0.005f;
     #endregion
 
     #region Public Interface
@@ -39,9 +51,7 @@ public class PhysicsModule : MonoBehaviour
         {
             if (!this.linearVelocity.HasValue)
             {
-                this.linearVelocity = Settings.IsRealism
-                    ? this.transform.InverseTransformDirection(this.rBody.velocity) * NormalDist.Random(1, PhysicsModule.averageLinearErrorFactor) / 10
-                    : this.transform.InverseTransformDirection(this.rBody.velocity) / 10;
+                this.linearVelocity = this.transform.InverseTransformDirection(this.rBody.velocity) / 10;
             }
             return this.linearVelocity.Value;
         }
@@ -56,10 +66,18 @@ public class PhysicsModule : MonoBehaviour
         {
             if (!this.angularVelocity.HasValue)
             {
-                // Unity uses a left-handed coordinate system, but our IMU is right-handed
-                this.angularVelocity = Settings.IsRealism
-                    ? -this.rBody.angularVelocity * NormalDist.Random(1, PhysicsModule.averageAngularErrorFactor)
-                    : -this.rBody.angularVelocity;
+                // Unity uses a left-handed coordinate system, but our API is right-handed
+                Vector3 angVel = -this.rBody.angularVelocity;
+
+                if (Settings.IsRealism)
+                {
+                    angVel *= NormalDist.Random(1, PhysicsModule.angularErrorFactor);
+                    angVel.x += NormalDist.Random(0, PhysicsModule.angularErrorFixed);
+                    angVel.y += NormalDist.Random(0, PhysicsModule.angularErrorFixed);
+                    angVel.z += NormalDist.Random(0, PhysicsModule.angularErrorFixed);
+                }
+
+                this.angularVelocity = angVel;
             }
             return this.angularVelocity.Value;
         }
@@ -98,10 +116,20 @@ public class PhysicsModule : MonoBehaviour
 
     private void FixedUpdate()
     {
+        // Calculate current linear acceleration, incorporating gravity and error rate
         Vector3 curAcceleration = (this.LinearVelocity - this.prevVelocity) / Time.deltaTime;
-        this.LinearAccceleration += (curAcceleration - this.LinearAccceleration) / PhysicsModule.accelerationSamples;
+        curAcceleration += this.transform.InverseTransformDirection(Vector3.down * 9.81f);
+        if (Settings.IsRealism)
+        {
+            curAcceleration *= NormalDist.Random(1, PhysicsModule.linearErrorFactor);
+            curAcceleration.x += NormalDist.Random(0, PhysicsModule.linearErrorFixed);
+            curAcceleration.y += NormalDist.Random(0, PhysicsModule.linearErrorFixed);
+            curAcceleration.z += NormalDist.Random(0, PhysicsModule.linearErrorFixed);
+        }
 
-        prevVelocity = this.LinearVelocity;
+        // Update linear acceleration running average
+        this.LinearAccceleration += (curAcceleration - this.LinearAccceleration) / PhysicsModule.accelerationSamples;
+        this.prevVelocity = this.LinearVelocity;
     }
 
     private void LateUpdate()

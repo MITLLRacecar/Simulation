@@ -1,5 +1,23 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-7053539721077398670
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5303431927814079149}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a3e4dc2d0287744d9de20c6b0cb45b0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  color: 0
+  turnDirection: 0
+  setColor: 0
+  setColorInChild: 0
+  setRotation: 0
+  setActive: 0
 --- !u!1001 &1134740085290598649
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -74,3 +92,9 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d413bf112e931694a820fc7e101f0c0a, type: 3}
+--- !u!1 &5303431927814079149 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5055003768705663572, guid: d413bf112e931694a820fc7e101f0c0a,
+    type: 3}
+  m_PrefabInstance: {fileID: 1134740085290598649}
+  m_PrefabAsset: {fileID: 0}

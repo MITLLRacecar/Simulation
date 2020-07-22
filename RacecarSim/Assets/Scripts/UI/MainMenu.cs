@@ -31,7 +31,8 @@ public class MainMenu : MonoBehaviour
         { "Lab 5A: LIDAR Safety Stop", 8 },
         { "Lab 5B: LIDAR Wall Following", 14 },
         { "Lab 6: Sensor Fusion", 15 },
-        { "Lab 7: AR Tags", 16 }
+        { "Lab 7: AR Tags", 16 },
+        { "Time Trial", 17 }
     };
 
     /// <summary>

@@ -93,7 +93,14 @@ public class Racecar : MonoBehaviour
         this.pythonInterface.PythonStart();
         this.isDefaultDrive = false;
         this.Hud.UpdateMode(this.isDefaultDrive, this.isValidRun);
+
         this.startTime = Time.time;
+        GameObject raceManager = GameObject.FindGameObjectWithTag("RaceManager");
+        if (raceManager != null)
+        {
+            print("we in bois");
+            raceManager.GetComponent<VariableManager>().SetKeyTime(VariableManager.KeyTime.Start, this.startTime);
+        }
     }
 
     /// <summary>

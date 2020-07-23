@@ -1,8 +1,27 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.Data;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public class VariableManager : MonoBehaviour
 {
+    public class TimeInfo
+    {
+        public float startTime;
+        public float finishTime;
+        public float[] checkpointTimes = new float[3];
+
+        public override string ToString()
+        {
+            string output = $"Start Time: {startTime}\nFinish Time: {finishTime}";
+            for (int i = 0; i < checkpointTimes.Length; i++)
+            {
+                output += $"\nCheckpoint {i} time: {checkpointTimes[i]}";
+            }
+
+            return output;
+        }
+    }
+
     private static readonly Color[] colors =
     {
         Color.white,
@@ -30,6 +49,15 @@ public class VariableManager : MonoBehaviour
         Right
     }
 
+    public enum KeyTime
+    {
+        Start,
+        Finish,
+        Checkpoint1,
+        Checkpoint2,
+        Checkpoint3
+    }
+
     public static VariableTurn[] TurnChoices { get; private set; } = new VariableTurn[2];
 
     public static Color GetColor(VariableColor color)
@@ -37,10 +65,34 @@ public class VariableManager : MonoBehaviour
         return VariableManager.colors[colorAssignments[color.GetHashCode()]];
     }
 
+    public void SetKeyTime(KeyTime keyTime, float time)
+    {
+        switch (keyTime)
+        {
+            case KeyTime.Start:
+                this.timeInfo.startTime = time;
+                break;
+
+            case KeyTime.Finish:
+                this.timeInfo.finishTime = time;
+                break;
+
+            default:
+                this.timeInfo.checkpointTimes[keyTime.GetHashCode() - KeyTime.Checkpoint1.GetHashCode()] = time;
+                break;
+        }
+    }
+
     private static int[] colorAssignments;
 
-    void Awake()
+    private TimeInfo timeInfo = new TimeInfo();
+
+    private Hud hud;
+
+    private void Awake()
     {
+        this.hud = FindObjectOfType<Hud>();
+
         VariableManager.TurnChoices[0] = Random.value < 0.5f ? VariableTurn.Left : VariableTurn.Right;
         VariableManager.TurnChoices[1] = Random.value < 0.5f ? VariableTurn.Left : VariableTurn.Right;
 
@@ -59,5 +111,10 @@ public class VariableManager : MonoBehaviour
             colorAssignments[i] = colorAssignments[swapIndex];
             colorAssignments[swapIndex] = temp;
         }
+    }
+
+    private void Update()
+    {
+        this.hud.UpdateTimes(this.timeInfo);
     }
 }

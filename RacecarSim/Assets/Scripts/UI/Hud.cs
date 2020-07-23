@@ -102,6 +102,42 @@ public class Hud : MonoBehaviour
         this.SuccessMessage.SetActive(true);
         this.texts[Texts.SuccessTime.GetHashCode()].text = $"Time: {time:F2} seconds";
     }
+
+    public void UpdateTimes(VariableManager.TimeInfo timeInfo)
+    {
+        if (timeInfo.startTime == 0)
+        {
+            this.texts[Texts.MainTime.GetHashCode()].text = 0.0f.ToString("F3");
+            return;
+        }
+
+        if (timeInfo.finishTime == 0)
+        {
+            this.texts[Texts.MainTime.GetHashCode()].text = (Time.time - timeInfo.startTime).ToString("F3");
+        }
+        else
+        {
+            this.texts[Texts.MainTime.GetHashCode()].text = (timeInfo.finishTime - timeInfo.startTime).ToString("F3");
+        }
+
+        float[] times = new float[timeInfo.checkpointTimes.Length + 1];
+        times[0] = timeInfo.startTime;
+        Array.Copy(timeInfo.checkpointTimes, 0, times, 1, timeInfo.checkpointTimes.Length);
+
+        this.texts[Texts.LapTime.GetHashCode()].text = string.Empty;
+        for (int i = 1; i < times.Length; i++)
+        {
+            if (times[i] != 0)
+            { 
+                this.texts[Texts.LapTime.GetHashCode()].text += $"Section {i}: {times[i] - times[i - 1]:F3}\n";
+            }
+            else
+            {
+                this.texts[Texts.LapTime.GetHashCode()].text += $"Section {i}: {Time.time - times[i - 1]:F3}";
+                break;
+            }
+        }
+    }
     #endregion
 
     /// <summary>
@@ -115,7 +151,9 @@ public class Hud : MonoBehaviour
         Mode = 13,
         Message = 14,
         Failure = 16,
-        SuccessTime = 19
+        SuccessTime = 19,
+        MainTime = 21,
+        LapTime = 22
     }
 
     /// <summary>
@@ -196,6 +234,9 @@ public class Hud : MonoBehaviour
         this.images[Images.TimeWarp.GetHashCode()].enabled = false;
         this.FailureMessage.SetActive(false);
         this.SuccessMessage.SetActive(false);
+
+        this.texts[Texts.MainTime.GetHashCode()].text = string.Empty;
+        this.texts[Texts.LapTime.GetHashCode()].text = string.Empty;
 
         this.curTimeScale = 1.0f;
         Time.timeScale = this.curTimeScale;

@@ -1,5 +1,18 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!65 &7057755691202531776
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5165485823386958729}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1.5, y: 1.5, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &1913185675328268266
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12,6 +25,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 219f0731034a08e4aa6cde123b8223d2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  tags:
+  - {fileID: 2100000, guid: c6f279162215ab0489651b96432d8b37, type: 2}
+  - {fileID: 2100000, guid: a51d1f17e4b94754a8be89ef0dca937b, type: 2}
+  - {fileID: 2100000, guid: d6d052b49882d394d8818f6943b991bb, type: 2}
+  - {fileID: 2100000, guid: df26c9df4248748438822192109437c7, type: 2}
+  - {fileID: 2100000, guid: 15049ee271de5b647a253bbf6a814d49, type: 2}
+  - {fileID: 2100000, guid: 73c2eb335193f7442bddba911860ca54, type: 2}
+  - {fileID: 2100000, guid: 0a77be749240a6840bdf8748d7ffaa7d, type: 2}
+  - {fileID: 2100000, guid: 6056647988949d64d9be64ba5e73e5eb, type: 2}
+  - {fileID: 2100000, guid: cfd0a0e4471820e4c8c1be4745a0fc8f, type: 2}
+  tagIndex: 1
 --- !u!1001 &4064318576221444254
 PrefabInstance:
   m_ObjectHideFlags: 0

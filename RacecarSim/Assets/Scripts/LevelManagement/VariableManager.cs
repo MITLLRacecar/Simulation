@@ -1,5 +1,4 @@
 ﻿using System.Data;
-using System.Runtime.CompilerServices;
 using UnityEngine;
 
 public class VariableManager : MonoBehaviour
@@ -60,9 +59,21 @@ public class VariableManager : MonoBehaviour
 
     public static VariableTurn[] TurnChoices { get; private set; } = new VariableTurn[2];
 
+    private System.Tuple<Vector3, Quaternion>[] checkpoints = new System.Tuple<Vector3, Quaternion>[3];
+
     public static Color GetColor(VariableColor color)
     {
         return VariableManager.colors[colorAssignments[color.GetHashCode()]];
+    }
+
+    public void SetCheckpoint(int index, System.Tuple<Vector3, Quaternion> info)
+    {
+        this.checkpoints[index] = info;
+    }
+
+    public System.Tuple<Vector3, Quaternion> GetCheckpoint(int index)
+    {
+        return this.checkpoints[index];
     }
 
     public void SetKeyTime(KeyTime keyTime, float time)
@@ -89,6 +100,8 @@ public class VariableManager : MonoBehaviour
 
     private Hud hud;
 
+    private GameObject racecar;
+
     private void Awake()
     {
         this.hud = FindObjectOfType<Hud>();
@@ -111,10 +124,21 @@ public class VariableManager : MonoBehaviour
             colorAssignments[i] = colorAssignments[swapIndex];
             colorAssignments[swapIndex] = temp;
         }
+
+        this.racecar = GameObject.FindGameObjectWithTag("Player");
     }
 
     private void Update()
     {
         this.hud.UpdateTimes(this.timeInfo);
+
+        for (int i = 0; i < 3; ++i)
+        {
+            if (Input.GetKeyDown(KeyCode.Alpha1 + i))
+            {
+                this.racecar.transform.position = this.checkpoints[i].Item1;
+                this.racecar.transform.rotation = this.checkpoints[i].Item2;
+            }
+        }
     }
 }

@@ -98,7 +98,6 @@ public class Racecar : MonoBehaviour
         GameObject raceManager = GameObject.FindGameObjectWithTag("RaceManager");
         if (raceManager != null)
         {
-            print("we in bois");
             raceManager.GetComponent<VariableManager>().SetKeyTime(VariableManager.KeyTime.Start, this.startTime);
         }
     }

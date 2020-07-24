@@ -120,9 +120,10 @@ public class Hud : MonoBehaviour
             this.texts[Texts.MainTime.GetHashCode()].text = (timeInfo.finishTime - timeInfo.startTime).ToString("F3");
         }
 
-        float[] times = new float[timeInfo.checkpointTimes.Length + 1];
+        float[] times = new float[timeInfo.checkpointTimes.Length + 2];
         times[0] = timeInfo.startTime;
         Array.Copy(timeInfo.checkpointTimes, 0, times, 1, timeInfo.checkpointTimes.Length);
+        times[times.Length - 1] = timeInfo.finishTime;
 
         this.texts[Texts.LapTime.GetHashCode()].text = string.Empty;
         for (int i = 1; i < times.Length; i++)
@@ -131,10 +132,13 @@ public class Hud : MonoBehaviour
             { 
                 this.texts[Texts.LapTime.GetHashCode()].text += $"Section {i}: {times[i] - times[i - 1]:F3}\n";
             }
+            else if (times[i - 1] !=  0)
+            {
+                this.texts[Texts.LapTime.GetHashCode()].text += $"Section {i}: {Time.time - times[i - 1]:F3}\n";
+            }
             else
             {
-                this.texts[Texts.LapTime.GetHashCode()].text += $"Section {i}: {Time.time - times[i - 1]:F3}";
-                break;
+                this.texts[Texts.LapTime.GetHashCode()].text += $"Section {i}: --\n";
             }
         }
     }

@@ -247,6 +247,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3024277807209750848}
   - component: {fileID: 5476385625404875746}
+  - component: {fileID: 1764372498603223910}
   m_Layer: 0
   m_Name: ArTag
   m_TagString: Untagged
@@ -290,3 +291,16 @@ MonoBehaviour:
   setColorInChild: 0
   setRotation: 0
   remove: 0
+--- !u!65 &1764372498603223910
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9207646594306466583}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 2, y: 2, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}

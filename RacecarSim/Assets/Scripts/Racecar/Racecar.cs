@@ -283,6 +283,16 @@ public class Racecar : MonoBehaviour
             print("Kachow!");
         }
 
+        // Use the bumpers to adjust max speed
+        if (this.Controller.WasPressed(Controller.Button.RB))
+        {
+            this.Drive.MaxSpeed = Mathf.Min(this.Drive.MaxSpeed + 0.1f, 1);
+        }
+        if (this.Controller.WasPressed(Controller.Button.LB))
+        {
+            this.Drive.MaxSpeed = Mathf.Max(this.Drive.MaxSpeed - 0.1f, 0);
+        }
+
         // If the user moves in default drive mode, it is no longer a valid run
         if (this.isValidRun && this.Drive.Speed != 0)
         {

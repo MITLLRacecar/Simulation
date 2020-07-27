@@ -113,7 +113,7 @@ public class Hud : MonoBehaviour
 
         if (timeInfo.finishTime == 0)
         {
-            this.texts[Texts.MainTime.GetHashCode()].text = (Time.time - timeInfo.startTime).ToString("F3");
+            this.texts[Texts.MainTime.GetHashCode()].text = (Time.time + timeInfo.penalty - timeInfo.startTime).ToString("F3");
         }
         else
         {
@@ -134,7 +134,7 @@ public class Hud : MonoBehaviour
             }
             else if (times[i - 1] !=  0)
             {
-                this.texts[Texts.LapTime.GetHashCode()].text += $"Section {i}: {Time.time - times[i - 1]:F3}\n";
+                this.texts[Texts.LapTime.GetHashCode()].text += $"Section {i}: {Time.time + timeInfo.penalty - times[i - 1]:F3}\n";
             }
             else
             {

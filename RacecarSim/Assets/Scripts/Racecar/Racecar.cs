@@ -95,11 +95,7 @@ public class Racecar : MonoBehaviour
         this.Hud.UpdateMode(this.isDefaultDrive, this.isValidRun);
 
         this.startTime = Time.time;
-        GameObject raceManager = GameObject.FindGameObjectWithTag("RaceManager");
-        if (raceManager != null)
-        {
-            raceManager.GetComponent<VariableManager>().SetKeyTime(VariableManager.KeyTime.Start, this.startTime);
-        }
+        VariableManager.SetKeyTime(VariableManager.KeyTime.Start, this.startTime);
     }
 
     /// <summary>

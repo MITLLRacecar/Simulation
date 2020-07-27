@@ -8,6 +8,7 @@ public class VariableManager : MonoBehaviour
         public float startTime;
         public float finishTime;
         public float[] checkpointTimes = new float[3];
+        public float penalty = 0;
 
         public override string ToString()
         {
@@ -59,52 +60,60 @@ public class VariableManager : MonoBehaviour
 
     public static VariableTurn[] TurnChoices { get; private set; } = new VariableTurn[2];
 
-    private System.Tuple<Vector3, Quaternion>[] checkpoints = new System.Tuple<Vector3, Quaternion>[3];
+    private static System.Tuple<Vector3, Quaternion>[] checkpoints = new System.Tuple<Vector3, Quaternion>[3];
 
     public static Color GetColor(VariableColor color)
     {
         return VariableManager.colors[colorAssignments[color.GetHashCode()]];
     }
 
-    public void SetCheckpoint(int index, System.Tuple<Vector3, Quaternion> info)
+    public static void SetCheckpoint(int index, System.Tuple<Vector3, Quaternion> info)
     {
-        this.checkpoints[index] = info;
+        checkpoints[index] = info;
     }
 
-    public System.Tuple<Vector3, Quaternion> GetCheckpoint(int index)
+    public static System.Tuple<Vector3, Quaternion> GetCheckpoint(int index)
     {
-        return this.checkpoints[index];
+        return checkpoints[index];
     }
 
-    public void SetKeyTime(KeyTime keyTime, float time)
+    public static void SetKeyTime(KeyTime keyTime, float time)
     {
+        time += timeInfo.penalty;
         switch (keyTime)
         {
             case KeyTime.Start:
-                this.timeInfo.startTime = time;
+                timeInfo.startTime = time;
                 break;
 
             case KeyTime.Finish:
-                this.timeInfo.finishTime = time;
+                timeInfo.finishTime = time;
                 break;
 
             default:
-                this.timeInfo.checkpointTimes[keyTime.GetHashCode() - KeyTime.Checkpoint1.GetHashCode()] = time;
+                timeInfo.checkpointTimes[keyTime.GetHashCode() - KeyTime.Checkpoint1.GetHashCode()] = time;
                 break;
         }
     }
 
+    public static void AddPenalty(float time)
+    {
+        timeInfo.penalty += time;
+    }
+
     private static int[] colorAssignments;
 
-    private TimeInfo timeInfo = new TimeInfo();
+    private static TimeInfo timeInfo;
 
-    private Hud hud;
+    private static Hud hud;
 
-    private GameObject racecar;
+    private static GameObject racecar;
 
     private void Awake()
     {
-        this.hud = FindObjectOfType<Hud>();
+        timeInfo = new TimeInfo();
+        hud = FindObjectOfType<Hud>();
+        racecar = GameObject.FindGameObjectWithTag("Player");
 
         VariableManager.TurnChoices[0] = Random.value < 0.5f ? VariableTurn.Left : VariableTurn.Right;
         VariableManager.TurnChoices[1] = Random.value < 0.5f ? VariableTurn.Left : VariableTurn.Right;
@@ -124,20 +133,21 @@ public class VariableManager : MonoBehaviour
             colorAssignments[i] = colorAssignments[swapIndex];
             colorAssignments[swapIndex] = temp;
         }
-
-        this.racecar = GameObject.FindGameObjectWithTag("Player");
     }
 
     private void Update()
     {
-        this.hud.UpdateTimes(this.timeInfo);
+        hud.UpdateTimes(timeInfo);
 
         for (int i = 0; i < 3; ++i)
         {
             if (Input.GetKeyDown(KeyCode.Alpha1 + i))
             {
-                this.racecar.transform.position = this.checkpoints[i].Item1;
-                this.racecar.transform.rotation = this.checkpoints[i].Item2;
+                racecar.transform.position = checkpoints[i].Item1;
+                racecar.transform.rotation = checkpoints[i].Item2;
+                racecar.transform.position += racecar.transform.forward * -12;
+                racecar.transform.position += Vector3.up;
+                break;
             }
         }
     }

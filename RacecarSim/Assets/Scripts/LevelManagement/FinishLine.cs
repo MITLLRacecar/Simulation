@@ -20,11 +20,7 @@ public class FinishLine : MonoBehaviour
         {
             player.HandleFinish(level);
 
-            GameObject raceManager = GameObject.FindGameObjectWithTag("RaceManager");
-            if (raceManager != null)
-            {
-                raceManager.GetComponent<VariableManager>().SetKeyTime(VariableManager.KeyTime.Finish, Time.time);
-            }
+            VariableManager.SetKeyTime(VariableManager.KeyTime.Finish, Time.time);
         }
     }
 }

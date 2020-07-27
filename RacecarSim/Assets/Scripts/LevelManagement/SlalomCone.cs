@@ -11,6 +11,9 @@ public class SlalomCone : MonoBehaviour
     [SerializeField]
     private bool isRed;
 
+    [SerializeField]
+    private bool isTimePenalty;
+
     /// <summary>
     /// The failure message to show if the player crosses the incorrect side of a red cone.
     /// </summary>
@@ -21,13 +24,23 @@ public class SlalomCone : MonoBehaviour
     /// </summary>
     private const string blueMessage = "You must pass on the left side of blue slalom cones.";
 
+    private const float timePenalty = 5;
+
     private void OnTriggerEnter(Collider other)
     {
         // If the collider is a player, cause the player to fail
         Racecar player = other.GetComponentInParent<Racecar>();
         if (player != null)
         {
-            player.Hud.ShowFailureMessage(isRed ? SlalomCone.redMessage : SlalomCone.blueMessage);
+            if (this.isTimePenalty)
+            {
+                VariableManager.AddPenalty(SlalomCone.timePenalty);
+                Destroy(this.gameObject);
+            }
+            else
+            {
+                player.Hud.ShowFailureMessage(isRed ? SlalomCone.redMessage : SlalomCone.blueMessage);
+            }
         }
     }
 }

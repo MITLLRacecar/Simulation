@@ -138,6 +138,22 @@ public class Racecar : MonoBehaviour
         this.isValidRun = true;
         this.Hud.UpdateMode(this.isDefaultDrive, this.isValidRun);
     }
+
+    /// <summary>
+    /// Moves the car to the most recent checkpoint.
+    /// </summary>
+    public void ResetToCheckpoint()
+    {
+        if (this.checkPoint != null)
+        {
+            this.transform.position = this.checkPoint.transform.position + Vector3.up;
+            this.transform.rotation = this.checkPoint.transform.rotation;
+
+            Rigidbody rbody = this.GetComponent<Rigidbody>();
+            rbody.velocity = Vector3.zero;
+            rbody.angularVelocity = Vector3.zero;
+        }
+    }
     #endregion
 
     /// <summary>
@@ -164,6 +180,11 @@ public class Racecar : MonoBehaviour
     /// The index in PlayerCameras of the current active camera.
     /// </summary>
     private int curCamera;
+
+    /// <summary>
+    /// The most recent checkpoint which the RACECAR touched.
+    /// </summary>
+    private GameObject checkPoint;
 
     private void Awake()
     {
@@ -261,6 +282,14 @@ public class Racecar : MonoBehaviour
         }
     }
 
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.GetComponent<Checkpoint>() != null)
+        {
+            this.checkPoint = other.gameObject;
+        }
+    }
+
     /// <summary>
     /// Called on the first frame when the car enters default drive mode.
     /// </summary>
@@ -281,6 +310,11 @@ public class Racecar : MonoBehaviour
         if (this.Controller.WasPressed(Controller.Button.A))
         {
             print("Kachow!");
+        }
+
+        if (this.Controller.WasPressed(Controller.Button.B))
+        {
+            this.ResetToCheckpoint();
         }
 
         // Use the bumpers to adjust max speed

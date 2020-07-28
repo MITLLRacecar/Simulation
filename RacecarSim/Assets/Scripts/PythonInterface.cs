@@ -253,6 +253,12 @@ public class PythonInterface
                     Controller.Button buttonPressed = (Controller.Button)data[1];
                     sendData = BitConverter.GetBytes(this.racecar.Controller.WasPressed(buttonPressed));
                     this.udpClient.Send(sendData, sendData.Length);
+
+                    // TODO: Remove this
+                    if (buttonPressed == Controller.Button.B)
+                    {
+                        this.racecar.ResetToCheckpoint();
+                    }
                     break;
 
                 case Header.controller_was_released:

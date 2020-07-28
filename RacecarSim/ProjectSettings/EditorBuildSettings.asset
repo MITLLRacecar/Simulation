@@ -56,4 +56,13 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Lab6B.unity
     guid: 61428b9256688c54b8ed1a256d7347bc
+  - enabled: 1
+    path: Assets/Scenes/Lab7Jupyter.unity
+    guid: 418006b3308733041a83b03b5ca1623d
+  - enabled: 1
+    path: Assets/Scenes/Phase2.unity
+    guid: 98ed6aa31e448844dbb78b887df775ca
+  - enabled: 1
+    path: Assets/Scenes/GrandPrix.unity
+    guid: d66aacdc67c45f94e91e170b7c9ae645
   m_configObjects: {}

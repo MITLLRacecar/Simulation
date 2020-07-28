@@ -10,9 +10,9 @@ MeshCollider:
   m_Material: {fileID: 13400000, guid: 88cf4ba8a624d7c489ec01d3657e507e, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 3
+  serializedVersion: 4
   m_Convex: 1
-  m_CookingOptions: 14
+  m_CookingOptions: 30
   m_Mesh: {fileID: 4300000, guid: 63b1ddc2e1b61624f89ae531a3eac698, type: 3}
 --- !u!1 &5055003768705663572
 GameObject:

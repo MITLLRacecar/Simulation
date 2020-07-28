@@ -145,7 +145,6 @@ public class VariableManager : MonoBehaviour
             {
                 racecar.transform.position = checkpoints[i].Item1;
                 racecar.transform.rotation = checkpoints[i].Item2;
-                racecar.transform.position += racecar.transform.forward * -12;
                 racecar.transform.position += Vector3.up;
                 break;
             }

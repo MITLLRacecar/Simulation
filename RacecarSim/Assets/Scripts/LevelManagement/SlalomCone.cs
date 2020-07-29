@@ -5,14 +5,25 @@
 /// </summary>
 public class SlalomCone : MonoBehaviour
 {
+    #region Set in Unity Editor
     /// <summary>
     /// True if the cone is red.
     /// </summary>
     [SerializeField]
     private bool isRed;
 
+    /// <summary>
+    /// True if the player should incur a time penalty if they pass the cone on the wrong side.
+    /// </summary>
     [SerializeField]
     private bool isTimePenalty;
+
+    /// <summary>
+    /// True if the player should be disqualified if they pass the cone on the wrong side.
+    /// </summary>
+    [SerializeField]
+    private bool isDisqualify;
+    #endregion
 
     /// <summary>
     /// The failure message to show if the player crosses the incorrect side of a red cone.
@@ -37,7 +48,7 @@ public class SlalomCone : MonoBehaviour
                 VariableManager.AddPenalty(SlalomCone.timePenalty);
                 Destroy(this.gameObject);
             }
-            else
+            else if (this.isDisqualify)
             {
                 player.Hud.ShowFailureMessage(isRed ? SlalomCone.redMessage : SlalomCone.blueMessage);
             }

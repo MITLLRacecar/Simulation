@@ -6,6 +6,11 @@ using UnityEngine.UI;
 /// </summary>
 public class SettingsUI : MonoBehaviour
 {
+    #region Set in Unity Editor
+    [SerializeField]
+    private Material[] carMaterials = new Material[6];
+    #endregion
+
     #region Public Interface
     /// <summary>
     /// Restore the default settings.
@@ -23,6 +28,9 @@ public class SettingsUI : MonoBehaviour
     {
         Settings.IsRealism = this.toggles[Toggles.IsRealism.GetHashCode()].isOn;
         Settings.DepthRes = (Settings.DepthResolution)this.dropdowns[Dropdowns.DepthRes.GetHashCode()].value;
+        
+        this.ApplyColorInputs();
+
         Settings.SaveSettings();
         this.gameObject.SetActive(false);
     }
@@ -34,6 +42,11 @@ public class SettingsUI : MonoBehaviour
     {
         this.UpdateInputs();
         this.gameObject.SetActive(false);
+    }
+
+    public void ColorChanged()
+    {
+        // TODO: update on fly
     }
     #endregion
 
@@ -50,7 +63,23 @@ public class SettingsUI : MonoBehaviour
     /// </summary>
     private enum Toggles
     {
-        IsRealism
+        IsRealism,
+        Car1FrontShiny,
+        Car1BackShiny,
+        Car2FrontShiny,
+        Car2BackShiny,
+        Car3FrontShiny,
+        Car3BackShiny
+    }
+
+    private enum Sliders
+    {
+        Car1Front = 0,
+        Car1Back = 3,
+        Car2Front = 6,
+        Car2Back = 9,
+        Car3Front = 12,
+        Car3Back = 15
     }
 
     /// <summary>
@@ -63,10 +92,16 @@ public class SettingsUI : MonoBehaviour
     /// </summary>
     private Toggle[] toggles;
 
+    /// <summary>
+    /// The sliders in the settings pane.
+    /// </summary>
+    private Slider[] sliders;
+
     private void Awake()
     {
         this.dropdowns = this.GetComponentsInChildren<Dropdown>();
         this.toggles = this.GetComponentsInChildren<Toggle>();
+        this.sliders = this.GetComponentsInChildren<Slider>();
     }
 
     private void Start()
@@ -81,5 +116,31 @@ public class SettingsUI : MonoBehaviour
     {
         this.toggles[Toggles.IsRealism.GetHashCode()].isOn = Settings.IsRealism;
         this.dropdowns[Dropdowns.DepthRes.GetHashCode()].value = Settings.DepthRes.GetHashCode();
+
+        this.LoadColors();
+    }
+
+    private void ApplyColorInputs()
+    {
+        for (int i = 0; i < this.carMaterials.Length; i++)
+        {
+            this.carMaterials[i].color = new Color(this.sliders[3 * i].value, this.sliders[3 * i + 1].value, this.sliders[3 * i + 2].value);
+
+            float metallic = this.toggles[Toggles.Car1FrontShiny.GetHashCode() + i].isOn ? 1 : 0;
+            this.carMaterials[i].SetFloat("_Metallic", metallic);
+        }
+    }
+
+    private void LoadColors()
+    {
+        for (int i = 0; i < this.carMaterials.Length; i++)
+        {
+            Color color = this.carMaterials[i].color;
+            this.sliders[3 * i].value = color.r;
+            this.sliders[3 * i + 1].value = color.g;
+            this.sliders[3 * i + 2].value = color.b;
+
+            this.toggles[Toggles.Car1FrontShiny.GetHashCode() + i].isOn = this.carMaterials[i].GetFloat("_Metallic") > 0;
+        }
     }
 }

@@ -113,7 +113,6 @@ public class VariableManager : MonoBehaviour
     {
         timeInfo = new TimeInfo();
         hud = FindObjectOfType<Hud>();
-        racecar = GameObject.FindGameObjectWithTag("Player");
 
         VariableManager.TurnChoices[0] = Random.value < 0.5f ? VariableTurn.Left : VariableTurn.Right;
         VariableManager.TurnChoices[1] = Random.value < 0.5f ? VariableTurn.Left : VariableTurn.Right;
@@ -132,6 +131,19 @@ public class VariableManager : MonoBehaviour
             int temp = colorAssignments[i];
             colorAssignments[i] = colorAssignments[swapIndex];
             colorAssignments[swapIndex] = temp;
+        }
+    }
+
+    private void Start()
+    {
+        GameObject[] racecars = GameObject.FindGameObjectsWithTag("Player");
+        foreach (GameObject car in racecars)
+        {
+            if (car.GetComponent<Racecar>().Hud != null)
+            {
+                VariableManager.racecar = car;
+                break;
+            }
         }
     }
 

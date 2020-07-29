@@ -338,7 +338,7 @@ public class Racecar : MonoBehaviour
             print("Kachow!");
         }
 
-        if (this.Controller.WasPressed(Controller.Button.B))
+        if (this.Controller.WasPressed(Controller.Button.Y))
         {
             this.ResetToCheckpoint();
         }

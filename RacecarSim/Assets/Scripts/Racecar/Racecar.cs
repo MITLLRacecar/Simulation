@@ -18,6 +18,12 @@ public class Racecar : MonoBehaviour
     /// </summary>
     [SerializeField]
     private float FailureSpeed = -1;
+
+    /// <summary>
+    /// The index of the RACECAR.
+    /// </summary>
+    [SerializeField]
+    private int index;
     #endregion
 
     #region Constants
@@ -81,7 +87,11 @@ public class Racecar : MonoBehaviour
         print(">> Entering default drive mode");
         this.isDefaultDrive = true;
         this.DefaultDriveStart();
-        this.Hud.UpdateMode(this.isDefaultDrive, this.isValidRun);
+
+        if (this.Hud != null)
+        {
+            this.Hud.UpdateMode(this.isDefaultDrive, this.isValidRun);
+        }
     }
 
     /// <summary>
@@ -90,9 +100,13 @@ public class Racecar : MonoBehaviour
     public void EnterUserProgram()
     {
         print(">> Entering user program mode");
-        this.pythonInterface.PythonStart();
+        PythonInterface.Instance.PythonStart(this.index);
         this.isDefaultDrive = false;
-        this.Hud.UpdateMode(this.isDefaultDrive, this.isValidRun);
+
+        if (this.Hud != null)
+        {
+            this.Hud.UpdateMode(this.isDefaultDrive, this.isValidRun);
+        }
 
         this.startTime = Time.time;
         VariableManager.SetKeyTime(VariableManager.KeyTime.Start, this.startTime);
@@ -104,7 +118,7 @@ public class Racecar : MonoBehaviour
     public void HandleExit()
     {
         print(">> Goodbye!");
-        this.pythonInterface.HandleExit();
+        PythonInterface.Instance.HandleExit();
 
         // Reload current level with the ReloadBuffer
         ReloadBuffer.BuildIndexToReload = SceneManager.GetActiveScene().buildIndex;
@@ -120,7 +134,10 @@ public class Racecar : MonoBehaviour
         if (this.isValidRun)
         {
             float time = Time.time - this.startTime;
-            this.Hud.ShowSuccessMessage(time);
+            if (this.Hud != null)
+            {
+                this.Hud.ShowSuccessMessage(time);
+            }
             this.isValidRun = false;
 
             if (level != BestTimes.Level.None)
@@ -136,7 +153,11 @@ public class Racecar : MonoBehaviour
     public void SetIsWinable()
     {
         this.isValidRun = true;
-        this.Hud.UpdateMode(this.isDefaultDrive, this.isValidRun);
+
+        if (this.Hud != null)
+        {
+            this.Hud.UpdateMode(this.isDefaultDrive, this.isValidRun);
+        }
     }
 
     /// <summary>
@@ -155,11 +176,6 @@ public class Racecar : MonoBehaviour
         }
     }
     #endregion
-
-    /// <summary>
-    /// The UDP interface to the Python script controlling this car.
-    /// </summary>
-    private PythonInterface pythonInterface;
 
     /// <summary>
     /// True if the car is currently in default drive mode.
@@ -190,8 +206,6 @@ public class Racecar : MonoBehaviour
     {
         this.isValidRun = false;
         this.curCamera = 0;
-
-        this.pythonInterface = new PythonInterface(this);
         this.Hud = this.transform.parent.GetComponentInChildren<Hud>();
 
         // Find submodules
@@ -204,11 +218,16 @@ public class Racecar : MonoBehaviour
 
     private void Start()
     {
+        PythonInterface.Instance.AddRacecar(this, this.index);
+
         // Begin with main player camera (0th camera)
-        this.PlayerCameras[0].enabled = true;
-        for (int i = 1; i < this.PlayerCameras.Length; i++)
+        if (this.PlayerCameras.Length > 0)
         {
-            this.PlayerCameras[i].enabled = false;
+            this.PlayerCameras[0].enabled = true;
+            for (int i = 1; i < this.PlayerCameras.Length; i++)
+            {
+                this.PlayerCameras[i].enabled = false;
+            }
         }
 
         this.EnterDefaultDrive();
@@ -223,7 +242,7 @@ public class Racecar : MonoBehaviour
         }
         else
         {
-            this.pythonInterface.PythonUpdate();
+            PythonInterface.Instance.PythonUpdate(this.index);
         }
 
         // Handle START and BACK buttons
@@ -241,7 +260,11 @@ public class Racecar : MonoBehaviour
             if (this.isValidRun)
             {
                 this.isValidRun = false;
-                this.Hud.UpdateMode(this.isDefaultDrive, this.isValidRun);
+
+                if (this.Hud != null)
+                {
+                    this.Hud.UpdateMode(this.isDefaultDrive, this.isValidRun);
+                }
             }
         }
 
@@ -256,14 +279,17 @@ public class Racecar : MonoBehaviour
         // Return to main menu on escape
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            this.pythonInterface.HandleExit();
+            PythonInterface.Instance.HandleExit();
             SceneManager.LoadScene(0);
         }
 
         // Check if we have exceeded FailureSpeed
         if (this.FailureSpeed > 0 && this.Physics.LinearVelocity.magnitude > this.FailureSpeed)
         {
-            this.Hud.ShowFailureMessage($"The car exceeded {this.FailureSpeed} m/s");
+            if (this.Hud != null)
+            {
+                this.Hud.ShowFailureMessage($"The car exceeded {this.FailureSpeed} m/s");
+            }
         }
     }
 
@@ -331,7 +357,11 @@ public class Racecar : MonoBehaviour
         if (this.isValidRun && this.Drive.Speed != 0)
         {
             this.isValidRun = false;
-            this.Hud.UpdateMode(this.isDefaultDrive, this.isValidRun);
+
+            if (this.Hud != null)
+            {
+                this.Hud.UpdateMode(this.isDefaultDrive, this.isValidRun);
+            }
         }
     }
 }

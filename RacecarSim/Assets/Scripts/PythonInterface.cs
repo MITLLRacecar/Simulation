@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -7,7 +9,7 @@ using UnityEngine;
 /// <summary>
 /// Manages UDP communication with the user's Python script.
 /// </summary>
-public class PythonInterface
+public class PythonInterface : MonoBehaviour
 {
     #region Constants
     /// <summary>
@@ -36,33 +38,17 @@ public class PythonInterface
     private const int maxPacketSize = 65507;
     #endregion
 
-    #region Public Interface
-    /// <summary>
-    /// Creates a Python Interface for a player.
-    /// </summary>
-    /// <param name="racecar">The car which the python interface will control.</param>
-    public PythonInterface(Racecar racecar)
-    {
-        this.wasExitHandled = false;
-        this.isSyncConnected = false;
-        this.racecar = racecar;
-
-        // Establish and configure a UDP port
-        this.udpClient = new UdpClient(new IPEndPoint(PythonInterface.ipAddress, PythonInterface.unityPort));
-        this.udpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
-        this.udpClient.Client.ReceiveTimeout = PythonInterface.timeoutTime;
-
-        // Initialize client to handle async calls
-        this.asyncClientThread = new Thread(new ThreadStart(this.ProcessAsyncCalls))
-        {
-            IsBackground = true
-        };
-        this.asyncClientThread.Start();
-    }
+    #region Public
+    public static PythonInterface Instance;
 
     ~PythonInterface()
     {
         this.HandleExit();
+    }
+
+    public void AddRacecar(Racecar racecar, int index)
+    {
+        this.racecars[index] = racecar;
     }
 
     /// <summary>
@@ -72,19 +58,18 @@ public class PythonInterface
     {
         if (!this.wasExitHandled)
         {
-            if (this.isSyncConnected)
+            foreach (IPEndPoint endpoint in this.pythonEndPoints)
             {
                 try
                 {
-                    this.udpClient.Send(new byte[] { (byte)Header.unity_exit }, 1);
+                    this.udpClient.Send(new byte[] { (byte)Header.unity_exit }, 1, endpoint);
                 }
                 catch (Exception e)
                 {
-                    Debug.Log($"Unable to send exit command to Python. Error: {e}");
+                    Debug.LogError($"Unable to send exit command to Python. Error: {e}");
                 }
-
-                this.isSyncConnected = false;
             }
+            this.pythonEndPoints.Clear();
 
             this.udpClient.Close();
             this.udpClientAsync.Close();
@@ -95,17 +80,17 @@ public class PythonInterface
     /// <summary>
     /// Tells Python to run the user's start function.
     /// </summary>
-    public void PythonStart()
+    public void PythonStart(int racecarIndex)
     {
-        this.PythonCall(Header.unity_start);
+        this.PythonCall(Header.unity_start, racecarIndex);
     }
 
     /// <summary>
     /// Tells Python to run the user's update function.
     /// </summary>
-    public void PythonUpdate()
+    public void PythonUpdate(int racecarIndex)
     {
-        this.PythonCall(Header.unity_update);
+        this.PythonCall(Header.unity_update, racecarIndex);
     }
     #endregion
 
@@ -151,24 +136,38 @@ public class PythonInterface
 
     #region Sync
     /// <summary>
-    /// The racecar controlled by the user's Python script.
+    /// The RACECAR(s) controlled by the user Python script(s).
     /// </summary>
-    private Racecar racecar;
-
-    /// <summary>
-    /// True if udpClient is connected to Python.
-    /// </summary>
-    private bool isSyncConnected;
+    private Racecar[] racecars;
 
     /// <summary>
     /// The UDP client used to send packets to Python.
     /// </summary>
     private UdpClient udpClient;
 
-    /// <summary>
-    /// The IP address and port used by the Python RACECAR library.
-    /// </summary>
-    private IPEndPoint pythonEndPoint;
+    private List<IPEndPoint> pythonEndPoints;
+
+    private void Awake()
+    {
+        // TODO: Eventually, we should probably make PythonInterface a static class
+        PythonInterface.Instance = this;
+
+        this.wasExitHandled = false;
+        this.racecars = new Racecar[4];
+        this.pythonEndPoints = new List<IPEndPoint>();
+
+        // Establish and configure a UDP port
+        this.udpClient = new UdpClient(new IPEndPoint(PythonInterface.ipAddress, PythonInterface.unityPort));
+        this.udpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+        this.udpClient.Client.ReceiveTimeout = PythonInterface.timeoutTime;
+
+        // Initialize client to handle async calls
+        this.asyncClientThread = new Thread(new ThreadStart(this.ProcessAsyncCalls))
+        {
+            IsBackground = true
+        };
+        this.asyncClientThread.Start();
+    }
 
     /// <summary>
     /// Connect the sync client to a Python script.
@@ -176,31 +175,33 @@ public class PythonInterface
     /// <param name="pythonPort">The port used by the Python script.</param>
     private void ConnectSyncClient(int pythonPort)
     {
-        this.pythonEndPoint = new IPEndPoint(PythonInterface.ipAddress, pythonPort);
-        this.udpClient.Connect(this.pythonEndPoint);
-        this.isSyncConnected = true;
+        this.pythonEndPoints.Add(new IPEndPoint(PythonInterface.ipAddress, pythonPort));
     }
 
     /// <summary>
     /// Handles a call to a Python function.
     /// </summary>
     /// <param name="function">The Python function to call (start or update)</param>
-    private void PythonCall(Header function)
+    private void PythonCall(Header function, int racecarIndex)
     {
-        if (!this.isSyncConnected)
+        if (racecarIndex >= this.pythonEndPoints.Count)
         {
-            this.HandleError("Not connected to a Python script.");
+            this.HandleError($"RACECAR index {racecarIndex} not connected to a Python script.", racecarIndex);
+            return;
         }
 
+        Racecar racecar = this.racecars[racecarIndex];
+        IPEndPoint endPoint = this.pythonEndPoints[racecarIndex];
+
         // Tell Python what function to call
-        this.udpClient.Send(new byte[] { (byte)function }, 1);
+        this.udpClient.Send(new byte[] { (byte)function }, 1, endPoint);
 
         // Respond to API calls from Python until we receive a python_finished message
         bool pythonFinished = false;
         while (!pythonFinished)
         {
             // Receive a response from Python
-            byte[] data = this.SafeRecieve();
+            byte[] data = this.SafeRecieve(racecarIndex);
             if (data == null)
             {
                 break;
@@ -212,7 +213,7 @@ public class PythonInterface
             switch (header)
             {
                 case Header.error:
-                    HandleError("Error code sent from Python.");
+                    HandleError("Error code sent from Python.", racecarIndex);
                     break;
 
                 case Header.python_finished:
@@ -221,102 +222,102 @@ public class PythonInterface
 
                 case Header.racecar_get_delta_time:
                     sendData = BitConverter.GetBytes(Time.deltaTime);
-                    this.udpClient.Send(sendData, sendData.Length);
+                    this.udpClient.Send(sendData, sendData.Length, endPoint);
                     break;
 
                 case Header.camera_get_color_image:
-                    this.SendFragmented(this.racecar.Camera.ColorImageRaw, 32);
+                    this.SendFragmented(racecar.Camera.ColorImageRaw, 32, racecarIndex);
                     break;
 
                 case Header.camera_get_depth_image:
-                    sendData = this.racecar.Camera.DepthImageRaw;
-                    this.udpClient.Send(sendData, sendData.Length);
+                    sendData = racecar.Camera.DepthImageRaw;
+                    this.udpClient.Send(sendData, sendData.Length, endPoint);
                     break;
 
                 case Header.camera_get_width:
                     sendData = BitConverter.GetBytes(CameraModule.ColorWidth);
-                    this.udpClient.Send(sendData, sendData.Length);
+                    this.udpClient.Send(sendData, sendData.Length, endPoint);
                     break;
 
                 case Header.camera_get_height:
                     sendData = BitConverter.GetBytes(CameraModule.ColorHeight);
-                    this.udpClient.Send(sendData, sendData.Length);
+                    this.udpClient.Send(sendData, sendData.Length, endPoint);
                     break;
 
                 case Header.controller_is_down:
                     Controller.Button buttonDown = (Controller.Button)data[1];
-                    sendData = BitConverter.GetBytes(this.racecar.Controller.IsDown(buttonDown));
-                    this.udpClient.Send(sendData, sendData.Length);
+                    sendData = BitConverter.GetBytes(racecar.Controller.IsDown(buttonDown));
+                    this.udpClient.Send(sendData, sendData.Length, endPoint);
                     break;
 
                 case Header.controller_was_pressed:
                     Controller.Button buttonPressed = (Controller.Button)data[1];
-                    sendData = BitConverter.GetBytes(this.racecar.Controller.WasPressed(buttonPressed));
-                    this.udpClient.Send(sendData, sendData.Length);
+                    sendData = BitConverter.GetBytes(racecar.Controller.WasPressed(buttonPressed));
+                    this.udpClient.Send(sendData, sendData.Length, endPoint);
 
                     // TODO: Remove this
                     if (buttonPressed == Controller.Button.B)
                     {
-                        this.racecar.ResetToCheckpoint();
+                        racecar.ResetToCheckpoint();
                     }
                     break;
 
                 case Header.controller_was_released:
                     Controller.Button buttonReleased = (Controller.Button)data[1];
-                    sendData = BitConverter.GetBytes(this.racecar.Controller.WasReleased(buttonReleased));
-                    this.udpClient.Send(sendData, sendData.Length);
+                    sendData = BitConverter.GetBytes(racecar.Controller.WasReleased(buttonReleased));
+                    this.udpClient.Send(sendData, sendData.Length, endPoint);
                     break;
 
                 case Header.controller_get_trigger:
                     Controller.Trigger trigger = (Controller.Trigger)data[1];
-                    sendData = BitConverter.GetBytes(this.racecar.Controller.GetTrigger(trigger));
-                    this.udpClient.Send(sendData, sendData.Length);
+                    sendData = BitConverter.GetBytes(racecar.Controller.GetTrigger(trigger));
+                    this.udpClient.Send(sendData, sendData.Length, endPoint);
                     break;
 
                 case Header.controller_get_joystick:
                     Controller.Joystick joystick = (Controller.Joystick)data[1];
-                    Vector2 joystickValues = this.racecar.Controller.GetJoystick(joystick);
+                    Vector2 joystickValues = racecar.Controller.GetJoystick(joystick);
                     sendData = new byte[sizeof(float) * 2];
                     Buffer.BlockCopy(new float[] { joystickValues.x, joystickValues.y }, 0, sendData, 0, sendData.Length);
-                    this.udpClient.Send(sendData, sendData.Length);
+                    this.udpClient.Send(sendData, sendData.Length, endPoint);
                     break;
 
                 case Header.drive_set_speed_angle:
-                    this.racecar.Drive.Speed = BitConverter.ToSingle(data, 4);
-                    this.racecar.Drive.Angle = BitConverter.ToSingle(data, 8);
+                    racecar.Drive.Speed = BitConverter.ToSingle(data, 4);
+                    racecar.Drive.Angle = BitConverter.ToSingle(data, 8);
                     break;
 
                 case Header.drive_stop:
-                    this.racecar.Drive.Stop();
+                    racecar.Drive.Stop();
                     break;
 
                 case Header.drive_set_max_speed:
-                    this.racecar.Drive.MaxSpeed = BitConverter.ToSingle(data, 4);
+                    racecar.Drive.MaxSpeed = BitConverter.ToSingle(data, 4);
                     break;
 
                 case Header.lidar_get_num_samples:
                     sendData = BitConverter.GetBytes(Lidar.NumSamples);
-                    this.udpClient.Send(sendData, sendData.Length);
+                    this.udpClient.Send(sendData, sendData.Length, endPoint);
                     break;
 
                 case Header.lidar_get_samples:
                     sendData = new byte[sizeof(float) * Lidar.NumSamples];
-                    Buffer.BlockCopy(this.racecar.Lidar.Samples, 0, sendData, 0, sendData.Length);
-                    this.udpClient.Send(sendData, sendData.Length);
+                    Buffer.BlockCopy(racecar.Lidar.Samples, 0, sendData, 0, sendData.Length);
+                    this.udpClient.Send(sendData, sendData.Length, endPoint);
                     break;
 
                 case Header.physics_get_linear_acceleration:
-                    Vector3 linearAcceleration = this.racecar.Physics.LinearAccceleration;
+                    Vector3 linearAcceleration = racecar.Physics.LinearAccceleration;
                     sendData = new byte[sizeof(float) * 3];
                     Buffer.BlockCopy(new float[] { linearAcceleration.x, linearAcceleration.y, linearAcceleration.z }, 0, sendData, 0, sendData.Length);
-                    this.udpClient.Send(sendData, sendData.Length);
+                    this.udpClient.Send(sendData, sendData.Length, endPoint);
                     break;
 
                 case Header.physics_get_angular_velocity:
-                    Vector3 angularVelocity = this.racecar.Physics.AngularVelocity;
+                    Vector3 angularVelocity = racecar.Physics.AngularVelocity;
                     sendData = new byte[sizeof(float) * 3];
                     Buffer.BlockCopy(new float[] { angularVelocity.x, angularVelocity.y, angularVelocity.z }, 0, sendData, 0, sendData.Length);
-                    this.udpClient.Send(sendData, sendData.Length);
+                    this.udpClient.Send(sendData, sendData.Length, endPoint);
                     break;
 
                 default:
@@ -331,19 +332,20 @@ public class PythonInterface
     /// </summary>
     /// <param name="bytes">The bytes to send (must be divisible by numPackets).</param>
     /// <param name="numPackets">The number of packets to split the data across.</param>
-    private void SendFragmented(byte[] bytes, int numPackets)
+    /// <param name="racecarIndex">The index of the RACECAR to which to send and receive data.</param>
+    private void SendFragmented(byte[] bytes, int numPackets, int racecarIndex)
     {
         int blockSize = bytes.Length / numPackets;
         byte[] sendData = new byte[blockSize];
         for (int i = 0; i < numPackets; i++)
         {
             Buffer.BlockCopy(bytes, i * blockSize, sendData, 0, blockSize);
-            this.udpClient.Send(sendData, sendData.Length);
+            this.udpClient.Send(sendData, sendData.Length, this.pythonEndPoints[racecarIndex]);
 
-            byte[] response = this.SafeRecieve();
+            byte[] response = this.SafeRecieve(racecarIndex);
             if (response == null || (Header)response[0] != Header.python_send_next)
             {
-                this.HandleError("Unity and Python became out of sync while sending a block message.");
+                this.HandleError("Unity and Python became out of sync while sending a block message.", racecarIndex);
                 break;
             }
         }
@@ -352,18 +354,20 @@ public class PythonInterface
     /// <summary>
     /// Receives a packet from Python and safely handles UDP exceptions (broken socket, timeout, etc.).
     /// </summary>
+    /// <param name="racecarIndex">The index of the RACECAR program from which to receive data.</param>
     /// <returns>The data in the packet, or null if an error occurred.</returns>
-    private byte[] SafeRecieve()
+    private byte[] SafeRecieve(int racecarIndex)
     {
         try
         {
-            return this.udpClient.Receive(ref this.pythonEndPoint);
+            IPEndPoint endPoint = this.pythonEndPoints[racecarIndex];
+            return this.udpClient.Receive(ref endPoint);
         }
         catch (SocketException e)
         {
             if (e.SocketErrorCode == SocketError.TimedOut)
             {
-                this.HandleError("No message received from Python within the alloted time.");
+                this.HandleError("No message received from Python within the alloted time.", racecarIndex);
                 Debug.LogError(">> Troubleshooting:" +
                     "\n1. Make sure that your Python program does not block or wait. For example, your program should never call time.sleep()." +
                     "\n2. Make sure that your program is not too computationally intensive. Your start and update functions should be able to run in under 10 milliseconds." +
@@ -372,7 +376,7 @@ public class PythonInterface
             }
             else
             {
-                this.HandleError("An error occurred when attempting to receive data from Python.");
+                this.HandleError("An error occurred when attempting to receive data from Python.", racecarIndex);
             }
         }
         return null;
@@ -382,17 +386,32 @@ public class PythonInterface
     /// Handles when a sync error occurs by showing error text, sending an error response, and returning to default drive.
     /// </summary>
     /// <param name="errorText">The error text to show.</param>
-    private void HandleError(string errorText)
+    /// <param name="racecarIndex">The index of the RACECAR for which the error occurred.</param>
+    private void HandleError(string errorText, int racecarIndex)
     {
-        Debug.LogError($">> Error: {errorText} Returning to default drive mode.");
-        this.racecar.Hud.SetMessage($"Error: {errorText} Returning to default drive mode.", Color.red, 5, 1);
+        Debug.LogError($">> Error: {errorText} RACECAR index {racecarIndex} returning to default drive mode.");
 
-        if (this.isSyncConnected)
+        if (this.racecars[racecarIndex] != null)
         {
-            this.udpClient.Send(new byte[] { (byte)Header.error }, 1);
-        }
+            if (this.racecars[racecarIndex].Hud != null)
+            {
+                this.racecars[racecarIndex].Hud.SetMessage($"Error: {errorText} Returning to default drive mode.", Color.red, 5, 1);
+            }
 
-        this.racecar.EnterDefaultDrive();
+            try
+            {
+                if (racecarIndex < this.pythonEndPoints.Count)
+                {
+                    this.udpClient.Send(new byte[] { (byte)Header.error }, 1, this.pythonEndPoints[racecarIndex]);
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.LogError(e);
+            }
+
+            this.racecars[racecarIndex].EnterDefaultDrive();
+        }
     }
     #endregion
 
@@ -420,30 +439,29 @@ public class PythonInterface
             byte[] data = this.udpClientAsync.Receive(ref receiveEndPoint);
             Header header = (Header)data[0];
 
+            Racecar racecar = this.racecars[0];
+
             byte[] sendData;
             switch (header)
             {
                 case Header.connect:
-                    if (!this.isSyncConnected)
-                    {
-                        this.ConnectSyncClient(receiveEndPoint.Port);
-                        sendData = new byte[1] { (byte)Header.connect };
-                        this.udpClientAsync.Send(sendData, sendData.Length, receiveEndPoint);
-                    }
+                    this.ConnectSyncClient(receiveEndPoint.Port);
+                    sendData = new byte[1] { (byte)Header.connect };
+                    this.udpClientAsync.Send(sendData, sendData.Length, receiveEndPoint);
                     break;
 
                 case Header.camera_get_color_image:
-                    this.SendFragmentedAsync(this.racecar.Camera.GetColorImageRawAsync(), 32, receiveEndPoint);
+                    this.SendFragmentedAsync(racecar.Camera.GetColorImageRawAsync(), 32, receiveEndPoint);
                     break;
 
                 case Header.camera_get_depth_image:
-                    sendData = this.racecar.Camera.GetDepthImageRawAsync();
+                    sendData = racecar.Camera.GetDepthImageRawAsync();
                     this.udpClientAsync.Send(sendData, sendData.Length, receiveEndPoint);
                     break;
 
                 case Header.lidar_get_samples:
                     sendData = new byte[sizeof(float) * Lidar.NumSamples];
-                    Buffer.BlockCopy(this.racecar.Lidar.Samples, 0, sendData, 0, sendData.Length);
+                    Buffer.BlockCopy(racecar.Lidar.Samples, 0, sendData, 0, sendData.Length);
                     this.udpClientAsync.Send(sendData, sendData.Length, receiveEndPoint);
                     break;
 

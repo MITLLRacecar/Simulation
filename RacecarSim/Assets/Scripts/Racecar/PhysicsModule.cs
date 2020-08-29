@@ -3,7 +3,7 @@
 /// <summary>
 /// Simulates the IMU.
 /// </summary>
-public class PhysicsModule : MonoBehaviour
+public class PhysicsModule : RacecarModule
 {
     #region Constants
     /// <summary>
@@ -104,14 +104,24 @@ public class PhysicsModule : MonoBehaviour
     /// </summary>
     private Vector3? angularVelocity = null;
 
-    private void Awake()
+    protected override void Awake()
     {
         this.rBody = this.GetComponent<Rigidbody>();
+
+        base.Awake();
     }
 
     private void Start()
     {
         this.prevVelocity = this.LinearVelocity;
+    }
+
+    private void Update()
+    {
+        if (this.racecar.Hud != null)
+        {
+            this.racecar.Hud.UpdatePhysics(this.LinearVelocity.magnitude, this.LinearAccceleration, this.LinearVelocity);
+        }
     }
 
     private void FixedUpdate()

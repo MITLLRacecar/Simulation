@@ -5,7 +5,7 @@ using UnityEngine;
 /// <summary>
 /// Simulates the color and depth channels of the RealSense camera.
 /// </summary>
-public class CameraModule : MonoBehaviour
+public class CameraModule : RacecarModule
 {
     #region Constants
     /// <summary>
@@ -237,11 +237,13 @@ public class CameraModule : MonoBehaviour
     /// </summary>
     private bool mustUpdateDepthImageRaw;
 
-    private void Awake()
+    protected override void Awake()
     {
         Camera[] cameras = this.GetComponentsInChildren<Camera>();
         this.colorCamera = cameras[0];
         this.depthCamera = cameras[1];
+
+        base.Awake();
     }
 
     private void Start()
@@ -271,6 +273,11 @@ public class CameraModule : MonoBehaviour
         {
             this.UpdateDepthImageRaw();
             this.mustUpdateDepthImageRaw = false;
+        }
+
+        if (this.racecar.Hud != null)
+        {
+            this.VisualizeDepth(this.racecar.Hud.DepthVisualization);
         }
     }
 

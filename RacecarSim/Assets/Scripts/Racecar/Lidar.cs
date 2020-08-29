@@ -4,7 +4,7 @@ using UnityEngine;
 /// <summary>
 /// Simulates the LIDAR sensor.
 /// </summary>
-public class Lidar : MonoBehaviour
+public class Lidar : RacecarModule
 {
     #region Constants
     /// <summary>
@@ -106,16 +106,11 @@ public class Lidar : MonoBehaviour
     #endregion
 
     /// <summary>
-    /// The parent racecar to which this module belongs.
-    /// </summary>
-    private Racecar racecar;
-
-    /// <summary>
     /// The index of the most recently captured sample.
     /// </summary>
     private int curSample = 0;
 
-    private void Awake()
+    protected override void FindParent()
     {
         this.racecar = this.GetComponentInParent<Racecar>();
     }
@@ -125,7 +120,15 @@ public class Lidar : MonoBehaviour
         this.Samples = new float[Lidar.NumSamples];
     }
 
-    void FixedUpdate()
+    private void Update()
+    {
+        if (this.racecar.Hud != null)
+        {
+            this.VisualizeLidar(this.racecar.Hud.LidarVisualization);
+        }
+    }
+
+    private void FixedUpdate()
     {
         int lastSample = (curSample + Mathf.RoundToInt(Lidar.samplesPerSecond * Time.deltaTime)) % NumSamples;
 
@@ -140,7 +143,7 @@ public class Lidar : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (!other.isTrigger)
+        if (!other.isTrigger && this.racecar.Hud != null)
         {
             this.racecar.Hud.ShowFailureMessage(Lidar.collisionFailureMessage);
         }

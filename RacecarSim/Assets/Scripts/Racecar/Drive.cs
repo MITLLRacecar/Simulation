@@ -4,7 +4,7 @@ using UnityEngine;
 /// <summary>
 /// Controls car physics and movement.
 /// </summary>
-public class Drive : MonoBehaviour
+public class Drive : RacecarModule
 {
     #region Set in Unity Editor
     /// <summary>
@@ -93,9 +93,11 @@ public class Drive : MonoBehaviour
         BackRight
     }
 
-    private void Awake()
+    protected override void Awake()
     {
         this.rBody = this.GetComponent<Rigidbody>();
+
+        base.Awake();
     }
 
     private void Start()

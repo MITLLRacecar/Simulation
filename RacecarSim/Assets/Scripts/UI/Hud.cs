@@ -50,6 +50,41 @@ public class Hud : MonoBehaviour
 
     #region Public Interface
     /// <summary>
+    /// The texture containing the LIDAR visualization.
+    /// </summary>
+    public Texture2D LidarVisualization
+    {
+        get
+        {
+            return (Texture2D)this.images[(int)Images.LidarMap].texture;
+        }
+    }
+
+    /// <summary>
+    /// The texture containing the depth camera visualization.
+    /// </summary>
+    public Texture2D DepthVisualization
+    {
+        get
+        {
+            return (Texture2D)this.images[(int)Images.DepthFeed].texture;
+        }
+    }
+
+    /// <summary>
+    /// Update the physics statistics shown on the HUD.
+    /// </summary>
+    /// <param name="speed">The magnitude of the car's linear velocity in m/s.</param>
+    /// <param name="linearAcceleration">The car's linear acceleration in m/s^2.</param>
+    /// <param name="angularVelocity">The car's angular velocity in rad/s.</param>
+    public void UpdatePhysics(float speed, Vector3 linearAcceleration, Vector3 angularVelocity)
+    {
+        this.texts[Texts.TrueSpeed.GetHashCode()].text = speed.ToString("F2");
+        this.texts[Texts.LinearAcceleration.GetHashCode()].text = FormatVector3(linearAcceleration);
+        this.texts[Texts.AngularVelocity.GetHashCode()].text = FormatVector3(angularVelocity);
+    }
+
+    /// <summary>
     /// Sets the message text at the bottom of the screen.
     /// </summary>
     /// <param name="message">The text to show.</param>
@@ -185,11 +220,6 @@ public class Hud : MonoBehaviour
     private RawImage[] images;
 
     /// <summary>
-    /// The RACECAR for which the HUD displays information.
-    /// </summary>
-    private Racecar racecar;
-
-    /// <summary>
     /// A counter used to track message persistence and fade out.
     /// </summary>
     private float messageCounter;
@@ -227,8 +257,6 @@ public class Hud : MonoBehaviour
 
         this.images[Images.LidarMap.GetHashCode()].texture = new Texture2D(CameraModule.ColorWidth / Hud.lidarMapScale, CameraModule.ColorHeight / Hud.lidarMapScale);
         this.images[Images.DepthFeed.GetHashCode()].texture = new Texture2D(CameraModule.DepthWidth, CameraModule.DepthHeight);
-
-        this.racecar = this.transform.parent.GetComponentInChildren<Racecar>();
     }
 
     private void Start()
@@ -249,14 +277,6 @@ public class Hud : MonoBehaviour
 
     private void Update()
     {
-        // Update mutable texts and images
-        this.texts[Texts.TrueSpeed.GetHashCode()].text = this.racecar.Physics.LinearVelocity.magnitude.ToString("F2");
-        this.texts[Texts.LinearAcceleration.GetHashCode()].text = FormatVector3(this.racecar.Physics.LinearAccceleration);
-        this.texts[Texts.AngularVelocity.GetHashCode()].text = FormatVector3(this.racecar.Physics.AngularVelocity);
-
-        this.racecar.Lidar.VisualizeLidar((Texture2D)this.images[Images.LidarMap.GetHashCode()].texture);
-        this.racecar.Camera.VisualizeDepth((Texture2D)this.images[Images.DepthFeed.GetHashCode()].texture);
-
         this.UpdateController();
 
         // Toggle time warp when the backspace alt key is pressed
@@ -287,26 +307,28 @@ public class Hud : MonoBehaviour
     /// </summary>
     private void UpdateController()
     {
-        // Update buttons
-        int index = Images.ControllerFirstButton.GetHashCode();
-        foreach (Controller.Button button in Enum.GetValues(typeof(Controller.Button)))
+        Array buttons = Enum.GetValues(typeof(Controller.Button));
+        Array triggers = Enum.GetValues(typeof(Controller.Trigger));
+        Array joysticks = Enum.GetValues(typeof(Controller.Joystick));
+
+        int index = Images.ControllerFirstButton.GetHashCode(); ;
+
+        foreach (Controller.Button button in buttons)
         {
-            this.images[index].enabled = this.racecar.Controller.IsDown(button);
+            this.images[index].enabled = Controller.IsDown(button);
             index++;
         }
 
-        // Update triggers
-        foreach (Controller.Trigger trigger in Enum.GetValues(typeof(Controller.Trigger)))
+        foreach (Controller.Trigger trigger in triggers)
         {
-            this.images[index].enabled = this.racecar.Controller.GetTrigger(trigger) > 0;
+            this.images[index].enabled = Controller.GetTrigger(trigger) > 0;
             index++;
         }
 
-        // Update joysticks
-        foreach (Controller.Joystick joystick in Enum.GetValues(typeof(Controller.Joystick)))
+        foreach (Controller.Joystick joystick in joysticks)
         {
-            Vector2 values = this.racecar.Controller.GetJoystick(joystick);
-            this.images[index].enabled = values.x * values.x + values.y * values.y > 0;
+            Vector2 joystickAxes = Controller.GetJoystick(joystick);
+            this.images[index].enabled = joystickAxes.x != 0 || joystickAxes.y != 0;
             index++;
         }
     }

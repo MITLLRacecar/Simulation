@@ -11,7 +11,7 @@ using UnityEngine;
 /// Xbox controller mapping varies based on operating system.
 /// See https://wiki.unity3d.com/index.php/Xbox360Controller for details.
 /// </remarks>
-public class Controller : MonoBehaviour
+public static class Controller
 {
     #region Constants
     /// <summary>
@@ -180,7 +180,7 @@ public class Controller : MonoBehaviour
     /// </summary>
     /// <param name="button">A button on an Xbox controller.</param>
     /// <returns>True if the provided button is currently pressed.</returns>
-    public bool IsDown(Button button)
+    public static bool IsDown(Button button)
     {
         int index = button.GetHashCode();
         if (button == Button.BACK)
@@ -195,7 +195,7 @@ public class Controller : MonoBehaviour
     /// </summary>
     /// <param name="button">A button on an Xbox controller.</param>
     /// <returns>True if the provided button was pressed this frame.</returns>
-    public bool WasPressed(Button button)
+    public static bool WasPressed(Button button)
     {
         int index = button.GetHashCode();
         if (button == Button.BACK)
@@ -210,7 +210,7 @@ public class Controller : MonoBehaviour
     /// </summary>
     /// <param name="button">A button on an Xbox controller.</param>
     /// <returns>True if the provided button was released this frame.</returns>
-    public bool WasReleased(Button button)
+    public static bool WasReleased(Button button)
     {
         int index = button.GetHashCode();
         if (button == Button.BACK)
@@ -225,7 +225,7 @@ public class Controller : MonoBehaviour
     /// </summary>
     /// <param name="trigger">A trigger on an Xbox controller.</param>
     /// <returns>The value of the provided trigger, ranging from 0 (unpressed) to 1 (fully pressed).</returns>
-    public float GetTrigger(Trigger trigger)
+    public static float GetTrigger(Trigger trigger)
     {
         int index = trigger.GetHashCode();
         float triggerValue = Input.GetAxis(Controller.triggerMap[index]);
@@ -244,7 +244,7 @@ public class Controller : MonoBehaviour
     /// </summary>
     /// <param name="joystick">A joystick on an Xbox controller.</param>
     /// <returns>The x and y coordinates of the provided joystick, ranging from (-1, -1) (bottom left) to (1, 1) (top right)</returns>
-    public Vector2 GetJoystick(Joystick joystick)
+    public static Vector2 GetJoystick(Joystick joystick)
     {
         int index = joystick.GetHashCode();
         float xAxis = Input.GetAxis(Controller.joystickMap[index][0]);
@@ -261,5 +261,5 @@ public class Controller : MonoBehaviour
 
         return new Vector2(xAxis, yAxis);
     }
-#endregion
+    #endregion
 }

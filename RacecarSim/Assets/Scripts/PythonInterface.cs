@@ -229,31 +229,31 @@ public class PythonInterface
 
                     case Header.controller_is_down:
                         Controller.Button buttonDown = (Controller.Button)data[1];
-                        sendData = BitConverter.GetBytes(racecar.Controller.IsDown(buttonDown));
+                        sendData = BitConverter.GetBytes(Controller.IsDown(buttonDown));
                         this.udpClient.Send(sendData, sendData.Length, endPoint);
                         break;
 
                     case Header.controller_was_pressed:
                         Controller.Button buttonPressed = (Controller.Button)data[1];
-                        sendData = BitConverter.GetBytes(racecar.Controller.WasPressed(buttonPressed));
+                        sendData = BitConverter.GetBytes(Controller.WasPressed(buttonPressed));
                         this.udpClient.Send(sendData, sendData.Length, endPoint);
                         break;
 
                     case Header.controller_was_released:
                         Controller.Button buttonReleased = (Controller.Button)data[1];
-                        sendData = BitConverter.GetBytes(racecar.Controller.WasReleased(buttonReleased));
+                        sendData = BitConverter.GetBytes(Controller.WasReleased(buttonReleased));
                         this.udpClient.Send(sendData, sendData.Length, endPoint);
                         break;
 
                     case Header.controller_get_trigger:
                         Controller.Trigger trigger = (Controller.Trigger)data[1];
-                        sendData = BitConverter.GetBytes(racecar.Controller.GetTrigger(trigger));
+                        sendData = BitConverter.GetBytes(Controller.GetTrigger(trigger));
                         this.udpClient.Send(sendData, sendData.Length, endPoint);
                         break;
 
                     case Header.controller_get_joystick:
                         Controller.Joystick joystick = (Controller.Joystick)data[1];
-                        Vector2 joystickValues = racecar.Controller.GetJoystick(joystick);
+                        Vector2 joystickValues = Controller.GetJoystick(joystick);
                         sendData = new byte[sizeof(float) * 2];
                         Buffer.BlockCopy(new float[] { joystickValues.x, joystickValues.y }, 0, sendData, 0, sendData.Length);
                         this.udpClient.Send(sendData, sendData.Length, endPoint);

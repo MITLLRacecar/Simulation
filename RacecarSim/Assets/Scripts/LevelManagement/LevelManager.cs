@@ -1,5 +1,16 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using UnityEngine.SceneManagement;
+
+/// <summary>
+/// The possible modes of the simulation.
+/// </summary>
+public enum SimulationMode
+{
+    DefaultDrive,
+    UserProgram,
+    Wait,
+    Paused
+}
 
 public class LevelManager : MonoBehaviour
 {
@@ -16,8 +27,15 @@ public class LevelManager : MonoBehaviour
     [SerializeField]
     private GameObject hudPrefab;
 
-    // Once again, it would be preferable to use a jagged array to set spawn positions,
-    // but we have had to fall back to hard coding settable positions for up to four cars.
+    /// <summary>
+    /// The prefabs containing the screen managers for races with increasing numbers of cars.
+    /// The 0th prefab supports 1 car, the 1st prefab supports 2 cars, and so on.
+    /// </summary>
+    [SerializeField]
+    private GameObject[] raceScreenPrefabs;
+
+    // The Unity Editor does not support jagged arrays,
+    // so we resort to hard coding settable positions for up to four cars.
 
     /// <summary>
     /// The position at which a singe car will be spawned.
@@ -50,16 +68,20 @@ public class LevelManager : MonoBehaviour
     /// </summary>
     public static int NumPlayers = 1;
 
+    /// <summary>
+    /// True if the current simulation is an evaluation run.
+    /// </summary>
+    public static bool IsEvaluation = false;
+
     public static void HandleError(string errorText)
     {
         Debug.LogError($">> Error: {errorText} Returning to default drive mode.");
-        if (instance.hud != null)
-        {
-            instance.hud.SetMessage($"Error: {errorText} Returning to default drive mode.", Color.red, 5, 1);
-        }
+        instance.screenManager.ShowMessage($"Error: {errorText} Returning to default drive mode.", Color.red, 5, 1);
     }
     #endregion
-
+    /// <summary>
+    /// A static reference to the current LevelManager (there is only ever one at a time).
+    /// </summary>
     private static LevelManager instance;
 
     /// <summary>
@@ -67,30 +89,87 @@ public class LevelManager : MonoBehaviour
     /// </summary>
     private PythonInterface pythonInteraface;
 
-    private Hud hud;
+    /// <summary>
+    /// The object managing the 2D screen content.
+    /// </summary>
+    private ScreenManager screenManager;
+
+    /// <summary>
+    /// The racecars in the current simulation.
+    /// </summary>
+    private Racecar[] players;
+
+    /// <summary>
+    /// The current simulation mode.
+    /// </summary>
+    private SimulationMode mode;
 
     private void Awake()
     {
         LevelManager.instance = this;
+        this.mode = LevelManager.IsEvaluation ? SimulationMode.Wait : SimulationMode.DefaultDrive;
     }
 
     private void Start()
     {
-        this.pythonInteraface = new PythonInterface(this.SpawnPlayers());
+        this.SpawnPlayers();
+        this.pythonInteraface = new PythonInterface(this.players);
+    }
+
+    private void Update()
+    {
+        switch (this.mode)
+        {
+            case SimulationMode.DefaultDrive:
+                foreach (Racecar player in this.players)
+                {
+                    player.DefaultDriveUpdate();
+                }
+                break;
+            case SimulationMode.UserProgram:
+                this.pythonInteraface.HandleUpdate();
+                break;
+        }
+
+        // Handle START and BACK buttons
+        if (Controller.IsDown(Controller.Button.START) && Controller.IsDown(Controller.Button.BACK))
+        {
+            this.HandleRestart();
+        }
+        else if (Controller.WasPressed(Controller.Button.START))
+        {
+            this.HandleStart();
+        }
+        else if (Controller.WasPressed(Controller.Button.BACK))
+        {
+            this.HandleBack();
+        }
+
+        // Handle exit on escape
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            this.HandleExit();
+        }
+    }
+
+    private void OnApplicationQuit()
+    {
+        this.pythonInteraface.HandleExit();
     }
 
     /// <summary>
-    /// Spawns the correct number of players and creates a HUD if there is only one player.
+    /// Spawns the correct number of players and creates the corresponding screen manager.
     /// </summary>
-    /// <returns>An array containing the spawned players.</returns>
-    private Racecar[] SpawnPlayers()
+    private void SpawnPlayers()
     {
-        Racecar[] output = new Racecar[LevelManager.NumPlayers];
+        this.players = new Racecar[LevelManager.NumPlayers];
         if (LevelManager.NumPlayers == 1)
         {
-            output[0] = GameObject.Instantiate(this.playerPrefab, this.oneCarSpawn, Quaternion.identity).GetComponent<Racecar>();
-            this.hud = GameObject.Instantiate(this.hudPrefab).GetComponent<Hud>();
-            output[0].GetComponentInChildren<Racecar>().Hud = this.hud;
+            this.players[0] = GameObject.Instantiate(this.playerPrefab, this.oneCarSpawn, Quaternion.identity).GetComponent<Racecar>();
+            
+            Hud hud = GameObject.Instantiate(this.hudPrefab).GetComponent<Hud>();
+            this.players[0].GetComponentInChildren<Racecar>().Hud = hud;
+            this.screenManager = hud;
         }
         else
         {
@@ -113,10 +192,60 @@ public class LevelManager : MonoBehaviour
 
             for (int i = 0; i < LevelManager.NumPlayers; i++)
             {
-                output[i] = GameObject.Instantiate(this.playerPrefab, spawnLocations[i], Quaternion.identity).GetComponent<Racecar>();
+                this.players[i] = GameObject.Instantiate(this.playerPrefab, spawnLocations[i], Quaternion.identity).GetComponent<Racecar>();
+            }
+
+            this.screenManager = GameObject.Instantiate(this.raceScreenPrefabs[LevelManager.NumPlayers - 1]).GetComponent<RaceScreen>();
+        }
+        this.screenManager.UpdateMode(this.mode);
+    }
+
+    /// <summary>
+    /// Handles when the user presses the START button.
+    /// </summary>
+    private void HandleStart()
+    {
+        this.mode = SimulationMode.UserProgram;
+        this.pythonInteraface.HandleStart();
+        this.screenManager.UpdateMode(this.mode);
+    }
+
+    /// <summary>
+    /// Handles when the user presses the BACK button.
+    /// </summary>
+    private void HandleBack()
+    {
+        if (LevelManager.IsEvaluation)
+        {
+            this.mode = SimulationMode.Paused;
+        }
+        else
+        {
+            this.mode = SimulationMode.DefaultDrive;
+            foreach (Racecar player in this.players)
+            {
+                player.DefaultDriveStart();
             }
         }
+        this.screenManager.UpdateMode(this.mode);
+    }
 
-        return output;
+    /// <summary>
+    /// Handles when the user restarts the current level (START + BACK).
+    /// </summary>
+    private void HandleRestart()
+    {
+        // Reload current level with the ReloadBuffer
+        ReloadBuffer.BuildIndexToReload = SceneManager.GetActiveScene().buildIndex;
+        SceneManager.LoadSceneAsync(ReloadBuffer.BuildIndex, LoadSceneMode.Single);
+    }
+
+    /// <summary>
+    /// Handles when the user exits to the main menu (escape).
+    /// </summary>
+    private void HandleExit()
+    {
+        this.pythonInteraface.HandleExit();
+        SceneManager.LoadScene(0);
     }
 }

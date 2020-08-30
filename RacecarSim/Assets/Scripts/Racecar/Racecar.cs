@@ -18,12 +18,6 @@ public class Racecar : MonoBehaviour
     /// </summary>
     [SerializeField]
     private float FailureSpeed = -1;
-
-    /// <summary>
-    /// The index of the RACECAR.
-    /// </summary>
-    [SerializeField]
-    private int index;
     #endregion
 
     #region Constants
@@ -55,11 +49,6 @@ public class Racecar : MonoBehaviour
     public CameraModule Camera { get; private set; }
 
     /// <summary>
-    /// Exposes the Xbox controller.
-    /// </summary>
-    public Controller Controller { get; private set; }
-
-    /// <summary>
     /// Exposes the car motors.
     /// </summary>
     public Drive Drive { get; private set; }
@@ -75,55 +64,9 @@ public class Racecar : MonoBehaviour
     public PhysicsModule Physics { get; private set; }
 
     /// <summary>
-    /// The heads-up display associated with this car.
+    /// The heads-up display controlled by this car, if any.
     /// </summary>
-    public Hud Hud { get; private set; }
-
-    /// <summary>
-    /// Causes the car to enter default drive mode, allowing the user to drive around with the controller.
-    /// </summary>
-    public void EnterDefaultDrive()
-    {
-        print(">> Entering default drive mode");
-        this.isDefaultDrive = true;
-        this.DefaultDriveStart();
-
-        if (this.Hud != null)
-        {
-            this.Hud.UpdateMode(this.isDefaultDrive, this.isValidRun);
-        }
-    }
-
-    /// <summary>
-    /// Causes the car to enter user program mode, executing the user program.
-    /// </summary>
-    public void EnterUserProgram()
-    {
-        print(">> Entering user program mode");
-        PythonInterface.Instance.PythonStart(this.index);
-        this.isDefaultDrive = false;
-
-        if (this.Hud != null)
-        {
-            this.Hud.UpdateMode(this.isDefaultDrive, this.isValidRun);
-        }
-
-        this.startTime = Time.time;
-        VariableManager.SetKeyTime(VariableManager.KeyTime.Start, this.startTime);
-    }
-
-    /// <summary>
-    /// Safely exits the application.
-    /// </summary>
-    public void HandleExit()
-    {
-        print(">> Goodbye!");
-        PythonInterface.Instance.HandleExit();
-
-        // Reload current level with the ReloadBuffer
-        ReloadBuffer.BuildIndexToReload = SceneManager.GetActiveScene().buildIndex;
-        SceneManager.LoadSceneAsync(ReloadBuffer.BuildIndex, LoadSceneMode.Single);
-    }
+    public Hud Hud { get; set; }
 
     /// <summary>
     /// Handles crossing the finish line.
@@ -131,33 +74,20 @@ public class Racecar : MonoBehaviour
     /// <param name="level">The level entry to update in BestTimes (if time is recorded for this level).</param>
     public void HandleFinish(BestTimes.Level level = BestTimes.Level.None)
     {
-        if (this.isValidRun)
-        {
-            float time = Time.time - this.startTime;
-            if (this.Hud != null)
-            {
-                this.Hud.ShowSuccessMessage(time);
-            }
-            this.isValidRun = false;
+        //if (this.isValidRun)
+        //{
+        //    float time = Time.time - this.startTime;
+        //    if (this.Hud != null)
+        //    {
+        //        this.Hud.ShowSuccessMessage(time);
+        //    }
+        //    this.isValidRun = false;
 
-            if (level != BestTimes.Level.None)
-            {
-                BestTimes.UpdateBestTime(level, time);
-            }
-        }
-    }
-
-    /// <summary>
-    /// Tells the car that the current level has a winnable objective.
-    /// </summary>
-    public void SetIsWinable()
-    {
-        this.isValidRun = true;
-
-        if (this.Hud != null)
-        {
-            this.Hud.UpdateMode(this.isDefaultDrive, this.isValidRun);
-        }
+        //    if (level != BestTimes.Level.None)
+        //    {
+        //        BestTimes.UpdateBestTime(level, time);
+        //    }
+        //}
     }
 
     /// <summary>
@@ -175,17 +105,45 @@ public class Racecar : MonoBehaviour
             rbody.angularVelocity = Vector3.zero;
         }
     }
+
+    /// <summary>
+    /// Called on the first frame when the car enters default drive mode.
+    /// </summary>
+    public void DefaultDriveStart()
+    {
+        this.Drive.MaxSpeed = Drive.DefaultMaxSpeed;
+        this.Drive.Stop();
+    }
+
+    /// <summary>
+    /// Called each frame that the car is in default drive mode.
+    /// </summary>
+    public void DefaultDriveUpdate()
+    {
+        this.Drive.Speed = Controller.GetTrigger(Controller.Trigger.RIGHT) - Controller.GetTrigger(Controller.Trigger.LEFT);
+        this.Drive.Angle = Controller.GetJoystick(Controller.Joystick.LEFT).x;
+
+        if (Controller.WasPressed(Controller.Button.A))
+        {
+            print("Kachow!");
+        }
+
+        if (Controller.WasPressed(Controller.Button.Y))
+        {
+            this.ResetToCheckpoint();
+        }
+
+        // Use the bumpers to adjust max speed
+        if (Controller.WasPressed(Controller.Button.RB))
+        {
+            this.Drive.MaxSpeed = Mathf.Min(this.Drive.MaxSpeed + 0.1f, 1);
+        }
+        if (Controller.WasPressed(Controller.Button.LB))
+        {
+            this.Drive.MaxSpeed = Mathf.Max(this.Drive.MaxSpeed - 0.1f, 0);
+        }
+    }
     #endregion
-
-    /// <summary>
-    /// True if the car is currently in default drive mode.
-    /// </summary>
-    private bool isDefaultDrive = true;
-
-    /// <summary>
-    /// True if the current run has only been controlled by the user's program.
-    /// </summary>
-    private bool isValidRun;
 
     /// <summary>
     /// The time at which the car entered user program mode.
@@ -204,13 +162,10 @@ public class Racecar : MonoBehaviour
 
     private void Awake()
     {
-        this.isValidRun = false;
         this.curCamera = 0;
-        this.Hud = this.transform.parent.GetComponentInChildren<Hud>();
 
         // Find submodules
         this.Camera = this.GetComponent<CameraModule>();
-        this.Controller = this.GetComponent<Controller>();
         this.Drive = this.GetComponent<Drive>();
         this.Lidar = this.GetComponentInChildren<Lidar>();
         this.Physics = this.GetComponent<PhysicsModule>();
@@ -218,8 +173,6 @@ public class Racecar : MonoBehaviour
 
     private void Start()
     {
-        PythonInterface.Instance.AddRacecar(this, this.index);
-
         // Begin with main player camera (0th camera)
         if (this.PlayerCameras.Length > 0)
         {
@@ -229,58 +182,16 @@ public class Racecar : MonoBehaviour
                 this.PlayerCameras[i].enabled = false;
             }
         }
-
-        this.EnterDefaultDrive();
     }
 
     private void Update()
     {
-        // Call correct update function based on mode
-        if (this.isDefaultDrive)
-        {
-            this.DefaultDriveUpdate();
-        }
-        else
-        {
-            PythonInterface.Instance.PythonUpdate(this.index);
-        }
-
-        // Handle START and BACK buttons
-        if (this.Controller.IsDown(Controller.Button.START) && this.Controller.IsDown(Controller.Button.BACK))
-        {
-            this.HandleExit();
-        }
-        else if (this.Controller.WasPressed(Controller.Button.START))
-        {
-            this.EnterUserProgram();
-        }
-        else if (this.Controller.WasPressed(Controller.Button.BACK))
-        {
-            this.EnterDefaultDrive();
-            if (this.isValidRun)
-            {
-                this.isValidRun = false;
-
-                if (this.Hud != null)
-                {
-                    this.Hud.UpdateMode(this.isDefaultDrive, this.isValidRun);
-                }
-            }
-        }
-
         // Toggle camera when the space bar is pressed
         if (Input.GetKeyDown(KeyCode.Space))
         {
             this.PlayerCameras[this.curCamera].enabled = false;
             this.curCamera = (this.curCamera + 1) % this.PlayerCameras.Length;
             this.PlayerCameras[this.curCamera].enabled = true;
-        }
-
-        // Return to main menu on escape
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            PythonInterface.Instance.HandleExit();
-            SceneManager.LoadScene(0);
         }
 
         // Check if we have exceeded FailureSpeed
@@ -295,7 +206,7 @@ public class Racecar : MonoBehaviour
 
     private void LateUpdate()
     {
-        for (int i = 0; i < this.PlayerCameras.Length; ++i)
+        for (int i = 0; i < this.PlayerCameras.Length; i++)
         {
             Vector3 followPoint = this.transform.forward * Racecar.cameraOffsets[i].z;
             Vector3 targetCameraPosition = this.transform.position + new Vector3(followPoint.x, Racecar.cameraOffsets[i].y, followPoint.z);
@@ -313,55 +224,6 @@ public class Racecar : MonoBehaviour
         if (other.GetComponent<Checkpoint>() != null)
         {
             this.checkPoint = other.gameObject;
-        }
-    }
-
-    /// <summary>
-    /// Called on the first frame when the car enters default drive mode.
-    /// </summary>
-    private void DefaultDriveStart()
-    {
-        this.Drive.MaxSpeed = Drive.DefaultMaxSpeed;
-        this.Drive.Stop();
-    }
-
-    /// <summary>
-    /// Called each frame that the car is in default drive mode.
-    /// </summary>
-    private void DefaultDriveUpdate()
-    {
-        this.Drive.Speed = this.Controller.GetTrigger(Controller.Trigger.RIGHT) - this.Controller.GetTrigger(Controller.Trigger.LEFT);
-        this.Drive.Angle = this.Controller.GetJoystick(Controller.Joystick.LEFT).x;
-
-        if (this.Controller.WasPressed(Controller.Button.A))
-        {
-            print("Kachow!");
-        }
-
-        if (this.Controller.WasPressed(Controller.Button.Y))
-        {
-            this.ResetToCheckpoint();
-        }
-
-        // Use the bumpers to adjust max speed
-        if (this.Controller.WasPressed(Controller.Button.RB))
-        {
-            this.Drive.MaxSpeed = Mathf.Min(this.Drive.MaxSpeed + 0.1f, 1);
-        }
-        if (this.Controller.WasPressed(Controller.Button.LB))
-        {
-            this.Drive.MaxSpeed = Mathf.Max(this.Drive.MaxSpeed - 0.1f, 0);
-        }
-
-        // If the user moves in default drive mode, it is no longer a valid run
-        if (this.isValidRun && this.Drive.Speed != 0)
-        {
-            this.isValidRun = false;
-
-            if (this.Hud != null)
-            {
-                this.Hud.UpdateMode(this.isDefaultDrive, this.isValidRun);
-            }
         }
     }
 }

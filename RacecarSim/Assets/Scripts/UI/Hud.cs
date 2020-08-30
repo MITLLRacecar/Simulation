@@ -5,7 +5,7 @@ using UnityEngine.UI;
 /// <summary>
 /// Controls the heads-up display shown to the user.
 /// </summary>
-public class Hud : MonoBehaviour
+public class Hud : ScreenManager
 {
     #region Set in Unity Editor
     /// <summary>
@@ -28,19 +28,29 @@ public class Hud : MonoBehaviour
     public static readonly Color SensorBackgroundColor = new Color(0.2f, 0.2f, 0.2f);
 
     /// <summary>
+    /// The background color of the mode label when the simulation is in default drive mode.
+    /// </summary>
+    private static readonly Color defaultDriveColor = new Color(0, 1f, 0.5f);
+
+    /// <summary>
+    /// The background color of the mode label when the simulation is in user program mode.
+    /// </summary>
+    private static readonly Color userProgramColor = new Color(0.75f, 0, 0.25f);
+
+    /// <summary>
+    /// The background color of the mode label when the simulation is in wait mode.
+    /// </summary>
+    private static readonly Color waitColor = new Color(1f, 0.5f, 0);
+
+    /// <summary>
+    /// The background color of the mode label when the simulation is paused.
+    /// </summary>
+    private static readonly Color pausedColor = new Color(0, 0.5f, 1f);
+
+    /// <summary>
     /// The number of times the LIDAR map is smaller than the color and depth visualizations.
     /// </summary>
     private const int lidarMapScale = 4;
-
-    /// <summary>
-    /// The background color of the mode label when the car is in default drive mode.
-    /// </summary>
-    private static readonly Color defaultDriveColor = new Color(0, 0.5f, 1);
-
-    /// <summary>
-    /// The background color of the mode label when the car is in user program mode.
-    /// </summary>
-    private static readonly Color userProgramColor = new Color(0.75f, 0, 0.25f);
 
     /// <summary>
     /// The factor that time slows down during time warp.
@@ -72,6 +82,42 @@ public class Hud : MonoBehaviour
     }
 
     /// <summary>
+    /// Updates the element showing the current simulation mode.
+    /// </summary>
+    /// <param name="mode">The current mode of the simulation.</param>
+    public override void UpdateMode(SimulationMode mode)
+    {
+        string modeName;
+        Color iconColor = Color.white;
+
+        switch (mode)
+        {
+            case SimulationMode.DefaultDrive:
+                modeName = "Default Drive";
+                iconColor = Hud.defaultDriveColor;
+                break;
+            case SimulationMode.UserProgram:
+                modeName = "User Program";
+                iconColor = Hud.userProgramColor;
+                break;
+            case SimulationMode.Wait:
+                modeName = "Wait";
+                iconColor = Hud.waitColor;
+                break;
+            case SimulationMode.Paused:
+                modeName = "Paused";
+                iconColor = Hud.pausedColor;
+                break;
+            default:
+                modeName = "Unrecognized";
+                break;
+        }
+
+        this.texts[(int)Texts.Mode].text = modeName;
+        this.images[(int)Images.ModeBackground].color = iconColor;
+    }
+
+    /// <summary>
     /// Update the physics statistics shown on the HUD.
     /// </summary>
     /// <param name="speed">The magnitude of the car's linear velocity in m/s.</param>
@@ -82,40 +128,6 @@ public class Hud : MonoBehaviour
         this.texts[Texts.TrueSpeed.GetHashCode()].text = speed.ToString("F2");
         this.texts[Texts.LinearAcceleration.GetHashCode()].text = FormatVector3(linearAcceleration);
         this.texts[Texts.AngularVelocity.GetHashCode()].text = FormatVector3(angularVelocity);
-    }
-
-    /// <summary>
-    /// Sets the message text at the bottom of the screen.
-    /// </summary>
-    /// <param name="message">The text to show.</param>
-    public void SetMessage(string message, Color color, float persistTime = -1, float fadeTime = 1.0f)
-    {
-        this.texts[Texts.Message.GetHashCode()].text = message;
-        this.texts[Texts.Message.GetHashCode()].color = color;
-
-        this.messageColor = color;
-        this.messageCounter = 0;
-        this.messagePersistTime = persistTime;
-        this.messageFadeTime = fadeTime;
-    }
-
-    /// <summary>
-    /// Updates the icon showing the current driving mode.
-    /// </summary>
-    /// <param name="isDefaultDrive">Whether the car is currently in default drive mode.</param>
-    public void UpdateMode(bool isDefaultDrive, bool isValid)
-    {
-        if (isDefaultDrive)
-        {
-            this.texts[Texts.Mode.GetHashCode()].text = "Default Drive";
-            this.images[Images.ModeBackground.GetHashCode()].color = Hud.defaultDriveColor;
-        }
-        else
-        {
-            this.texts[Texts.Mode.GetHashCode()].text = "User Program";
-            this.images[Images.ModeBackground.GetHashCode()].color = Hud.userProgramColor;
-        }
-        this.images[Images.Star.GetHashCode()].enabled = isValid;
     }
 
     /// <summary>
@@ -138,45 +150,45 @@ public class Hud : MonoBehaviour
         this.texts[Texts.SuccessTime.GetHashCode()].text = $"Time: {time:F2} seconds";
     }
 
-    public void UpdateTimes(VariableManager.TimeInfo timeInfo)
-    {
-        if (timeInfo.startTime == 0)
-        {
-            this.texts[Texts.MainTime.GetHashCode()].text = 0.0f.ToString("F3");
-            return;
-        }
+    //public void UpdateTimes(VariableManager.TimeInfo timeInfo)
+    //{
+    //    if (timeInfo.startTime == 0)
+    //    {
+    //        this.texts[Texts.MainTime.GetHashCode()].text = 0.0f.ToString("F3");
+    //        return;
+    //    }
 
-        if (timeInfo.finishTime == 0)
-        {
-            this.texts[Texts.MainTime.GetHashCode()].text = (Time.time + timeInfo.penalty - timeInfo.startTime).ToString("F3");
-        }
-        else
-        {
-            this.texts[Texts.MainTime.GetHashCode()].text = (timeInfo.finishTime - timeInfo.startTime).ToString("F3");
-        }
+    //    if (timeInfo.finishTime == 0)
+    //    {
+    //        this.texts[Texts.MainTime.GetHashCode()].text = (Time.time + timeInfo.penalty - timeInfo.startTime).ToString("F3");
+    //    }
+    //    else
+    //    {
+    //        this.texts[Texts.MainTime.GetHashCode()].text = (timeInfo.finishTime - timeInfo.startTime).ToString("F3");
+    //    }
 
-        float[] times = new float[timeInfo.checkpointTimes.Length + 2];
-        times[0] = timeInfo.startTime;
-        Array.Copy(timeInfo.checkpointTimes, 0, times, 1, timeInfo.checkpointTimes.Length);
-        times[times.Length - 1] = timeInfo.finishTime;
+    //    float[] times = new float[timeInfo.checkpointTimes.Length + 2];
+    //    times[0] = timeInfo.startTime;
+    //    Array.Copy(timeInfo.checkpointTimes, 0, times, 1, timeInfo.checkpointTimes.Length);
+    //    times[times.Length - 1] = timeInfo.finishTime;
 
-        this.texts[Texts.LapTime.GetHashCode()].text = string.Empty;
-        for (int i = 1; i < times.Length; i++)
-        {
-            if (times[i] != 0)
-            { 
-                this.texts[Texts.LapTime.GetHashCode()].text += $"Section {i}: {times[i] - times[i - 1]:F3}\n";
-            }
-            else if (times[i - 1] !=  0)
-            {
-                this.texts[Texts.LapTime.GetHashCode()].text += $"Section {i}: {Time.time + timeInfo.penalty - times[i - 1]:F3}\n";
-            }
-            else
-            {
-                this.texts[Texts.LapTime.GetHashCode()].text += $"Section {i}: --\n";
-            }
-        }
-    }
+    //    this.texts[Texts.LapTime.GetHashCode()].text = string.Empty;
+    //    for (int i = 1; i < times.Length; i++)
+    //    {
+    //        if (times[i] != 0)
+    //        { 
+    //            this.texts[Texts.LapTime.GetHashCode()].text += $"Section {i}: {times[i] - times[i - 1]:F3}\n";
+    //        }
+    //        else if (times[i - 1] !=  0)
+    //        {
+    //            this.texts[Texts.LapTime.GetHashCode()].text += $"Section {i}: {Time.time + timeInfo.penalty - times[i - 1]:F3}\n";
+    //        }
+    //        else
+    //        {
+    //            this.texts[Texts.LapTime.GetHashCode()].text += $"Section {i}: --\n";
+    //        }
+    //    }
+    //}
     #endregion
 
     /// <summary>
@@ -210,36 +222,6 @@ public class Hud : MonoBehaviour
     }
 
     /// <summary>
-    /// All text fields contained in the HUD.
-    /// </summary>
-    private Text[] texts;
-
-    /// <summary>
-    /// All images contained in the HUD.
-    /// </summary>
-    private RawImage[] images;
-
-    /// <summary>
-    /// A counter used to track message persistence and fade out.
-    /// </summary>
-    private float messageCounter;
-
-    /// <summary>
-    /// The time is seconds that the current message will persist.  If -1, the current message will persist indefinitely.
-    /// </summary>
-    private float messagePersistTime;
-
-    /// <summary>
-    /// The time in seconds that the current message will take to fade out.
-    /// </summary>
-    private float messageFadeTime;
-
-    /// <summary>
-    /// The color of the current message.
-    /// </summary>
-    private Color messageColor;
-
-    /// <summary>
     /// The current factor at which time progresses.
     /// </summary>
     private float curTimeScale;
@@ -249,23 +231,15 @@ public class Hud : MonoBehaviour
     /// </summary>
     private float defaultFixedDeltaTime;
 
-    private void Awake()
-    {
-        // Find components
-        this.texts = GetComponentsInChildren<Text>();
-        this.images = this.GetComponentsInChildren<RawImage>();
-
-        this.images[Images.LidarMap.GetHashCode()].texture = new Texture2D(CameraModule.ColorWidth / Hud.lidarMapScale, CameraModule.ColorHeight / Hud.lidarMapScale);
-        this.images[Images.DepthFeed.GetHashCode()].texture = new Texture2D(CameraModule.DepthWidth, CameraModule.DepthHeight);
-    }
-
     private void Start()
     {
-        this.messagePersistTime = -1;
         this.defaultFixedDeltaTime = Time.fixedDeltaTime;
         this.images[Images.TimeWarp.GetHashCode()].enabled = false;
         this.FailureMessage.SetActive(false);
         this.SuccessMessage.SetActive(false);
+
+        this.images[Images.LidarMap.GetHashCode()].texture = new Texture2D(CameraModule.ColorWidth / Hud.lidarMapScale, CameraModule.ColorHeight / Hud.lidarMapScale);
+        this.images[Images.DepthFeed.GetHashCode()].texture = new Texture2D(CameraModule.DepthWidth, CameraModule.DepthHeight);
 
         this.texts[Texts.MainTime.GetHashCode()].text = string.Empty;
         this.texts[Texts.LapTime.GetHashCode()].text = string.Empty;
@@ -275,7 +249,7 @@ public class Hud : MonoBehaviour
         Time.fixedDeltaTime = this.defaultFixedDeltaTime * this.curTimeScale;
     }
 
-    private void Update()
+    protected override void Update()
     {
         this.UpdateController();
 
@@ -285,21 +259,7 @@ public class Hud : MonoBehaviour
             this.ToggleTimeWarp();
         }
 
-        // Handle message persistence and fadeout
-        if (this.messagePersistTime > 0)
-        {
-            this.messageCounter += Time.deltaTime;
-            if (this.messageCounter > this.messagePersistTime)
-            {
-                this.messagePersistTime = 0;
-                this.messageCounter = 0;
-            }
-        }
-        else if (this.messagePersistTime == 0 && this.messageCounter < this.messageFadeTime)
-        {
-            this.messageCounter += Time.deltaTime;
-            this.texts[Texts.Message.GetHashCode()].color = Color.Lerp(this.messageColor, Color.clear, this.messageCounter / this.messageFadeTime);
-        }
+        base.Update();
     }
 
     /// <summary>

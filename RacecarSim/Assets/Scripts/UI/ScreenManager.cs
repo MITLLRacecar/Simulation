@@ -30,6 +30,14 @@ public abstract class ScreenManager : MonoBehaviour
     /// </summary>
     /// <param name="mode">The current mode of the simulation.</param>
     public abstract void UpdateMode(SimulationMode mode);
+
+    public abstract void UpdateTimeScale(float timeScale);
+
+    public abstract void UpdateTimes(float[][] times);
+
+    public abstract void HandleWin(float[][] times);
+
+    public abstract void HandleFailure(int carIndex, string reason);
     #endregion
 
     /// <summary>

@@ -44,6 +44,11 @@ public class Racecar : MonoBehaviour
 
     #region Public Interface
     /// <summary>
+    /// The index of the racecar.
+    /// </summary>
+    public int Index;
+
+    /// <summary>
     /// Exposes the RealSense D435i color and depth channels.
     /// </summary>
     public CameraModule Camera { get; private set; }
@@ -216,14 +221,6 @@ public class Racecar : MonoBehaviour
                 Racecar.cameraSpeed * Time.deltaTime);
 
             this.PlayerCameras[i].transform.LookAt(this.transform.position);
-        }
-    }
-
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.GetComponent<Checkpoint>() != null)
-        {
-            this.checkPoint = other.gameObject;
         }
     }
 }

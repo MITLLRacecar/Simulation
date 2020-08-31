@@ -30,7 +30,7 @@ public class Hud : ScreenManager
     /// <summary>
     /// The background color of the mode label when the simulation is in default drive mode.
     /// </summary>
-    private static readonly Color defaultDriveColor = new Color(0, 1f, 0.5f);
+    private static readonly Color defaultDriveColor = new Color(0, 0.75f, 0.25f);
 
     /// <summary>
     /// The background color of the mode label when the simulation is in user program mode.
@@ -51,36 +51,10 @@ public class Hud : ScreenManager
     /// The number of times the LIDAR map is smaller than the color and depth visualizations.
     /// </summary>
     private const int lidarMapScale = 4;
-
-    /// <summary>
-    /// The factor that time slows down during time warp.
-    /// </summary>
-    private const float timeWarpScale = 0.1f;
     #endregion
 
     #region Public Interface
-    /// <summary>
-    /// The texture containing the LIDAR visualization.
-    /// </summary>
-    public Texture2D LidarVisualization
-    {
-        get
-        {
-            return (Texture2D)this.images[(int)Images.LidarMap].texture;
-        }
-    }
-
-    /// <summary>
-    /// The texture containing the depth camera visualization.
-    /// </summary>
-    public Texture2D DepthVisualization
-    {
-        get
-        {
-            return (Texture2D)this.images[(int)Images.DepthFeed].texture;
-        }
-    }
-
+    #region Overrides
     /// <summary>
     /// Updates the element showing the current simulation mode.
     /// </summary>
@@ -117,6 +91,52 @@ public class Hud : ScreenManager
         this.images[(int)Images.ModeBackground].color = iconColor;
     }
 
+    public override void UpdateTimeScale(float timeScale)
+    {
+        this.images[(int)Images.TimeWarp].enabled = timeScale < 1;
+        this.images[(int)Images.TimeWarp].color = new Color(Mathf.Max(0, 1 - timeScale);
+    }
+
+    public override void UpdateTimes(float[][] times)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override void HandleWin(float[][] times)
+    {
+        this.SuccessMessage.SetActive(true);
+        this.texts[Texts.SuccessTime.GetHashCode()].text = $"Time: {times[0][times[0].Length - 1]:F2} seconds";
+    }
+
+    public override void HandleFailure(int carIndex, string reason)
+    {
+        this.FailureMessage.SetActive(true);
+        this.texts[Texts.Failure.GetHashCode()].text = reason;
+    }
+    #endregion
+
+    /// <summary>
+    /// The texture containing the LIDAR visualization.
+    /// </summary>
+    public Texture2D LidarVisualization
+    {
+        get
+        {
+            return (Texture2D)this.images[(int)Images.LidarMap].texture;
+        }
+    }
+
+    /// <summary>
+    /// The texture containing the depth camera visualization.
+    /// </summary>
+    public Texture2D DepthVisualization
+    {
+        get
+        {
+            return (Texture2D)this.images[(int)Images.DepthFeed].texture;
+        }
+    }
+
     /// <summary>
     /// Update the physics statistics shown on the HUD.
     /// </summary>
@@ -128,26 +148,6 @@ public class Hud : ScreenManager
         this.texts[Texts.TrueSpeed.GetHashCode()].text = speed.ToString("F2");
         this.texts[Texts.LinearAcceleration.GetHashCode()].text = FormatVector3(linearAcceleration);
         this.texts[Texts.AngularVelocity.GetHashCode()].text = FormatVector3(angularVelocity);
-    }
-
-    /// <summary>
-    /// Show the failure textbox with the provided message.
-    /// </summary>
-    /// <param name="text">The reason the user failed.</param>
-    public void ShowFailureMessage(string text)
-    {
-        this.FailureMessage.SetActive(true);
-        this.texts[Texts.Failure.GetHashCode()].text = text;
-    }
-
-    /// <summary>
-    /// Show the success textbox with the provided completion time.
-    /// </summary>
-    /// <param name="time">The time (in seconds) the player took to complete the lab.</param>
-    public void ShowSuccessMessage(float time)
-    {
-        this.SuccessMessage.SetActive(true);
-        this.texts[Texts.SuccessTime.GetHashCode()].text = $"Time: {time:F2} seconds";
     }
 
     //public void UpdateTimes(VariableManager.TimeInfo timeInfo)
@@ -221,19 +221,8 @@ public class Hud : ScreenManager
         ControllerFirstButton = 12
     }
 
-    /// <summary>
-    /// The current factor at which time progresses.
-    /// </summary>
-    private float curTimeScale;
-
-    /// <summary>
-    /// The default value of Time.fixedDeltaTime.
-    /// </summary>
-    private float defaultFixedDeltaTime;
-
     private void Start()
     {
-        this.defaultFixedDeltaTime = Time.fixedDeltaTime;
         this.images[Images.TimeWarp.GetHashCode()].enabled = false;
         this.FailureMessage.SetActive(false);
         this.SuccessMessage.SetActive(false);
@@ -252,13 +241,6 @@ public class Hud : ScreenManager
     protected override void Update()
     {
         this.UpdateController();
-
-        // Toggle time warp when the backspace alt key is pressed
-        if (Input.GetKeyDown(KeyCode.LeftAlt) || Input.GetKeyDown(KeyCode.RightAlt))
-        {
-            this.ToggleTimeWarp();
-        }
-
         base.Update();
     }
 
@@ -291,18 +273,6 @@ public class Hud : ScreenManager
             this.images[index].enabled = joystickAxes.x != 0 || joystickAxes.y != 0;
             index++;
         }
-    }
-
-    /// <summary>
-    /// Turns time warp on or off and updates the HUD accordingly.
-    /// </summary>
-    private void ToggleTimeWarp()
-    {
-        this.images[Images.TimeWarp.GetHashCode()].enabled = !this.images[Images.TimeWarp.GetHashCode()].enabled;
-
-        this.curTimeScale = this.curTimeScale < 1.0f ? 1.0f : Hud.timeWarpScale;
-        Time.timeScale = this.curTimeScale;
-        Time.fixedDeltaTime = this.defaultFixedDeltaTime * this.curTimeScale;
     }
 
     /// <summary>

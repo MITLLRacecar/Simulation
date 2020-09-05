@@ -26,13 +26,21 @@ public abstract class ScreenManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Updates the element showing the current simulation mode.
+    /// Updates the element(s) showing the current simulation mode.
     /// </summary>
     /// <param name="mode">The current mode of the simulation.</param>
     public abstract void UpdateMode(SimulationMode mode);
 
+    /// <summary>
+    /// Updates the element(s) showing the current rate at which time progresses.
+    /// </summary>
+    /// <param name="timeScale">The current rate at which time progresses. 1 is full speed, 0.5 is half speed, and 0 is paused.</param>
     public abstract void UpdateTimeScale(float timeScale);
 
+    /// <summary>
+    /// Updates the element(s) showing the current times of the car(s).
+    /// </summary>
+    /// <param name="times"></param>
     public abstract void UpdateTimes(float[][] times);
 
     public abstract void HandleWin(float[][] times);
@@ -41,12 +49,12 @@ public abstract class ScreenManager : MonoBehaviour
     #endregion
 
     /// <summary>
-    /// All text fields contained in the HUD.
+    /// All text fields contained in the screen manager.
     /// </summary>
     protected Text[] texts;
 
     /// <summary>
-    /// All images contained in the HUD.
+    /// All images contained in the screen manager.
     /// </summary>
     protected RawImage[] images;
 

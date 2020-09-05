@@ -94,12 +94,12 @@ public class Hud : ScreenManager
     public override void UpdateTimeScale(float timeScale)
     {
         this.images[(int)Images.TimeWarp].enabled = timeScale < 1;
-        this.images[(int)Images.TimeWarp].color = new Color(Mathf.Max(0, 1 - timeScale);
+        this.images[(int)Images.TimeWarp].color = new Color(1, 1, 1, Mathf.Max(0, 1 - timeScale));
     }
 
     public override void UpdateTimes(float[][] times)
     {
-        throw new NotImplementedException();
+        // TODO
     }
 
     public override void HandleWin(float[][] times)
@@ -149,46 +149,6 @@ public class Hud : ScreenManager
         this.texts[Texts.LinearAcceleration.GetHashCode()].text = FormatVector3(linearAcceleration);
         this.texts[Texts.AngularVelocity.GetHashCode()].text = FormatVector3(angularVelocity);
     }
-
-    //public void UpdateTimes(VariableManager.TimeInfo timeInfo)
-    //{
-    //    if (timeInfo.startTime == 0)
-    //    {
-    //        this.texts[Texts.MainTime.GetHashCode()].text = 0.0f.ToString("F3");
-    //        return;
-    //    }
-
-    //    if (timeInfo.finishTime == 0)
-    //    {
-    //        this.texts[Texts.MainTime.GetHashCode()].text = (Time.time + timeInfo.penalty - timeInfo.startTime).ToString("F3");
-    //    }
-    //    else
-    //    {
-    //        this.texts[Texts.MainTime.GetHashCode()].text = (timeInfo.finishTime - timeInfo.startTime).ToString("F3");
-    //    }
-
-    //    float[] times = new float[timeInfo.checkpointTimes.Length + 2];
-    //    times[0] = timeInfo.startTime;
-    //    Array.Copy(timeInfo.checkpointTimes, 0, times, 1, timeInfo.checkpointTimes.Length);
-    //    times[times.Length - 1] = timeInfo.finishTime;
-
-    //    this.texts[Texts.LapTime.GetHashCode()].text = string.Empty;
-    //    for (int i = 1; i < times.Length; i++)
-    //    {
-    //        if (times[i] != 0)
-    //        { 
-    //            this.texts[Texts.LapTime.GetHashCode()].text += $"Section {i}: {times[i] - times[i - 1]:F3}\n";
-    //        }
-    //        else if (times[i - 1] !=  0)
-    //        {
-    //            this.texts[Texts.LapTime.GetHashCode()].text += $"Section {i}: {Time.time + timeInfo.penalty - times[i - 1]:F3}\n";
-    //        }
-    //        else
-    //        {
-    //            this.texts[Texts.LapTime.GetHashCode()].text += $"Section {i}: --\n";
-    //        }
-    //    }
-    //}
     #endregion
 
     /// <summary>
@@ -232,10 +192,6 @@ public class Hud : ScreenManager
 
         this.texts[Texts.MainTime.GetHashCode()].text = string.Empty;
         this.texts[Texts.LapTime.GetHashCode()].text = string.Empty;
-
-        this.curTimeScale = 1.0f;
-        Time.timeScale = this.curTimeScale;
-        Time.fixedDeltaTime = this.defaultFixedDeltaTime * this.curTimeScale;
     }
 
     protected override void Update()

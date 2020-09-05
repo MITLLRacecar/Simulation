@@ -93,8 +93,8 @@ public class Hud : ScreenManager
 
     public override void UpdateTimeScale(float timeScale)
     {
-        this.images[(int)Images.TimeWarp].enabled = timeScale < 1;
-        this.images[(int)Images.TimeWarp].color = new Color(1, 1, 1, Mathf.Max(0, 1 - timeScale));
+        this.images[(int)Images.TimeWarp].color = new Color(1, 1, 1, Mathf.Max(0, 1 - Mathf.Sqrt(timeScale)));
+        this.texts[(int)Texts.TimeScale].text = timeScale >= 1 ? string.Empty : $"{Mathf.Round(1 / timeScale)}x Slow Motion";
     }
 
     public override void UpdateTimes(float[][] times)
@@ -102,10 +102,10 @@ public class Hud : ScreenManager
         // TODO
     }
 
-    public override void HandleWin(float[][] times)
+    public override void HandleWin(float[] times)
     {
         this.SuccessMessage.SetActive(true);
-        this.texts[Texts.SuccessTime.GetHashCode()].text = $"Time: {times[0][times[0].Length - 1]:F2} seconds";
+        this.texts[Texts.SuccessTime.GetHashCode()].text = $"Time: {times[0]:F2} seconds";
     }
 
     public override void HandleFailure(int carIndex, string reason)
@@ -156,15 +156,16 @@ public class Hud : ScreenManager
     /// </summary>
     private enum Texts
     {
-        TrueSpeed = 4,
-        LinearAcceleration = 8,
-        AngularVelocity = 11,
-        Mode = 13,
-        Message = 14,
-        Failure = 16,
-        SuccessTime = 19,
-        MainTime = 21,
-        LapTime = 22
+        TimeScale = 0,
+        TrueSpeed = 5,
+        LinearAcceleration = 9,
+        AngularVelocity = 12,
+        Mode = 14,
+        Message = 15,
+        Failure = 17,
+        SuccessTime = 20,
+        MainTime = 22,
+        LapTime = 23
     }
 
     /// <summary>
@@ -181,17 +182,23 @@ public class Hud : ScreenManager
         ControllerFirstButton = 12
     }
 
-    private void Start()
+    protected override void Awake()
     {
-        this.images[Images.TimeWarp.GetHashCode()].enabled = false;
-        this.FailureMessage.SetActive(false);
-        this.SuccessMessage.SetActive(false);
+        base.Awake();
 
         this.images[Images.LidarMap.GetHashCode()].texture = new Texture2D(CameraModule.ColorWidth / Hud.lidarMapScale, CameraModule.ColorHeight / Hud.lidarMapScale);
         this.images[Images.DepthFeed.GetHashCode()].texture = new Texture2D(CameraModule.DepthWidth, CameraModule.DepthHeight);
+    }
+
+    private void Start()
+    {
+        this.FailureMessage.SetActive(false);
+        this.SuccessMessage.SetActive(false);
 
         this.texts[Texts.MainTime.GetHashCode()].text = string.Empty;
         this.texts[Texts.LapTime.GetHashCode()].text = string.Empty;
+
+        this.UpdateTimeScale(1.0f);
     }
 
     protected override void Update()

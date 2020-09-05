@@ -137,7 +137,7 @@ public class LevelManager : MonoBehaviour
     /// <param name="carIndex"></param>
     public static void HandleFinish(int carIndex)
     {
-        // TODO: tell HUD to handle win
+        LevelManager.instance.screenManager.HandleWin(null);
     }
 
     /// <summary>
@@ -245,6 +245,7 @@ public class LevelManager : MonoBehaviour
         this.mode = LevelManager.IsEvaluation ? SimulationMode.Wait : SimulationMode.DefaultDrive;
         Time.timeScale = 1.0f;
         this.defaultFixedDeltaTime = Time.fixedDeltaTime;
+        this.timeEvents = new List<Tuple<float, float>>();
     }
 
     private void Start()
@@ -433,7 +434,7 @@ public class LevelManager : MonoBehaviour
     /// <param name="changeFactor">The number by which to multiply the current time factor.</param>
     private void ScaleTimeFactor(float changeFactor)
     {
-        Time.timeScale *= changeFactor;
+        Time.timeScale = Mathf.Max(Mathf.Min(Time.timeScale * changeFactor, 1.0f), 1 / 64.0f);
         Time.fixedDeltaTime = this.defaultFixedDeltaTime * Time.timeScale;
 
         if (this.timeEvents.Count > 0)
@@ -441,6 +442,6 @@ public class LevelManager : MonoBehaviour
             this.timeEvents.Add(new Tuple<float, float>(Time.time, Time.timeScale));
         }
 
-        // TODO: tell HUD
+        this.screenManager.UpdateTimeScale(Time.timeScale);
     }
 }

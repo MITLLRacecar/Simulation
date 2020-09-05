@@ -43,7 +43,7 @@ public abstract class ScreenManager : MonoBehaviour
     /// <param name="times"></param>
     public abstract void UpdateTimes(float[][] times);
 
-    public abstract void HandleWin(float[][] times);
+    public abstract void HandleWin(float[] times);
 
     public abstract void HandleFailure(int carIndex, string reason);
     #endregion

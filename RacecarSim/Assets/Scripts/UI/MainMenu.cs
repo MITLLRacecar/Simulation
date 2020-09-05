@@ -18,6 +18,9 @@ public class MainMenu : MonoBehaviour
         MainMenu.prevCollectionIndex = this.dropdowns[(int)Dropdowns.CollectionSelect].value;
         MainMenu.prevLevelIndex = this.dropdowns[(int)Dropdowns.LevelSelect].value;
 
+        LevelManager.NumPlayers = 1; // TODO: Read this from a dropdown
+        LevelManager.IsEvaluation = this.toggles[(int)Toggles.IsEvaluation].isOn;
+
         LevelManager.LevelInfo = this.SelectedLevel;
         SceneManager.LoadScene(this.SelectedLevel.BuildIndex, LoadSceneMode.Single);
     }
@@ -48,15 +51,26 @@ public class MainMenu : MonoBehaviour
     }
 
     /// <summary>
-    /// Update the options in the level selection dropdown menu.
+    /// Handles when the user selects a new value in the level collection dropdown.
     /// </summary>
-    /// <param name="selection">The index of the level which should be selected by default in the menu.</param>
-    public void UpdateLevelDropDown(int selection = 0)
+    /// <param name="selectedLevel">The index of the level which should be selected by default in the level select menu.</param>
+    public void HandleLevelCollectionDropdownChange(int selectedLevel = 0)
     {
         Dropdown levelSelect = this.dropdowns[(int)Dropdowns.LevelSelect];
         levelSelect.ClearOptions();
         levelSelect.AddOptions(this.SelectedLevelCollection.LevelNames);
-        levelSelect.value = selection;
+        levelSelect.value = selectedLevel;
+
+        this.HandleLevelDropdownChange();
+    }
+
+    /// <summary>
+    /// Handles when the user selects a new value in the level dropdown.
+    /// </summary>
+    public void HandleLevelDropdownChange()
+    {
+        this.toggles[(int)Toggles.IsEvaluation].gameObject.SetActive(this.SelectedLevel.IsWinable);
+        this.toggles[(int)Toggles.IsEvaluation].isOn = false;
     }
 
     /// <summary>
@@ -95,8 +109,16 @@ public class MainMenu : MonoBehaviour
     /// </summary>
     private enum Dropdowns
     {
-        CollectionSelect,
-        LevelSelect
+        CollectionSelect = 0,
+        LevelSelect = 1
+    }
+
+    /// <summary>
+    /// The toggles (check boxes) in the main menu, with values corresponding to the index in toggles.
+    /// </summary>
+    private enum Toggles
+    {
+        IsEvaluation = 0
     }
 
     /// <summary>
@@ -110,9 +132,14 @@ public class MainMenu : MonoBehaviour
     private static int prevLevelIndex = 0;
 
     /// <summary>
-    /// The dropdown menus used to select the level to load.
+    /// The dropdown menus in the main menu.
     /// </summary>
     private Dropdown[] dropdowns;
+
+    /// <summary>
+    /// The toggles (check boxes) in the main menu.
+    /// </summary>
+    private Toggle[] toggles;
 
     /// <summary>
     /// The screen which shows the controls.
@@ -132,6 +159,7 @@ public class MainMenu : MonoBehaviour
     private void Awake()
     {
         this.dropdowns = this.GetComponentsInChildren<Dropdown>();
+        this.toggles = this.GetComponentsInChildren<Toggle>();
 
         this.controllsPane = this.GetComponentInChildren<ControllsUI>();
         this.settingsPane = this.GetComponentInChildren<SettingsUI>();
@@ -156,6 +184,6 @@ public class MainMenu : MonoBehaviour
         collectionSelect.AddOptions(collectionDisplayNames);
         collectionSelect.value = MainMenu.prevCollectionIndex;
 
-        this.UpdateLevelDropDown(MainMenu.prevLevelIndex);
+        this.HandleLevelCollectionDropdownChange(MainMenu.prevLevelIndex);
     }
 }

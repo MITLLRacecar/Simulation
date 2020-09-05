@@ -40,8 +40,9 @@ public abstract class ScreenManager : MonoBehaviour
     /// <summary>
     /// Updates the element(s) showing the current times of the car(s).
     /// </summary>
-    /// <param name="times"></param>
-    public abstract void UpdateTimes(float[][] times);
+    /// <param name="mainTime">The overall time (in seconds) that the current level has been running.</param>
+    /// <param name="checkpointTimes">The times per checkpoint, if relevant.</param>
+    public abstract void UpdateTimes(float mainTime, float[] checkpointTimes = null);
 
     public abstract void HandleWin(float[] times);
 

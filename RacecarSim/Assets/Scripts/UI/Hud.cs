@@ -97,9 +97,25 @@ public class Hud : ScreenManager
         this.texts[(int)Texts.TimeScale].text = timeScale >= 1 ? string.Empty : $"{Mathf.Round(1 / timeScale)}x Slow Motion";
     }
 
-    public override void UpdateTimes(float[][] times)
+    /// <summary>
+    /// Updates the element(s) showing the current times of the car(s).
+    /// </summary>
+    /// <param name="mainTime">The overall time (in seconds) that the current level has been running.</param>
+    /// <param name="checkpointTimes">The times per checkpoint, if relevant.</param>
+    public override void UpdateTimes(float mainTime, float[] checkpointTimes = null)
     {
-        // TODO
+        this.texts[(int)Texts.MainTime].text = mainTime.ToString("F3");
+
+        string checkpointsFormatted = string.Empty;
+        if (checkpointTimes != null && checkpointTimes.Length > 0)
+        {
+            checkpointsFormatted = checkpointTimes[0].ToString("F3");
+            for (int i = 1; i < checkpointTimes.Length; i++)
+            {
+                checkpointsFormatted += checkpointTimes[i].ToString("F3");
+            }
+        }
+        this.texts[(int)Texts.LapTime].text = checkpointsFormatted;
     }
 
     public override void HandleWin(float[] times)
@@ -178,8 +194,7 @@ public class Hud : ScreenManager
         DepthFeed = 5,
         LidarMap = 7,
         ModeBackground = 9,
-        Star = 10,
-        ControllerFirstButton = 12
+        ControllerFirstButton = 11
     }
 
     protected override void Awake()

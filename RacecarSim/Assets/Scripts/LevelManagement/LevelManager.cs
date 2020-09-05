@@ -207,35 +207,42 @@ public class LevelManager : MonoBehaviour
     /// </summary>
     private SimulationMode mode;
 
-    private List<Tuple<float, float>> timeEvents;
+    /// <summary>
+    /// The time at which the race begun.
+    /// </summary>
+    private float startTime;
 
     private float[][] times;
 
+    /// <summary>
+    /// The number of checkpoints in the current level.
+    /// </summary>
     private int numCheckpoints;
 
+    /// <summary>
+    /// The position to which each car should be reset.
+    /// </summary>
     private Vector3[] resetPositions;
 
+    /// <summary>
+    /// The rotation with which each car should be reset.
+    /// </summary>
     private Vector3[] resetRotations;
 
+    /// <summary>
+    /// The default fixed delta time for the current level.
+    /// </summary>
     private float defaultFixedDeltaTime;
     
+    /// <summary>
+    /// The time in seconds since the race began, accounting for pausing and time scale changes.
+    /// </summary>
     private float CurTime
     {
         get
         {
-            if (timeEvents.Count == 0)
-            {
-                return 0;
-            }
-
-            float curTime = 0;
-            for (int i = 0; i < timeEvents.Count - 1; i++)
-            {
-                curTime += (this.timeEvents[i + 1].Item1 - this.timeEvents[i].Item1) * this.timeEvents[i].Item2;
-            }
-            curTime += (Time.time - this.timeEvents[this.timeEvents.Count - 1].Item1) * this.timeEvents[this.timeEvents.Count - 1].Item2;
- 
-            return curTime;
+            // Time.time already accounts for changes in the time scale
+            return Time.time - this.startTime;
         }
     }
 
@@ -245,7 +252,6 @@ public class LevelManager : MonoBehaviour
         this.mode = LevelManager.IsEvaluation ? SimulationMode.Wait : SimulationMode.DefaultDrive;
         Time.timeScale = 1.0f;
         this.defaultFixedDeltaTime = Time.fixedDeltaTime;
-        this.timeEvents = new List<Tuple<float, float>>();
     }
 
     private void Start()
@@ -253,15 +259,15 @@ public class LevelManager : MonoBehaviour
         this.SpawnPlayers();
         this.pythonInteraface = new PythonInterface(this.players);
 
-        if (LevelInfo.IsWinable)
+        if (LevelManager.IsEvaluation)
         {
-            this.timeEvents = new List<Tuple<float, float>>();
-
             this.times = new float[LevelManager.NumPlayers][];
             for (int i = 0; i < this.times.Length; i++)
             {
                 times[i] = new float[this.numCheckpoints + 1];
             }
+
+            this.screenManager.UpdateTimes(0.0f);
         }
     }
 
@@ -275,8 +281,13 @@ public class LevelManager : MonoBehaviour
                     player.DefaultDriveUpdate();
                 }
                 break;
+
             case SimulationMode.UserProgram:
                 this.pythonInteraface.HandleUpdate();
+                if (LevelManager.IsEvaluation)
+                {
+                    this.screenManager.UpdateTimes(this.CurTime);
+                }
                 break;
         }
 
@@ -309,8 +320,6 @@ public class LevelManager : MonoBehaviour
         {
             this.HandleExit();
         }
-
-        // TODO: Tell HUD the times
     }
 
     private void OnApplicationQuit()
@@ -381,11 +390,7 @@ public class LevelManager : MonoBehaviour
             this.mode = SimulationMode.UserProgram;
             this.pythonInteraface.HandleStart();
             this.screenManager.UpdateMode(this.mode);
-
-            if (LevelManager.LevelInfo.IsWinable)
-            {
-                this.timeEvents.Add(new Tuple<float, float>(Time.time, Time.timeScale));
-            }
+            this.startTime = Time.time;
         }
     }
 
@@ -397,6 +402,7 @@ public class LevelManager : MonoBehaviour
         if (LevelManager.IsEvaluation)
         {
             this.mode = SimulationMode.Paused;
+            this.ScaleTimeFactor(0);
         }
         else
         {
@@ -436,12 +442,6 @@ public class LevelManager : MonoBehaviour
     {
         Time.timeScale = Mathf.Max(Mathf.Min(Time.timeScale * changeFactor, 1.0f), 1 / 64.0f);
         Time.fixedDeltaTime = this.defaultFixedDeltaTime * Time.timeScale;
-
-        if (this.timeEvents.Count > 0)
-        {
-            this.timeEvents.Add(new Tuple<float, float>(Time.time, Time.timeScale));
-        }
-
         this.screenManager.UpdateTimeScale(Time.timeScale);
     }
 }

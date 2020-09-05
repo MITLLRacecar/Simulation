@@ -22,7 +22,7 @@ public class RaceScreen : ScreenManager
         // Intentionally blank for now
     }
 
-    public override void UpdateTimes(float[][] times)
+    public override void UpdateTimes(float mainTime, float[] checkpointTimes = null)
     {
         throw new System.NotImplementedException();
     }

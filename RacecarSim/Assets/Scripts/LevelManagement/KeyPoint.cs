@@ -27,7 +27,7 @@ public class KeyPoint : MonoBehaviour
             }
             else
             {
-                LevelManager.HandleCheckpoint(this.index, car.Index);
+                LevelManager.HandleCheckpoint(this.index, car.Index, this.transform.position, this.transform.rotation.eulerAngles);
             }
         }
     }

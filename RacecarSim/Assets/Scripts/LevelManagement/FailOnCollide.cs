@@ -16,7 +16,7 @@ public class FailOnCollide : MonoBehaviour
         Racecar player = collision.collider.GetComponentInParent<Racecar>();
         if (player != null)
         {
-            player.Hud.ShowFailureMessage(FailOnCollide.failureMessage);
+            LevelManager.HandleFailure(player.Index, FailOnCollide.failureMessage);
         }
     }
 }

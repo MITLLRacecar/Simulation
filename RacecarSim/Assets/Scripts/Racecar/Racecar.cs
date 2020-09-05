@@ -12,12 +12,6 @@ public class Racecar : MonoBehaviour
     /// </summary>
     [SerializeField]
     private Camera[] PlayerCameras;
-
-    /// <summary>
-    /// Cause the player to fail if they exceed this speed (in m/s).
-    /// </summary>
-    [SerializeField]
-    private float FailureSpeed = -1;
     #endregion
 
     #region Constants
@@ -74,44 +68,6 @@ public class Racecar : MonoBehaviour
     public Hud Hud { get; set; }
 
     /// <summary>
-    /// Handles crossing the finish line.
-    /// </summary>
-    /// <param name="level">The level entry to update in BestTimes (if time is recorded for this level).</param>
-    public void HandleFinish(BestTimes.Level level = BestTimes.Level.None)
-    {
-        //if (this.isValidRun)
-        //{
-        //    float time = Time.time - this.startTime;
-        //    if (this.Hud != null)
-        //    {
-        //        this.Hud.ShowSuccessMessage(time);
-        //    }
-        //    this.isValidRun = false;
-
-        //    if (level != BestTimes.Level.None)
-        //    {
-        //        BestTimes.UpdateBestTime(level, time);
-        //    }
-        //}
-    }
-
-    /// <summary>
-    /// Moves the car to the most recent checkpoint.
-    /// </summary>
-    public void ResetToCheckpoint()
-    {
-        if (this.checkPoint != null)
-        {
-            this.transform.position = this.checkPoint.transform.position + Vector3.up;
-            this.transform.rotation = this.checkPoint.transform.rotation;
-
-            Rigidbody rbody = this.GetComponent<Rigidbody>();
-            rbody.velocity = Vector3.zero;
-            rbody.angularVelocity = Vector3.zero;
-        }
-    }
-
-    /// <summary>
     /// Called on the first frame when the car enters default drive mode.
     /// </summary>
     public void DefaultDriveStart()
@@ -135,7 +91,7 @@ public class Racecar : MonoBehaviour
 
         if (Controller.WasPressed(Controller.Button.Y))
         {
-            this.ResetToCheckpoint();
+            LevelManager.ResetCar(this.Index);
         }
 
         // Use the bumpers to adjust max speed
@@ -197,15 +153,6 @@ public class Racecar : MonoBehaviour
             this.PlayerCameras[this.curCamera].enabled = false;
             this.curCamera = (this.curCamera + 1) % this.PlayerCameras.Length;
             this.PlayerCameras[this.curCamera].enabled = true;
-        }
-
-        // Check if we have exceeded FailureSpeed
-        if (this.FailureSpeed > 0 && this.Physics.LinearVelocity.magnitude > this.FailureSpeed)
-        {
-            if (this.Hud != null)
-            {
-                this.Hud.ShowFailureMessage($"The car exceeded {this.FailureSpeed} m/s");
-            }
         }
     }
 

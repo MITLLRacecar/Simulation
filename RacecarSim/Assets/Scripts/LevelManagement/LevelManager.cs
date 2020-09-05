@@ -99,7 +99,10 @@ public class LevelManager : MonoBehaviour
     /// </summary>
     public static bool IsEvaluation = false;
 
-    public static LevelInfo LevelInfo;
+    /// <summary>
+    /// The info of the current level.
+    /// </summary>
+    public static LevelInfo LevelInfo = LevelInfo.DefaultLevel;
 
     /// <summary>
     /// Displays an error to the screen manager and logs it to standard error.
@@ -138,6 +141,16 @@ public class LevelManager : MonoBehaviour
     }
 
     /// <summary>
+    /// Handles when a car fails the objective.
+    /// </summary>
+    /// <param name="carIndex">The car which failed.</param>
+    /// <param name="failureMessage">The message to display describing the reason the objective was failed.</param>
+    public static void HandleFailure(int carIndex, string failureMessage)
+    {
+        // TODO: 
+    }
+
+    /// <summary>
     /// Adds a time penalty for a car.
     /// </summary>
     /// <param name="carIndex">The car to penalize.</param>
@@ -158,8 +171,14 @@ public class LevelManager : MonoBehaviour
     /// <param name="carIndex">The index of the car to reset.</param>
     public static void ResetCar(int carIndex)
     {
+        // Relocate the car to its current reset point
         LevelManager.instance.players[carIndex].transform.position = LevelManager.instance.resetPositions[carIndex];
         LevelManager.instance.players[carIndex].transform.rotation = Quaternion.Euler(LevelManager.instance.resetRotations[carIndex]);
+
+        // Bring the car to a complete stop
+        Rigidbody carRigidBody = LevelManager.instance.players[carIndex].GetComponent<Rigidbody>();
+        carRigidBody.velocity = Vector3.zero;
+        carRigidBody.angularVelocity = Vector3.zero;
     }
     #endregion
 
@@ -233,7 +252,7 @@ public class LevelManager : MonoBehaviour
         this.SpawnPlayers();
         this.pythonInteraface = new PythonInterface(this.players);
 
-        if (LevelInfo.IsTimed)
+        if (LevelInfo.IsWinable)
         {
             this.timeEvents = new List<Tuple<float, float>>();
 
@@ -362,7 +381,7 @@ public class LevelManager : MonoBehaviour
             this.pythonInteraface.HandleStart();
             this.screenManager.UpdateMode(this.mode);
 
-            if (LevelManager.LevelInfo.IsTimed)
+            if (LevelManager.LevelInfo.IsWinable)
             {
                 this.timeEvents.Add(new Tuple<float, float>(Time.time, Time.timeScale));
             }

@@ -67,8 +67,6 @@ public class ParkingCube : MonoBehaviour
             Random.Range(-this.MaxRotation.x, this.MaxRotation.x),
             Random.Range(-this.MaxRotation.y, this.MaxRotation.y),
             Random.Range(-this.MaxRotation.z, this.MaxRotation.z));
-
-        this.player.SetIsWinable();
     }
 
     private void Update()
@@ -93,8 +91,7 @@ public class ParkingCube : MonoBehaviour
             && Mathf.Abs(ParkingCube.goalDistance - distance) < ParkingCube.distanceThreshold
             && this.player.Physics.LinearVelocity.magnitude < 0.01f)
         {
-            print("one");
-            this.player.HandleFinish();
+            LevelManager.HandleFinish(this.player.Index);
         }
     }
 }

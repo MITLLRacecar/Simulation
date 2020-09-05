@@ -145,7 +145,7 @@ public class Lidar : RacecarModule
     {
         if (!other.isTrigger && this.racecar.Hud != null)
         {
-            this.racecar.Hud.ShowFailureMessage(Lidar.collisionFailureMessage);
+            LevelManager.HandleFailure(this.racecar.Index, Lidar.collisionFailureMessage);
         }
     }
 

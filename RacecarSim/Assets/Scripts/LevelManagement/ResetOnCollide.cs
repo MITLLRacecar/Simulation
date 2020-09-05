@@ -3,14 +3,14 @@
 /// <summary>
 /// An object which resets a racecar back to the previous checkpoint on collision.
 /// </summary>
-public class ResetBox : MonoBehaviour
+public class ResetOnCollide : MonoBehaviour
 {
     private void OnTriggerEnter(Collider other)
     {
         Racecar racecar = other.GetComponentInParent<Racecar>();
         if (racecar != null)
         {
-            racecar.ResetToCheckpoint();
+            LevelManager.ResetCar(racecar.Index);
         }
     }
 }

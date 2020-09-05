@@ -1,5 +1,8 @@
 ﻿using UnityEngine;
 
+/// <summary>
+/// An object which randomly varies to alter a level.
+/// </summary>
 public class VariableObject : MonoBehaviour
 {
     /// <summary>

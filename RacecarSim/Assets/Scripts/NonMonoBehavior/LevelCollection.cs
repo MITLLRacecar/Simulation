@@ -43,7 +43,6 @@ public class LevelCollection
                 {
                     DisplayName = "Demo",
                     BuildIndex = 2,
-                    IsWinable = false
                 }
             }
         },
@@ -56,7 +55,6 @@ public class LevelCollection
                 {
                     DisplayName = "Driving in Shapes",
                     BuildIndex = 3,
-                    IsWinable = false
                 }
             }
         },
@@ -69,19 +67,16 @@ public class LevelCollection
                 {
                     DisplayName = "Jupyter Notebook",
                     BuildIndex = 4,
-                    IsWinable = false
                 },
                 new LevelInfo()
                 {
                     DisplayName = "A: Line Following",
                     BuildIndex = 5,
-                    IsWinable = false
                 },
                 new LevelInfo()
                 {
                     DisplayName = "B: Cone Parking",
                     BuildIndex = 6,
-                    IsWinable = false
                 }
             }
         },
@@ -94,25 +89,21 @@ public class LevelCollection
                 {
                     DisplayName = "Jupyter Notebook",
                     BuildIndex = 7,
-                    IsWinable = false
                 },
                 new LevelInfo()
                 {
                     DisplayName = "A: Safety Stop",
                     BuildIndex = 8,
-                    IsWinable = false
                 },
                 new LevelInfo()
                 {
                     DisplayName = "B: Cone Parking (Revisited)",
                     BuildIndex = 9,
-                    IsWinable = false
                 },
                 new LevelInfo()
                 {
                     DisplayName = "C: Wall Parking",
                     BuildIndex = 10,
-                    IsWinable = false
                 }
             }
         },
@@ -144,13 +135,11 @@ public class LevelCollection
                 {
                     DisplayName = "Jupyter Notebook",
                     BuildIndex = 13,
-                    IsWinable = false
                 },
                 new LevelInfo()
                 {
                     DisplayName = "A: Safety Stop (Revisited)",
                     BuildIndex = 8,
-                    IsWinable = false
                 },
                 new LevelInfo()
                 {
@@ -169,7 +158,6 @@ public class LevelCollection
                 {
                     DisplayName = "Jupyter Notebook",
                     BuildIndex = 15,
-                    IsWinable = false
                 },
                 new LevelInfo()
                 {
@@ -194,7 +182,8 @@ public class LevelCollection
                 {
                     DisplayName = "Grand Prix",
                     BuildIndex = 18,
-                    IsWinable = true
+                    IsWinable = true,
+                    MaxCars = 4
                 },
             }
         },
@@ -207,13 +196,11 @@ public class LevelCollection
                 {
                     DisplayName = "A: Roll Prevention",
                     BuildIndex = 19,
-                    IsWinable = false
                 },
                 new LevelInfo()
                 {
                     DisplayName = "B: Driving in Shapes (Revisited)",
                     BuildIndex = 3,
-                    IsWinable = false
                 },
             }
         },

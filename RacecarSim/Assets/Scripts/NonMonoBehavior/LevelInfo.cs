@@ -16,7 +16,12 @@ public class LevelInfo
     /// <summary>
     /// True if the level has a completable objective.
     /// </summary>
-    public bool IsWinable;
+    public bool IsWinable = false;
+
+    /// <summary>
+    /// The maximum number of cars the level supports.
+    /// </summary>
+    public int MaxCars = 1;
 
     /// <summary>
     /// Default level info which can be used as a fallback when no level info is found.

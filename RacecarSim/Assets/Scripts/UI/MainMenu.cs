@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -9,47 +8,18 @@ using UnityEngine.UI;
 /// </summary>
 public class MainMenu : MonoBehaviour
 {
-    #region Constants
-    /// <summary>
-    /// Maps each level name to the build index of that level.
-    /// </summary>
-    private static readonly Dictionary<string, int> levelMap = new Dictionary<string, int>()
-    {
-        { "Demo", 2 },
-        { "Lab 1: Driving in Shapes", 3 },
-        { "Lab 2 Jupyter Notebook", 4 },
-        { "Lab 2A: Color Image Line Following", 5 },
-        { "Lab 2B: Color Image Cone Parking", 6 },
-        { "Lab 3 Jupyter Notebook", 7 },
-        { "Lab 3A: Depth Camera Safety Stop", 8 },
-        { "Lab 3B: Depth Camera Cone Parking", 9 },
-        { "Lab 3C: Depth Camera Wall Parking", 10 },
-        { "Lab 4A: IMU Roll Prevention", 11 },
-        { "Lab 4B: IMU Driving in Shapes", 3 },
-        { "Phase 1 Challenge: Cone Slaloming", 12 },
-        { "Phase 1 Challenge: Cone Slaloming (Hard)", 13 },
-        { "Lab 5A: LIDAR Safety Stop", 8 },
-        { "Lab 5B: LIDAR Wall Following", 14 },
-        { "Lab 6: Sensor Fusion", 15 },
-        { "Lab 7: AR Tags", 16 },
-        { "Time Trial", 17 },
-        { "Grand Prix", 18 }
-    };
-
-    /// <summary>
-    /// The names of the simulation levels (in the order).
-    /// </summary>
-    private static readonly List<string> levelNames = MainMenu.levelMap.Keys.ToList<string>();
-    #endregion
-
     #region Public Interface
     /// <summary>
     /// Loads the level selected in the dropdown menu.
     /// </summary>
     public void BeginSimulation()
     {
-        MainMenu.lastLevel = this.levelSelect.value;
-        SceneManager.LoadScene(levelMap[levelNames[MainMenu.lastLevel]], LoadSceneMode.Single);
+        // Cache the current level and collection indices so we remember them the next time we load the main menu
+        MainMenu.prevCollectionIndex = this.dropdowns[(int)Dropdowns.CollectionSelect].value;
+        MainMenu.prevLevelIndex = this.dropdowns[(int)Dropdowns.LevelSelect].value;
+
+        LevelManager.LevelInfo = this.SelectedLevel;
+        SceneManager.LoadScene(this.SelectedLevel.BuildIndex, LoadSceneMode.Single);
     }
 
     /// <summary>
@@ -78,23 +48,71 @@ public class MainMenu : MonoBehaviour
     }
 
     /// <summary>
+    /// Update the options in the level selection dropdown menu.
+    /// </summary>
+    /// <param name="selection">The index of the level which should be selected by default in the menu.</param>
+    public void UpdateLevelDropDown(int selection = 0)
+    {
+        Dropdown levelSelect = this.dropdowns[(int)Dropdowns.LevelSelect];
+        levelSelect.ClearOptions();
+        levelSelect.AddOptions(this.SelectedLevelCollection.LevelNames);
+        levelSelect.value = selection;
+    }
+
+    /// <summary>
     /// Close the program.
     /// </summary>
     public void Exit()
     {
         Application.Quit(0);
     }
+
+    /// <summary>
+    /// The current level collection selected in the dropdown menu.
+    /// </summary>
+    public LevelCollection SelectedLevelCollection
+    {
+        get
+        {
+            return LevelCollection.LevelCollections[this.dropdowns[(int)Dropdowns.CollectionSelect].value];
+        }
+    }
+
+    /// <summary>
+    /// The current level selected in the dropdown menu.
+    /// </summary>
+    public LevelInfo SelectedLevel
+    {
+        get
+        {
+            return SelectedLevelCollection.Levels[this.dropdowns[(int)Dropdowns.LevelSelect].value];
+        }
+    }
     #endregion
+
+    /// <summary>
+    /// The dropdown menus in the main menu, with values corresponding to the index in dropdowns.
+    /// </summary>
+    private enum Dropdowns
+    {
+        CollectionSelect,
+        LevelSelect
+    }
+
+    /// <summary>
+    /// The index of the level collection selected the last time we loaded the main menu.
+    /// </summary>
+    private static int prevCollectionIndex = 0;
+
+    /// <summary>
+    /// The index of the level selected the last time we loaded the main menu.
+    /// </summary>
+    private static int prevLevelIndex = 0;
 
     /// <summary>
     /// The dropdown menus used to select the level to load.
     /// </summary>
-    private Dropdown levelSelect;
-
-    /// <summary>
-    /// The level previously selected with the level dropdown.
-    /// </summary>
-    private static int lastLevel;
+    private Dropdown[] dropdowns;
 
     /// <summary>
     /// The screen which shows the controls.
@@ -113,7 +131,7 @@ public class MainMenu : MonoBehaviour
 
     private void Awake()
     {
-        this.levelSelect = this.GetComponentInChildren<Dropdown>();
+        this.dropdowns = this.GetComponentsInChildren<Dropdown>();
 
         this.controllsPane = this.GetComponentInChildren<ControllsUI>();
         this.settingsPane = this.GetComponentInChildren<SettingsUI>();
@@ -127,9 +145,17 @@ public class MainMenu : MonoBehaviour
         this.settingsPane.gameObject.SetActive(false);
         this.bestTimesPane.gameObject.SetActive(false);
 
-        // Populate level select dropdown
-        this.levelSelect.ClearOptions();
-        this.levelSelect.AddOptions(MainMenu.levelNames);
-        this.levelSelect.value = MainMenu.lastLevel;
+        // Populate level collection dropdown
+        Dropdown collectionSelect = this.dropdowns[(int)Dropdowns.CollectionSelect];
+        collectionSelect.ClearOptions();
+        List<string> collectionDisplayNames = new List<string>(LevelCollection.LevelCollections.Length);
+        foreach (LevelCollection levelCollection in LevelCollection.LevelCollections)
+        {
+            collectionDisplayNames.Add(levelCollection.DisplayName);
+        }
+        collectionSelect.AddOptions(collectionDisplayNames);
+        collectionSelect.value = MainMenu.prevCollectionIndex;
+
+        this.UpdateLevelDropDown(MainMenu.prevLevelIndex);
     }
 }

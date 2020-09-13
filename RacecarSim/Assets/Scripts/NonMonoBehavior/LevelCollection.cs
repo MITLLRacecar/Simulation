@@ -217,6 +217,31 @@ public class LevelCollection
                 },
             }
         },
+        new LevelCollection()
+        {
+            DisplayName = "Testing",
+            Levels = new LevelInfo[]
+            {
+                new LevelInfo()
+                {
+                    DisplayName = "Basic Finish",
+                    BuildIndex = 21,
+                    IsWinable = true
+                },
+                new LevelInfo()
+                {
+                    DisplayName = "Checkpoints and Finish",
+                    BuildIndex = 22,
+                    IsWinable = true
+                },
+                new LevelInfo()
+                {
+                    DisplayName = "Race",
+                    BuildIndex = 23,
+                    IsWinable = true
+                },
+            }
+        },
     };
     #endregion
 }

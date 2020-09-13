@@ -76,6 +76,7 @@ public class PythonInterface
                 }
             }
             this.pythonEndPoints.Clear();
+            LevelManager.UpdateNumConnectedPrograms(this.pythonEndPoints.Count);
 
             this.udpClient.Close();
             this.udpClientAsync.Close();
@@ -163,6 +164,7 @@ public class PythonInterface
     private void ConnectSyncClient(int pythonPort)
     {
         this.pythonEndPoints.Add(new IPEndPoint(PythonInterface.ipAddress, pythonPort));
+        LevelManager.UpdateNumConnectedPrograms(this.pythonEndPoints.Count);
     }
 
     /// <summary>
@@ -377,6 +379,9 @@ public class PythonInterface
             }
         }
         LevelManager.HandleError(errorText);
+
+        this.pythonEndPoints.Clear();
+        LevelManager.UpdateNumConnectedPrograms(this.pythonEndPoints.Count);
     }
     #endregion
 

@@ -238,7 +238,8 @@ public class LevelCollection
                 {
                     DisplayName = "Race",
                     BuildIndex = 23,
-                    IsWinable = true
+                    IsWinable = true,
+                    MaxCars = 4
                 },
             }
         },

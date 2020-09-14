@@ -26,7 +26,7 @@ public class RaceScreen : ScreenManager
     /// Updates the element showing the current time elapsed in the race.
     /// </summary>
     /// <param name="mainTime">The overall time (in seconds) that the current level has been running.</param>
-    public override void UpdateTimes(float mainTime)
+    public override void UpdateTime(float mainTime)
     {
         throw new System.NotImplementedException();
     }

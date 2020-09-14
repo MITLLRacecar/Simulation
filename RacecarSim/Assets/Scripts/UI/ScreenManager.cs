@@ -48,7 +48,7 @@ public abstract class ScreenManager : MonoBehaviour
     /// Updates the element showing the current time elapsed in the race.
     /// </summary>
     /// <param name="mainTime">The overall time (in seconds) that the current level has been running.</param>
-    public abstract void UpdateTimes(float mainTime);
+    public abstract void UpdateTime(float mainTime);
 
     /// <summary>
     /// Updates the element(s) showing the current rate at which time progresses.

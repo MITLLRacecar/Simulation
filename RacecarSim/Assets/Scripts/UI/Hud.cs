@@ -101,7 +101,7 @@ public class Hud : ScreenManager
     /// Updates the element showing the current time elapsed in the race.
     /// </summary>
     /// <param name="mainTime">The overall time (in seconds) that the current level has been running.</param>
-    public override void UpdateTimes(float mainTime)
+    public override void UpdateTime(float mainTime)
     {
         this.texts[(int)Texts.MainTime].text = mainTime.ToString("F3");
     }
@@ -132,7 +132,7 @@ public class Hud : ScreenManager
     public override void HandleWin(float[] times)
     {
         this.SuccessMessage.SetActive(true);
-        this.texts[Texts.SuccessTime.GetHashCode()].text = $"Time: {times[0]:F2} seconds";
+        this.texts[Texts.SuccessTime.GetHashCode()].text = $"Time: {times[0]:F3} seconds";
     }
 
     public override void HandleFailure(int carIndex, string reason)

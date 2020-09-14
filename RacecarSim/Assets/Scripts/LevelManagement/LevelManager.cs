@@ -144,16 +144,17 @@ public class LevelManager : MonoBehaviour
     /// <summary>
     /// Handles when a car passes the finish line.
     /// </summary>
-    /// <param name="carIndex"></param>
+    /// <param name="carIndex">The index of the car which passed the finish line.</param>
     public static void HandleFinish(int carIndex)
     {
-        if (LevelManager.IsEvaluation)
+        if (LevelManager.IsEvaluation && LevelManager.instance.finishTimes[carIndex] == 0)
         {
             LevelManager.instance.finishTimes[carIndex] = LevelManager.instance.CurTime;
 
             if (!LevelManager.instance.finishTimes.Contains(0))
             {
                 LevelManager.instance.screenManager.HandleWin(LevelManager.instance.finishTimes);
+                LevelManager.instance.screenManager.UpdateTime(LevelManager.instance.CurTime);
             }
         }
     }
@@ -316,7 +317,7 @@ public class LevelManager : MonoBehaviour
         {
             this.checkpointTimes = new float[LevelManager.NumPlayers, this.numCheckpoints];
             this.finishTimes = new float[LevelManager.NumPlayers];
-            this.screenManager.UpdateTimes(0.0f);
+            this.screenManager.UpdateTime(0.0f);
         }
     }
 
@@ -333,9 +334,9 @@ public class LevelManager : MonoBehaviour
 
             case SimulationMode.UserProgram:
                 this.pythonInteraface.HandleUpdate();
-                if (LevelManager.IsEvaluation)
+                if (LevelManager.IsEvaluation && this.finishTimes.Contains(0))
                 {
-                    this.screenManager.UpdateTimes(this.CurTime);
+                    this.screenManager.UpdateTime(this.CurTime);
                 }
                 break;
         }

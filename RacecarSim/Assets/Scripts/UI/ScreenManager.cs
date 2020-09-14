@@ -16,14 +16,21 @@ public abstract class ScreenManager : MonoBehaviour
     /// <param name="fadeTime">In the time in seconds it takes for the text to fade out after persistTime has passed.</param>
     public void ShowMessage(string message, Color color, float persistTime = -1, float fadeTime = 1.0f)
     {
-        this.texts[0].text = message;
-        this.texts[0].color = color;
+        this.texts[this.messageTextIndex].text = message;
+        this.texts[this.messageTextIndex].color = color;
 
         this.messageColor = color;
         this.messageCounter = 0;
         this.messagePersistTime = persistTime;
         this.messageFadeTime = fadeTime;
     }
+
+    #region Abstract
+    public abstract void HandleWin(float[] times);
+
+    public abstract void HandleFailure(int carIndex, string reason);
+
+    public abstract void UpdateConnectedPrograms(int numConnectedPrograms);
 
     /// <summary>
     /// Updates the element(s) showing the current simulation mode.
@@ -32,21 +39,23 @@ public abstract class ScreenManager : MonoBehaviour
     public abstract void UpdateMode(SimulationMode mode);
 
     /// <summary>
+    /// Update the element(s) showing the time it took each car to reach each checkpoint.
+    /// </summary>
+    /// <param name="checkpointTimes">The time at which each car reached each checkpoint, indexed by car, then checkpoint.</param>
+    public abstract void UpdateCheckpointTimes(float[,] checkpointTimes);
+
+    /// <summary>
+    /// Updates the element showing the current time elapsed in the race.
+    /// </summary>
+    /// <param name="mainTime">The overall time (in seconds) that the current level has been running.</param>
+    public abstract void UpdateTimes(float mainTime);
+
+    /// <summary>
     /// Updates the element(s) showing the current rate at which time progresses.
     /// </summary>
     /// <param name="timeScale">The current rate at which time progresses. 1 is full speed, 0.5 is half speed, and 0 is paused.</param>
     public abstract void UpdateTimeScale(float timeScale);
-
-    /// <summary>
-    /// Updates the element(s) showing the current times of the car(s).
-    /// </summary>
-    /// <param name="mainTime">The overall time (in seconds) that the current level has been running.</param>
-    /// <param name="checkpointTimes">The times per checkpoint, if relevant.</param>
-    public abstract void UpdateTimes(float mainTime, float[] checkpointTimes = null);
-
-    public abstract void HandleWin(float[] times);
-
-    public abstract void HandleFailure(int carIndex, string reason);
+    #endregion
     #endregion
 
     /// <summary>
@@ -58,6 +67,11 @@ public abstract class ScreenManager : MonoBehaviour
     /// All images contained in the screen manager.
     /// </summary>
     protected RawImage[] images;
+
+    /// <summary>
+    /// The index of the message text in texts.
+    /// </summary>
+    protected int messageTextIndex = 0;
 
     protected virtual void Awake()
     {

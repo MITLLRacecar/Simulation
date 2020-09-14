@@ -98,24 +98,35 @@ public class Hud : ScreenManager
     }
 
     /// <summary>
-    /// Updates the element(s) showing the current times of the car(s).
+    /// Updates the element showing the current time elapsed in the race.
     /// </summary>
     /// <param name="mainTime">The overall time (in seconds) that the current level has been running.</param>
-    /// <param name="checkpointTimes">The times per checkpoint, if relevant.</param>
-    public override void UpdateTimes(float mainTime, float[] checkpointTimes = null)
+    public override void UpdateTimes(float mainTime)
     {
         this.texts[(int)Texts.MainTime].text = mainTime.ToString("F3");
+    }
 
+    /// <summary>
+    /// Update the element(s) showing the time it took each car to reach each checkpoint.
+    /// </summary>
+    /// <param name="checkpointTimes">The time at which each car reached each checkpoint, indexed by car, then checkpoint.</param>
+    public override void UpdateCheckpointTimes(float[,] checkpointTimes)
+    {
         string checkpointsFormatted = string.Empty;
         if (checkpointTimes != null && checkpointTimes.Length > 0)
         {
-            checkpointsFormatted = checkpointTimes[0].ToString("F3");
+            checkpointsFormatted = checkpointTimes[0, 0].ToString("F3");
             for (int i = 1; i < checkpointTimes.Length; i++)
             {
-                checkpointsFormatted += checkpointTimes[i].ToString("F3");
+                checkpointsFormatted += checkpointTimes[0, i].ToString("F3");
             }
         }
         this.texts[(int)Texts.LapTime].text = checkpointsFormatted;
+    }
+
+    public override void UpdateConnectedPrograms(int numConnectedPrograms)
+    {
+        this.images[(int)Images.ConnectedProgram].color = numConnectedPrograms > 0 ? new Color(1, 1, 1, 1) : new Color(1, 1, 1, 0.25f);
     }
 
     public override void HandleWin(float[] times)
@@ -172,12 +183,12 @@ public class Hud : ScreenManager
     /// </summary>
     private enum Texts
     {
-        TimeScale = 0,
-        TrueSpeed = 5,
-        LinearAcceleration = 9,
-        AngularVelocity = 12,
-        Mode = 14,
-        Message = 15,
+        Message = 0,
+        TimeScale = 1,
+        TrueSpeed = 6,
+        LinearAcceleration = 10,
+        AngularVelocity = 13,
+        Mode = 15,
         Failure = 17,
         SuccessTime = 20,
         MainTime = 22,
@@ -194,7 +205,8 @@ public class Hud : ScreenManager
         DepthFeed = 5,
         LidarMap = 7,
         ModeBackground = 9,
-        ControllerFirstButton = 11
+        ConnectedProgram = 10,
+        ControllerFirstButton = 12
     }
 
     protected override void Awake()
@@ -203,6 +215,8 @@ public class Hud : ScreenManager
 
         this.images[Images.LidarMap.GetHashCode()].texture = new Texture2D(CameraModule.ColorWidth / Hud.lidarMapScale, CameraModule.ColorHeight / Hud.lidarMapScale);
         this.images[Images.DepthFeed.GetHashCode()].texture = new Texture2D(CameraModule.DepthWidth, CameraModule.DepthHeight);
+
+        this.UpdateConnectedPrograms(0);
     }
 
     private void Start()

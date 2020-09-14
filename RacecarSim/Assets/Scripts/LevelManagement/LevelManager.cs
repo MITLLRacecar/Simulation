@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -105,13 +106,16 @@ public class LevelManager : MonoBehaviour
     public static LevelInfo LevelInfo = LevelInfo.DefaultLevel;
 
     /// <summary>
-    /// Displays an error to the screen manager and logs it to standard error.
+    /// Displays a simulation error to the screen manager and logs it to standard error.
     /// </summary>
     /// <param name="errorText"></param>
     public static void HandleError(string errorText)
     {
-        Debug.LogError($">> Error: {errorText} Returning to default drive mode.");
-        LevelManager.instance.screenManager.ShowMessage($"Error: {errorText} Returning to default drive mode.", Color.red, 5, 1);
+        LevelManager.instance.mode = LevelManager.IsEvaluation ? SimulationMode.Wait : SimulationMode.DefaultDrive;
+        errorText = $">> Error: {errorText} Returning to {LevelManager.instance.mode} mode.";
+
+        Debug.LogError(errorText);
+        LevelManager.instance.screenManager.ShowMessage(errorText, Color.red, 5, 1);
     }
 
     /// <summary>
@@ -123,11 +127,17 @@ public class LevelManager : MonoBehaviour
     /// <param name="checkpointRotation">The rotation of the checkpoint which was passed.</param>
     public static void HandleCheckpoint(int carIndex, int checkpointIndex, Vector3 checkpointPosition, Vector3 checkpointRotation)
     {
-        if (LevelManager.instance.times[carIndex][checkpointIndex] == 0)
+        // Only count if we have not passed this checkpoint yet
+        if (LevelManager.instance.checkpointTimes[carIndex, checkpointIndex] == 0)
         {
-            LevelManager.instance.times[carIndex][checkpointIndex] = LevelManager.instance.CurTime;
             LevelManager.instance.resetPositions[carIndex] = checkpointPosition;
             LevelManager.instance.resetRotations[carIndex] = checkpointRotation;
+            LevelManager.instance.checkpointTimes[carIndex, checkpointIndex] = LevelManager.instance.CurTime;
+
+            if (LevelManager.IsEvaluation)
+            {
+                LevelManager.instance.screenManager.UpdateCheckpointTimes(LevelManager.instance.checkpointTimes);
+            }
         }
     }
 
@@ -137,7 +147,15 @@ public class LevelManager : MonoBehaviour
     /// <param name="carIndex"></param>
     public static void HandleFinish(int carIndex)
     {
-        LevelManager.instance.screenManager.HandleWin(null);
+        if (LevelManager.IsEvaluation)
+        {
+            LevelManager.instance.finishTimes[carIndex] = LevelManager.instance.CurTime;
+
+            if (!LevelManager.instance.finishTimes.Contains(0))
+            {
+                LevelManager.instance.screenManager.HandleWin(LevelManager.instance.finishTimes);
+            }
+        }
     }
 
     /// <summary>
@@ -147,7 +165,7 @@ public class LevelManager : MonoBehaviour
     /// <param name="failureMessage">The message to display describing the reason the objective was failed.</param>
     public static void HandleFailure(int carIndex, string failureMessage)
     {
-        // TODO: 
+        LevelManager.instance.screenManager.HandleFailure(carIndex, failureMessage);
     }
 
     /// <summary>
@@ -180,6 +198,15 @@ public class LevelManager : MonoBehaviour
         carRigidBody.velocity = Vector3.zero;
         carRigidBody.angularVelocity = Vector3.zero;
     }
+
+    public static void UpdateNumConnectedPrograms(int numConnectedPrograms)
+    {
+        LevelManager.instance.numConnectedPrograms = numConnectedPrograms;
+
+        // We cannot update the screen manager immediately since this may not be the main thread,
+        // so we instead wait until the next call to Update
+        LevelManager.instance.wasConnectedProgramsChanged = true;
+    }
     #endregion
 
     /// <summary>
@@ -208,13 +235,6 @@ public class LevelManager : MonoBehaviour
     private SimulationMode mode;
 
     /// <summary>
-    /// The time at which the race begun.
-    /// </summary>
-    private float startTime;
-
-    private float[][] times;
-
-    /// <summary>
     /// The number of checkpoints in the current level.
     /// </summary>
     private int numCheckpoints;
@@ -230,10 +250,42 @@ public class LevelManager : MonoBehaviour
     private Vector3[] resetRotations;
 
     /// <summary>
+    /// The most recent checkpoint which each car passed.
+    /// </summary>
+    private int[] lastCheckpoint;
+
+    /// <summary>
+    /// The time at which the race begun.
+    /// </summary>
+    private float startTime;
+
+    /// <summary>
+    /// The times at which each car first reaches each checkpoint.
+    /// 
+    /// Indexed by car, then by checkpoint.
+    /// </summary>
+    private float[,] checkpointTimes;
+
+    /// <summary>
+    /// The times at which each car passes the finish line, indexed by car.
+    /// </summary>
+    private float[] finishTimes;
+
+    /// <summary>
     /// The default fixed delta time for the current level.
     /// </summary>
     private float defaultFixedDeltaTime;
-    
+
+    /// <summary>
+    /// The number of Python programs currently connected to RacecarSim.
+    /// </summary>
+    private int numConnectedPrograms;
+
+    /// <summary>
+    /// True when the number of Python programs connected to the sync client changed since the last call to Update.
+    /// </summary>
+    private bool wasConnectedProgramsChanged;
+
     /// <summary>
     /// The time in seconds since the race began, accounting for pausing and time scale changes.
     /// </summary>
@@ -258,15 +310,12 @@ public class LevelManager : MonoBehaviour
     {
         this.SpawnPlayers();
         this.pythonInteraface = new PythonInterface(this.players);
+        this.lastCheckpoint = new int[this.numCheckpoints];
 
         if (LevelManager.IsEvaluation)
         {
-            this.times = new float[LevelManager.NumPlayers][];
-            for (int i = 0; i < this.times.Length; i++)
-            {
-                times[i] = new float[this.numCheckpoints + 1];
-            }
-
+            this.checkpointTimes = new float[LevelManager.NumPlayers, this.numCheckpoints];
+            this.finishTimes = new float[LevelManager.NumPlayers];
             this.screenManager.UpdateTimes(0.0f);
         }
     }
@@ -319,6 +368,12 @@ public class LevelManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             this.HandleExit();
+        }
+
+        if (this.wasConnectedProgramsChanged)
+        {
+            this.screenManager.UpdateConnectedPrograms(numConnectedPrograms);
+            this.wasConnectedProgramsChanged = false; // TODO: there is probably a data race here
         }
     }
 
@@ -387,10 +442,17 @@ public class LevelManager : MonoBehaviour
     {
         if (this.mode != SimulationMode.UserProgram)
         {
-            this.mode = SimulationMode.UserProgram;
-            this.pythonInteraface.HandleStart();
-            this.screenManager.UpdateMode(this.mode);
-            this.startTime = Time.time;
+            if (this.numConnectedPrograms > 0)
+            {
+                this.mode = SimulationMode.UserProgram;
+                this.pythonInteraface.HandleStart();
+                this.screenManager.UpdateMode(this.mode);
+                this.startTime = Time.time;
+            }
+            else
+            {
+                this.screenManager.ShowMessage("You must connect a Python program before entering User Program mode.", Color.yellow, 5);
+            }
         }
     }
 
@@ -421,6 +483,7 @@ public class LevelManager : MonoBehaviour
     private void HandleRestart()
     {
         // Reload current level with the ReloadBuffer
+        this.pythonInteraface.HandleExit();
         ReloadBuffer.BuildIndexToReload = SceneManager.GetActiveScene().buildIndex;
         SceneManager.LoadSceneAsync(ReloadBuffer.BuildIndex, LoadSceneMode.Single);
     }

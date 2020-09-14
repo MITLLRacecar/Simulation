@@ -1,18 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &5052242347840856931
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7417053864628011046}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4683e4f54e051644392e476a203305fb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  index: 0
 --- !u!1001 &2384651477455864686
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -75,6 +62,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2334702365337920086, guid: ca5a6b50aa54a0547ae996b791cd091b,
+        type: 3}
+      propertyPath: isFinishLine
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4863223594227826231, guid: ca5a6b50aa54a0547ae996b791cd091b,
         type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -86,11 +78,5 @@ PrefabInstance:
       value: Checkpoint
       objectReference: {fileID: 0}
     m_RemovedComponents:
-    - {fileID: 3938748247389800688, guid: ca5a6b50aa54a0547ae996b791cd091b, type: 3}
+    - {fileID: 0}
   m_SourcePrefab: {fileID: 100100000, guid: ca5a6b50aa54a0547ae996b791cd091b, type: 3}
---- !u!1 &7417053864628011046 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5186265313930986312, guid: ca5a6b50aa54a0547ae996b791cd091b,
-    type: 3}
-  m_PrefabInstance: {fileID: 2384651477455864686}
-  m_PrefabAsset: {fileID: 0}

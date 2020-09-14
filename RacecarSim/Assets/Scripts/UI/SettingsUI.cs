@@ -26,8 +26,8 @@ public class SettingsUI : MonoBehaviour
     /// </summary>
     public void SaveSettings()
     {
-        Settings.IsRealism = this.toggles[Toggles.IsRealism.GetHashCode()].isOn;
-        Settings.DepthRes = (Settings.DepthResolution)this.dropdowns[Dropdowns.DepthRes.GetHashCode()].value;
+        Settings.IsRealism = this.toggles[(int)Toggles.IsRealism].isOn;
+        Settings.DepthRes = (Settings.DepthResolution)this.dropdowns[(int)Dropdowns.DepthRes].value;
         
         this.ApplyColorInputs();
 
@@ -114,8 +114,8 @@ public class SettingsUI : MonoBehaviour
     /// </summary>
     private void UpdateInputs()
     {
-        this.toggles[Toggles.IsRealism.GetHashCode()].isOn = Settings.IsRealism;
-        this.dropdowns[Dropdowns.DepthRes.GetHashCode()].value = Settings.DepthRes.GetHashCode();
+        this.toggles[(int)Toggles.IsRealism].isOn = Settings.IsRealism;
+        this.dropdowns[(int)Dropdowns.DepthRes].value = (int)Settings.DepthRes;
 
         this.LoadColors();
     }
@@ -126,7 +126,7 @@ public class SettingsUI : MonoBehaviour
         {
             this.carMaterials[i].color = new Color(this.sliders[3 * i].value, this.sliders[3 * i + 1].value, this.sliders[3 * i + 2].value);
 
-            float metallic = this.toggles[Toggles.Car1FrontShiny.GetHashCode() + i].isOn ? 1 : 0;
+            float metallic = this.toggles[(int)Toggles.Car1FrontShiny + i].isOn ? 1 : 0;
             this.carMaterials[i].SetFloat("_Metallic", metallic);
         }
     }
@@ -140,7 +140,7 @@ public class SettingsUI : MonoBehaviour
             this.sliders[3 * i + 1].value = color.g;
             this.sliders[3 * i + 2].value = color.b;
 
-            this.toggles[Toggles.Car1FrontShiny.GetHashCode() + i].isOn = this.carMaterials[i].GetFloat("_Metallic") > 0;
+            this.toggles[(int)Toggles.Car1FrontShiny + i].isOn = this.carMaterials[i].GetFloat("_Metallic") > 0;
         }
     }
 }

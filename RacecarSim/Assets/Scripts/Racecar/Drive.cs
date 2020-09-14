@@ -119,21 +119,21 @@ public class Drive : RacecarModule
 
         // Set torque and angle of wheel colliders
         float torque = this.Speed * this.MaxSpeed * Drive.torqueScale;
-        this.WheelColliders[WheelPosition.BackLeft.GetHashCode()].motorTorque = torque;
-        this.WheelColliders[WheelPosition.BackRight.GetHashCode()].motorTorque = torque;
+        this.WheelColliders[(int)WheelPosition.BackLeft].motorTorque = torque;
+        this.WheelColliders[(int)WheelPosition.BackRight].motorTorque = torque;
 
         float driveAngle = this.Angle * Drive.maxDriveAngle;
-        this.WheelColliders[WheelPosition.FrontLeft.GetHashCode()].steerAngle = driveAngle;
-        this.WheelColliders[WheelPosition.FrontRight.GetHashCode()].steerAngle = driveAngle;
+        this.WheelColliders[(int)WheelPosition.FrontLeft].steerAngle = driveAngle;
+        this.WheelColliders[(int)WheelPosition.FrontRight].steerAngle = driveAngle;
 
         // Update position and rotation of wheel models to match wheel colliders
         foreach(WheelPosition wheelPosition in Enum.GetValues(typeof(WheelPosition)))
         {
-            this.WheelColliders[wheelPosition.GetHashCode()].GetWorldPose(out Vector3 position, out Quaternion rotation);
-            this.Wheels[wheelPosition.GetHashCode()].transform.rotation = rotation;
-            this.Wheels[wheelPosition.GetHashCode()].transform.position = wheelPosition.GetHashCode() % 2 == 0 
-                ? position + this.Wheels[wheelPosition.GetHashCode()].transform.right * Drive.wheelOffset
-                : position - this.Wheels[wheelPosition.GetHashCode()].transform.right * Drive.wheelOffset;
+            this.WheelColliders[(int)wheelPosition].GetWorldPose(out Vector3 position, out Quaternion rotation);
+            this.Wheels[(int)wheelPosition].transform.rotation = rotation;
+            this.Wheels[(int)wheelPosition].transform.position = (int)wheelPosition % 2 == 0 
+                ? position + this.Wheels[(int)wheelPosition].transform.right * Drive.wheelOffset
+                : position - this.Wheels[(int)wheelPosition].transform.right * Drive.wheelOffset;
         }
     }
 }

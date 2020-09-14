@@ -182,7 +182,7 @@ public static class Controller
     /// <returns>True if the provided button is currently pressed.</returns>
     public static bool IsDown(Button button)
     {
-        int index = button.GetHashCode();
+        int index = (int)button;
         if (button == Button.BACK)
         {
             return Input.GetButton(Controller.buttonMap[index]) || Input.GetKey(KeyCode.Delete) || Input.GetKey(KeyCode.Backspace);
@@ -197,7 +197,7 @@ public static class Controller
     /// <returns>True if the provided button was pressed this frame.</returns>
     public static bool WasPressed(Button button)
     {
-        int index = button.GetHashCode();
+        int index = (int)button;
         if (button == Button.BACK)
         {
             return Input.GetButtonDown(Controller.buttonMap[index]) || Input.GetKeyDown(KeyCode.Delete) || Input.GetKeyDown(KeyCode.Backspace);
@@ -212,7 +212,7 @@ public static class Controller
     /// <returns>True if the provided button was released this frame.</returns>
     public static bool WasReleased(Button button)
     {
-        int index = button.GetHashCode();
+        int index = (int)button;
         if (button == Button.BACK)
         {
             return Input.GetButtonUp(Controller.buttonMap[index]) || Input.GetKeyUp(KeyCode.Delete) || Input.GetKeyUp(KeyCode.Backspace);
@@ -227,7 +227,7 @@ public static class Controller
     /// <returns>The value of the provided trigger, ranging from 0 (unpressed) to 1 (fully pressed).</returns>
     public static float GetTrigger(Trigger trigger)
     {
-        int index = trigger.GetHashCode();
+        int index = (int)trigger;
         float triggerValue = Input.GetAxis(Controller.triggerMap[index]);
 
         // If no input, check keyboard input
@@ -246,7 +246,7 @@ public static class Controller
     /// <returns>The x and y coordinates of the provided joystick, ranging from (-1, -1) (bottom left) to (1, 1) (top right)</returns>
     public static Vector2 GetJoystick(Joystick joystick)
     {
-        int index = joystick.GetHashCode();
+        int index = (int)joystick;
         float xAxis = Input.GetAxis(Controller.joystickMap[index][0]);
         float yAxis = Input.GetAxis(Controller.joystickMap[index][1]);
 

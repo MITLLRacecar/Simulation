@@ -52,7 +52,7 @@ public static class Settings
     {
         get
         {
-            return Settings.depthDivideFactors[Settings.DepthRes.GetHashCode()];
+            return Settings.depthDivideFactors[(int)Settings.DepthRes];
         }
     }
 

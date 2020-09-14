@@ -18,7 +18,7 @@ public class ArTagToggle : MonoBehaviour
 
     private Renderer outline;
 
-    private Renderer tag;
+    private Renderer arTag;
 
     private int colorIndex = 0;
 
@@ -28,12 +28,12 @@ public class ArTagToggle : MonoBehaviour
     {
         Renderer[] renderers = this.GetComponentsInChildren<Renderer>();
         this.outline = renderers[0];
-        this.tag = renderers[1];
+        this.arTag = renderers[1];
     }
 
     private void Start()
     {
-        this.tag.material = tags[tagIndex];
+        this.arTag.material = tags[tagIndex];
     }
 
     private void Update()
@@ -60,14 +60,14 @@ public class ArTagToggle : MonoBehaviour
             {
                 this.tagIndex += tags.Length - 1;
                 this.tagIndex %= tags.Length;
-                this.tag.material = tags[tagIndex];
+                this.arTag.material = tags[tagIndex];
             }
 
             if (Input.GetKeyDown(KeyCode.RightControl))
             {
                 this.tagIndex++;
                 this.tagIndex %= tags.Length;
-                this.tag.material = tags[tagIndex];
+                this.arTag.material = tags[tagIndex];
             }
         }
     }

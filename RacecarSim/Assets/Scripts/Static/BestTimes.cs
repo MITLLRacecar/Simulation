@@ -35,7 +35,7 @@ public static class BestTimes
     /// <param name="time">The time it took the user to complete the level.</param>
     public static void UpdateBestTime(Level level, float time)
     {
-        BestTimes.times[level.GetHashCode()] = Mathf.Min(BestTimes.times[level.GetHashCode()], time);
+        BestTimes.times[(int)level] = Mathf.Min(BestTimes.times[(int)level], time);
         PlayerPrefs.SetFloat(level.ToString(), time);
     }
 

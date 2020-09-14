@@ -12,8 +12,8 @@ public class BestTimesUI : MonoBehaviour
     /// </summary>
     public void UpdateTexts()
     {
-        this.texts[Texts.Names.GetHashCode()].text = BestTimes.GetFormattedNames();
-        this.texts[Texts.Times.GetHashCode()].text = BestTimes.GetFormattedTimes();
+        this.texts[(int)Texts.Names].text = BestTimes.GetFormattedNames();
+        this.texts[(int)Texts.Times].text = BestTimes.GetFormattedTimes();
     }
 
     /// <summary>

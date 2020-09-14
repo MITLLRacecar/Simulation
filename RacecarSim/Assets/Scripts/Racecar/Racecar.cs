@@ -106,19 +106,9 @@ public class Racecar : MonoBehaviour
     #endregion
 
     /// <summary>
-    /// The time at which the car entered user program mode.
-    /// </summary>
-    private float startTime;
-
-    /// <summary>
     /// The index in PlayerCameras of the current active camera.
     /// </summary>
     private int curCamera;
-
-    /// <summary>
-    /// The most recent checkpoint which the RACECAR touched.
-    /// </summary>
-    private GameObject checkPoint;
 
     private void Awake()
     {

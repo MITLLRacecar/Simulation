@@ -57,13 +57,13 @@ public class Hud : ScreenManager
     public override void HandleWin(float[] times)
     {
         this.SuccessMessage.SetActive(true);
-        this.texts[Texts.SuccessTime.GetHashCode()].text = $"Time: {times[0]:F3} seconds";
+        this.texts[(int)Texts.SuccessTime].text = $"Time: {times[0]:F3} seconds";
     }
 
     public override void HandleFailure(int carIndex, string reason)
     {
         this.FailureMessage.SetActive(true);
-        this.texts[Texts.Failure.GetHashCode()].text = reason;
+        this.texts[(int)Texts.Failure].text = reason;
     }
 
     public override void UpdateConnectedPrograms(int numConnectedPrograms)
@@ -159,9 +159,9 @@ public class Hud : ScreenManager
     /// <param name="angularVelocity">The car's angular velocity in rad/s.</param>
     public void UpdatePhysics(float speed, Vector3 linearAcceleration, Vector3 angularVelocity)
     {
-        this.texts[Texts.TrueSpeed.GetHashCode()].text = speed.ToString("F2");
-        this.texts[Texts.LinearAcceleration.GetHashCode()].text = FormatVector3(linearAcceleration);
-        this.texts[Texts.AngularVelocity.GetHashCode()].text = FormatVector3(angularVelocity);
+        this.texts[(int)Texts.TrueSpeed].text = speed.ToString("F2");
+        this.texts[(int)Texts.LinearAcceleration].text = FormatVector3(linearAcceleration);
+        this.texts[(int)Texts.AngularVelocity].text = FormatVector3(angularVelocity);
     }
     #endregion
 
@@ -200,8 +200,8 @@ public class Hud : ScreenManager
     {
         base.Awake();
 
-        this.images[Images.LidarMap.GetHashCode()].texture = new Texture2D(CameraModule.ColorWidth / Hud.lidarMapScale, CameraModule.ColorHeight / Hud.lidarMapScale);
-        this.images[Images.DepthFeed.GetHashCode()].texture = new Texture2D(CameraModule.DepthWidth, CameraModule.DepthHeight);
+        this.images[(int)Images.LidarMap].texture = new Texture2D(CameraModule.ColorWidth / Hud.lidarMapScale, CameraModule.ColorHeight / Hud.lidarMapScale);
+        this.images[(int)Images.DepthFeed].texture = new Texture2D(CameraModule.DepthWidth, CameraModule.DepthHeight);
 
         this.UpdateConnectedPrograms(0);
     }
@@ -211,8 +211,8 @@ public class Hud : ScreenManager
         this.FailureMessage.SetActive(false);
         this.SuccessMessage.SetActive(false);
 
-        this.texts[Texts.MainTime.GetHashCode()].text = string.Empty;
-        this.texts[Texts.LapTime.GetHashCode()].text = string.Empty;
+        this.texts[(int)Texts.MainTime].text = string.Empty;
+        this.texts[(int)Texts.LapTime].text = string.Empty;
 
         this.UpdateTimeScale(1.0f);
     }
@@ -232,7 +232,7 @@ public class Hud : ScreenManager
         Array triggers = Enum.GetValues(typeof(Controller.Trigger));
         Array joysticks = Enum.GetValues(typeof(Controller.Joystick));
 
-        int index = Images.ControllerFirstButton.GetHashCode(); ;
+        int index = (int)Images.ControllerFirstButton;
 
         foreach (Controller.Button button in buttons)
         {

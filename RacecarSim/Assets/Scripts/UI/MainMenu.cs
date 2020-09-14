@@ -52,25 +52,37 @@ public class MainMenu : MonoBehaviour
 
     /// <summary>
     /// Handles when the user selects a new value in the level collection dropdown.
+    /// 
+    /// This overload exists to be called from Unity, since Unity cannot call functions with multiple parameters.
+    /// </summary>
+    public void HandleLevelCollectionDropdownChange()
+    {
+        this.HandleLevelCollectionDropdownChange(0, false);
+    }
+
+    /// <summary>
+    /// Handles when the user selects a new value in the level collection dropdown.
     /// </summary>
     /// <param name="selectedLevel">The index of the level which should be selected by default in the level select menu.</param>
-    public void HandleLevelCollectionDropdownChange(int selectedLevel = 0)
+    /// <param name="isEvaluation">True if the isEvaluation toggle should be checked.</param>
+    public void HandleLevelCollectionDropdownChange(int selectedLevel, bool isEvaluation)
     {
         Dropdown levelSelect = this.dropdowns[(int)Dropdowns.LevelSelect];
         levelSelect.ClearOptions();
         levelSelect.AddOptions(this.SelectedLevelCollection.LevelNames);
         levelSelect.value = selectedLevel;
 
-        this.HandleLevelDropdownChange();
+        this.HandleLevelDropdownChange(isEvaluation);
     }
 
     /// <summary>
     /// Handles when the user selects a new value in the level dropdown.
     /// </summary>
-    public void HandleLevelDropdownChange()
+    /// <param name="isEvaluation">True if the isEvaluation toggle should be checked.</param>
+    public void HandleLevelDropdownChange(bool isEvaluation = false)
     {
         this.toggles[(int)Toggles.IsEvaluation].gameObject.SetActive(this.SelectedLevel.IsWinable);
-        this.toggles[(int)Toggles.IsEvaluation].isOn = false;
+        this.toggles[(int)Toggles.IsEvaluation].isOn = isEvaluation;
     }
 
     /// <summary>
@@ -184,6 +196,7 @@ public class MainMenu : MonoBehaviour
         collectionSelect.AddOptions(collectionDisplayNames);
         collectionSelect.value = MainMenu.prevCollectionIndex;
 
-        this.HandleLevelCollectionDropdownChange(MainMenu.prevLevelIndex);
+        // Begin with the previous level selection
+        this.HandleLevelCollectionDropdownChange(MainMenu.prevLevelIndex, LevelManager.IsEvaluation);
     }
 }

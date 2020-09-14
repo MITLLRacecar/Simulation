@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UnityEngine.SceneManagement;
 
 /// <summary>
 /// Encapsulates a RACECAR-MN.

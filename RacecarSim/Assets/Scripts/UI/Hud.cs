@@ -1,9 +1,8 @@
 ﻿using System;
 using UnityEngine;
-using UnityEngine.UI;
 
 /// <summary>
-/// Controls the heads-up display shown to the user.
+/// Controls the heads-up display shown to the user during races with a single car.
 /// </summary>
 public class Hud : ScreenManager
 {
@@ -55,10 +54,23 @@ public class Hud : ScreenManager
 
     #region Public Interface
     #region Overrides
-    /// <summary>
-    /// Updates the element showing the current simulation mode.
-    /// </summary>
-    /// <param name="mode">The current mode of the simulation.</param>
+    public override void HandleWin(float[] times)
+    {
+        this.SuccessMessage.SetActive(true);
+        this.texts[Texts.SuccessTime.GetHashCode()].text = $"Time: {times[0]:F3} seconds";
+    }
+
+    public override void HandleFailure(int carIndex, string reason)
+    {
+        this.FailureMessage.SetActive(true);
+        this.texts[Texts.Failure.GetHashCode()].text = reason;
+    }
+
+    public override void UpdateConnectedPrograms(int numConnectedPrograms)
+    {
+        this.images[(int)Images.ConnectedProgram].color = numConnectedPrograms > 0 ? new Color(1, 1, 1, 1) : new Color(1, 1, 1, 0.25f);
+    }
+
     public override void UpdateMode(SimulationMode mode)
     {
         string modeName;
@@ -97,19 +109,11 @@ public class Hud : ScreenManager
         this.texts[(int)Texts.TimeScale].text = timeScale >= 1 ? string.Empty : $"{Mathf.Round(1 / timeScale)}x Slow Motion";
     }
 
-    /// <summary>
-    /// Updates the element showing the current time elapsed in the race.
-    /// </summary>
-    /// <param name="mainTime">The overall time (in seconds) that the current level has been running.</param>
     public override void UpdateTime(float mainTime)
     {
         this.texts[(int)Texts.MainTime].text = mainTime.ToString("F3");
     }
 
-    /// <summary>
-    /// Update the element(s) showing the time it took each car to reach each checkpoint.
-    /// </summary>
-    /// <param name="checkpointTimes">The time at which each car reached each checkpoint, indexed by car, then checkpoint.</param>
     public override void UpdateCheckpointTimes(float[,] checkpointTimes)
     {
         string checkpointsFormatted = string.Empty;
@@ -122,23 +126,6 @@ public class Hud : ScreenManager
             }
         }
         this.texts[(int)Texts.LapTime].text = checkpointsFormatted;
-    }
-
-    public override void UpdateConnectedPrograms(int numConnectedPrograms)
-    {
-        this.images[(int)Images.ConnectedProgram].color = numConnectedPrograms > 0 ? new Color(1, 1, 1, 1) : new Color(1, 1, 1, 0.25f);
-    }
-
-    public override void HandleWin(float[] times)
-    {
-        this.SuccessMessage.SetActive(true);
-        this.texts[Texts.SuccessTime.GetHashCode()].text = $"Time: {times[0]:F3} seconds";
-    }
-
-    public override void HandleFailure(int carIndex, string reason)
-    {
-        this.FailureMessage.SetActive(true);
-        this.texts[Texts.Failure.GetHashCode()].text = reason;
     }
     #endregion
 

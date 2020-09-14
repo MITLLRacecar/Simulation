@@ -26,10 +26,23 @@ public abstract class ScreenManager : MonoBehaviour
     }
 
     #region Abstract
+    /// <summary>
+    /// Update the element(s) indicating that the race is won.
+    /// </summary>
+    /// <param name="times">The finish time of each car, indexed by car.</param>
     public abstract void HandleWin(float[] times);
 
+    /// <summary>
+    /// Update the element(s) indicating that a car failed a critical objective.
+    /// </summary>
+    /// <param name="carIndex">The index of the car which failed the objective.</param>
+    /// <param name="reason">A description of the failure.</param>
     public abstract void HandleFailure(int carIndex, string reason);
 
+    /// <summary>
+    /// Update the element(s) indicating how many Python programs are connected to RacecarSim.
+    /// </summary>
+    /// <param name="numConnectedPrograms"></param>
     public abstract void UpdateConnectedPrograms(int numConnectedPrograms);
 
     /// <summary>

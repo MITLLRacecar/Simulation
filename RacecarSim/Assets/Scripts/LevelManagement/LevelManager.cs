@@ -31,11 +31,10 @@ public class LevelManager : MonoBehaviour
     private GameObject hudPrefab;
 
     /// <summary>
-    /// The prefabs containing the screen managers for races with increasing numbers of cars.
-    /// The 0th prefab supports 1 car, the 1st prefab supports 2 cars, and so on.
+    /// The prefab which is copied to create the screen manager for a race with multiple cars.
     /// </summary>
     [SerializeField]
-    private GameObject[] raceScreenPrefabs;
+    private GameObject raceScreenPrefab;
 
     // The Unity Editor does not support jagged arrays,
     // so we resort to hard coding settable positions for up to four cars.
@@ -87,6 +86,10 @@ public class LevelManager : MonoBehaviour
     /// </summary>
     [SerializeField]
     private Vector3[] fourCarRotations = { Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero};
+    #endregion
+
+    #region Constants
+    private static readonly RenderTexture raceScreenTexture = new RenderTexture(960, 600, 24);
     #endregion
 
     #region Public Interface
@@ -288,6 +291,17 @@ public class LevelManager : MonoBehaviour
     private bool wasConnectedProgramsChanged;
 
     /// <summary>
+    /// The fixed camera(s) which capture the race.
+    /// </summary>
+    /// <remarks>These cameras are children of the LevelManager game object.</remarks>
+    private Camera[] raceCameras;
+
+    /// <summary>
+    /// The index of the current active race camera.
+    /// </summary>
+    private int currentRaceCamera;
+
+    /// <summary>
     /// The time in seconds since the race began, accounting for pausing and time scale changes.
     /// </summary>
     private float CurTime
@@ -305,6 +319,8 @@ public class LevelManager : MonoBehaviour
         this.mode = LevelManager.IsEvaluation ? SimulationMode.Wait : SimulationMode.DefaultDrive;
         Time.timeScale = 1.0f;
         this.defaultFixedDeltaTime = Time.fixedDeltaTime;
+
+        this.raceCameras = this.GetComponentsInChildren<Camera>();
     }
 
     private void Start()
@@ -390,6 +406,7 @@ public class LevelManager : MonoBehaviour
     {
         this.players = new Racecar[LevelManager.NumPlayers];
 
+        // If there is only one player, spawn a single car and create a HUD as the screen manager
         if (LevelManager.NumPlayers == 1)
         {
             this.players[0] = GameObject.Instantiate(this.playerPrefab, this.oneCarPosition, Quaternion.Euler(this.oneCarRotation)).GetComponentInChildren<Racecar>();
@@ -398,11 +415,12 @@ public class LevelManager : MonoBehaviour
             this.resetPositions = new Vector3[1] { this.oneCarPosition };
             this.resetRotations = new Vector3[1] { this.oneCarRotation };
             
-            // If there is only one player, create a HUD as the screen manager.
             Hud hud = GameObject.Instantiate(this.hudPrefab).GetComponent<Hud>();
             this.players[0].GetComponentInChildren<Racecar>().Hud = hud;
             this.screenManager = hud;
         }
+
+        // If there are multiple players, spawn multiple cars and create a RaceScreen as the screen manager
         else
         {
             switch (LevelManager.NumPlayers)
@@ -424,14 +442,37 @@ public class LevelManager : MonoBehaviour
                     break;
             }
 
+            RenderTexture[] playerCameraTextures = new RenderTexture[LevelManager.NumPlayers];
             for (int i = 0; i < LevelManager.NumPlayers; i++)
             {
                 this.players[i] = GameObject.Instantiate(this.playerPrefab, this.resetPositions[i], Quaternion.Euler(this.resetRotations[i])).GetComponentInChildren<Racecar>();
                 this.players[i].Index = i;
+
+                playerCameraTextures[i] = new RenderTexture(LevelManager.raceScreenTexture);
+                this.players[i].SetPlayerCameraFeatures(playerCameraTextures[i], false);
             }
 
-            // If there are multiple players, create a RaceScreen as the screen manager.
-            this.screenManager = GameObject.Instantiate(this.raceScreenPrefabs[LevelManager.NumPlayers - 1]).GetComponent<RaceScreen>();
+            // Create a render texture for the race cameras
+            RenderTexture raceCameraTexture = new RenderTexture(LevelManager.raceScreenTexture);
+            foreach(Camera raceCamera in this.raceCameras)
+            {
+                raceCamera.targetTexture = raceCameraTexture;
+            }
+
+            // Start with only the first race camera enabled
+            if (this.raceCameras.Length > 0)
+            {
+                this.raceCameras[0].enabled = true;
+                this.currentRaceCamera = 0;
+            }
+            for (int i = 1; i < this.raceCameras.Length; i++)
+            {
+                this.raceCameras[i].enabled = false;
+            }
+
+            RaceScreen raceScreen = GameObject.Instantiate(this.raceScreenPrefab).GetComponent<RaceScreen>();
+            raceScreen.SetCameras(playerCameraTextures, raceCameraTexture);
+            this.screenManager = raceScreen;
         }
         this.screenManager.UpdateMode(this.mode);
     }

@@ -10,7 +10,7 @@ public class Racecar : MonoBehaviour
     /// The cameras through which the user can observe the car.
     /// </summary>
     [SerializeField]
-    private Camera[] PlayerCameras;
+    private Camera[] playerCameras;
     #endregion
 
     #region Constants
@@ -103,6 +103,20 @@ public class Racecar : MonoBehaviour
             this.Drive.MaxSpeed = Mathf.Max(this.Drive.MaxSpeed - 0.1f, 0);
         }
     }
+
+    /// <summary>
+    /// Sets the render texture and audio listener of the player perspective (3rd person) cameras.
+    /// </summary>
+    /// <param name="texture">The render texture to which to assign the cameras.</param>
+    /// <param name="enableAudio">True if the audio listeners of the cameras should be enabled.</param>
+    public void SetPlayerCameraFeatures(RenderTexture texture, bool enableAudio)
+    {
+        foreach (Camera camera in this.playerCameras)
+        {
+            camera.targetTexture = texture;
+            camera.GetComponent<AudioListener>().enabled = enableAudio;
+        }
+    }
     #endregion
 
     /// <summary>
@@ -124,12 +138,12 @@ public class Racecar : MonoBehaviour
     private void Start()
     {
         // Begin with main player camera (0th camera)
-        if (this.PlayerCameras.Length > 0)
+        if (this.playerCameras.Length > 0)
         {
-            this.PlayerCameras[0].enabled = true;
-            for (int i = 1; i < this.PlayerCameras.Length; i++)
+            this.playerCameras[0].enabled = true;
+            for (int i = 1; i < this.playerCameras.Length; i++)
             {
-                this.PlayerCameras[i].enabled = false;
+                this.playerCameras[i].enabled = false;
             }
         }
     }
@@ -139,24 +153,24 @@ public class Racecar : MonoBehaviour
         // Toggle camera when the space bar is pressed
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            this.PlayerCameras[this.curCamera].enabled = false;
-            this.curCamera = (this.curCamera + 1) % this.PlayerCameras.Length;
-            this.PlayerCameras[this.curCamera].enabled = true;
+            this.playerCameras[this.curCamera].enabled = false;
+            this.curCamera = (this.curCamera + 1) % this.playerCameras.Length;
+            this.playerCameras[this.curCamera].enabled = true;
         }
     }
 
     private void LateUpdate()
     {
-        for (int i = 0; i < this.PlayerCameras.Length; i++)
+        for (int i = 0; i < this.playerCameras.Length; i++)
         {
             Vector3 followPoint = this.transform.forward * Racecar.cameraOffsets[i].z;
             Vector3 targetCameraPosition = this.transform.position + new Vector3(followPoint.x, Racecar.cameraOffsets[i].y, followPoint.z);
-            this.PlayerCameras[i].transform.position = Vector3.Lerp(
-                this.PlayerCameras[i].transform.position,
+            this.playerCameras[i].transform.position = Vector3.Lerp(
+                this.playerCameras[i].transform.position,
                 targetCameraPosition,
                 Racecar.cameraSpeed * Time.deltaTime);
 
-            this.PlayerCameras[i].transform.LookAt(this.transform.position);
+            this.playerCameras[i].transform.LookAt(this.transform.position);
         }
     }
 }

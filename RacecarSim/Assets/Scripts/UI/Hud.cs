@@ -202,8 +202,6 @@ public class Hud : ScreenManager
 
         this.images[(int)Images.LidarMap].texture = new Texture2D(CameraModule.ColorWidth / Hud.lidarMapScale, CameraModule.ColorHeight / Hud.lidarMapScale);
         this.images[(int)Images.DepthFeed].texture = new Texture2D(CameraModule.DepthWidth, CameraModule.DepthHeight);
-
-        this.UpdateConnectedPrograms(0);
     }
 
     private void Start()
@@ -215,6 +213,7 @@ public class Hud : ScreenManager
         this.texts[(int)Texts.LapTime].text = string.Empty;
 
         this.UpdateTimeScale(1.0f);
+        this.UpdateConnectedPrograms(0);
     }
 
     protected override void Update()

@@ -46,20 +46,31 @@ MonoBehaviour:
   playerPrefab: {fileID: 1987577223, guid: 17243f7e049157d4b950695aacf25b36, type: 3}
   hudPrefab: {fileID: 5036299379929912964, guid: 83edf10bfca08844487aa6ca89035791,
     type: 3}
-  numVariableTurns: 0
-  variableColor1: 
-  variableColor2: 
-  variableColor3: 
-  oneCarSpawn: {x: 0, y: 0, z: 0}
-  twoCarSpawn:
+  raceScreenPrefab: {fileID: 7680681115179678183, guid: cce8f4789f4394c47a57232243864afc,
+    type: 3}
+  oneCarPosition: {x: 0, y: 0, z: 0}
+  oneCarRotation: {x: 0, y: 0, z: 0}
+  twoCarPositions:
   - {x: -4, y: 0, z: 0}
   - {x: 4, y: 0, z: 0}
-  threeCarSpawn:
+  twoCarRotations:
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  threeCarPositions:
   - {x: -5, y: 0, z: 0}
   - {x: 0, y: 0, z: 0}
   - {x: 5, y: 0, z: 0}
-  fourCarSpawn:
+  threeCarRotations:
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  fourCarPositions:
   - {x: -4, y: 0, z: 0}
   - {x: 4, y: 0, z: 0}
   - {x: -4, y: 0, z: -8}
   - {x: 4, y: 0, z: -8}
+  fourCarRotations:
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}

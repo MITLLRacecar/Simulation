@@ -8,6 +8,14 @@ using UnityEngine.UI;
 /// </summary>
 public class MainMenu : MonoBehaviour
 {
+    #region Set in Unity Editor
+    /// <summary>
+    /// The game object containing the elements which allow the user to select the number of cars to spawn in the level.
+    /// </summary>
+    [SerializeField]
+    private GameObject numCars;
+    #endregion
+
     #region Public Interface
     /// <summary>
     /// Loads the level selected in the dropdown menu.
@@ -18,8 +26,8 @@ public class MainMenu : MonoBehaviour
         MainMenu.prevCollectionIndex = this.dropdowns[(int)Dropdowns.CollectionSelect].value;
         MainMenu.prevLevelIndex = this.dropdowns[(int)Dropdowns.LevelSelect].value;
 
-        LevelManager.NumPlayers = 1; // TODO: Read this from a dropdown
         LevelManager.IsEvaluation = this.toggles[(int)Toggles.IsEvaluation].isOn;
+        LevelManager.NumPlayers = this.dropdowns[(int)Dropdowns.NumCars].value + 1;
 
         LevelManager.LevelInfo = this.SelectedLevel;
         SceneManager.LoadScene(this.SelectedLevel.BuildIndex, LoadSceneMode.Single);
@@ -57,7 +65,7 @@ public class MainMenu : MonoBehaviour
     /// </summary>
     public void HandleLevelCollectionDropdownChange()
     {
-        this.HandleLevelCollectionDropdownChange(0, false);
+        this.HandleLevelCollectionDropdownChange(0, false, 1);
     }
 
     /// <summary>
@@ -65,24 +73,61 @@ public class MainMenu : MonoBehaviour
     /// </summary>
     /// <param name="selectedLevel">The index of the level which should be selected by default in the level select menu.</param>
     /// <param name="isEvaluation">True if the isEvaluation toggle should be checked.</param>
-    public void HandleLevelCollectionDropdownChange(int selectedLevel, bool isEvaluation)
+    /// <param name="numCars">The number of cars to spawn in the level.</param>
+    public void HandleLevelCollectionDropdownChange(int selectedLevel, bool isEvaluation, int numCars)
     {
         Dropdown levelSelect = this.dropdowns[(int)Dropdowns.LevelSelect];
         levelSelect.ClearOptions();
         levelSelect.AddOptions(this.SelectedLevelCollection.LevelNames);
         levelSelect.value = selectedLevel;
 
-        this.HandleLevelDropdownChange(isEvaluation);
+        this.HandleLevelDropdownChange(isEvaluation, numCars);
+    }
+
+    /// <summary>
+    /// Handles when the user selects a new value in the level dropdown.
+    /// 
+    /// This overload exists to be called from Unity, since Unity cannot call functions with multiple parameters.
+    /// </summary>
+    public void HandleLevelDropdownChange()
+    {
+        this.HandleLevelDropdownChange(false, 1);
     }
 
     /// <summary>
     /// Handles when the user selects a new value in the level dropdown.
     /// </summary>
     /// <param name="isEvaluation">True if the isEvaluation toggle should be checked.</param>
-    public void HandleLevelDropdownChange(bool isEvaluation = false)
+    /// <param name="numCars">The number of cars to spawn in the level.</param>
+    public void HandleLevelDropdownChange(bool isEvaluation, int numCars)
     {
+        // Show and set the IsEvaluation toggle if the level is winnable
         this.toggles[(int)Toggles.IsEvaluation].gameObject.SetActive(this.SelectedLevel.IsWinable);
         this.toggles[(int)Toggles.IsEvaluation].isOn = isEvaluation;
+
+        // Show and populate the numCars dropdown if the level supports multiple cars
+        Dropdown numCarDropdown = this.dropdowns[(int)Dropdowns.NumCars];
+        if (this.SelectedLevel.MaxCars > 1)
+        {
+            if (this.SelectedLevel.MaxCars != numCarDropdown.options.Count)
+            {
+                List<string> options = new List<string>(this.SelectedLevel.MaxCars);
+                for (int i = 1; i <= this.SelectedLevel.MaxCars; i++)
+                {
+                    options.Add(i.ToString());
+                }
+                numCarDropdown.ClearOptions();
+                numCarDropdown.AddOptions(options);
+            }
+            this.numCars.SetActive(true);
+        }
+        else
+        {
+            this.numCars.SetActive(false);
+        }
+
+        // Regardless of whether it is shown, we always set the dropdown value since it determines NumPlayers when the level is loaded
+        numCarDropdown.value = numCars - 1;
     }
 
     /// <summary>
@@ -122,7 +167,8 @@ public class MainMenu : MonoBehaviour
     private enum Dropdowns
     {
         CollectionSelect = 0,
-        LevelSelect = 1
+        LevelSelect = 1,
+        NumCars = 2
     }
 
     /// <summary>
@@ -185,6 +231,8 @@ public class MainMenu : MonoBehaviour
         this.settingsPane.gameObject.SetActive(false);
         this.bestTimesPane.gameObject.SetActive(false);
 
+        this.numCars.SetActive(false);
+
         // Populate level collection dropdown
         Dropdown collectionSelect = this.dropdowns[(int)Dropdowns.CollectionSelect];
         collectionSelect.ClearOptions();
@@ -197,6 +245,6 @@ public class MainMenu : MonoBehaviour
         collectionSelect.value = MainMenu.prevCollectionIndex;
 
         // Begin with the previous level selection
-        this.HandleLevelCollectionDropdownChange(MainMenu.prevLevelIndex, LevelManager.IsEvaluation);
+        this.HandleLevelCollectionDropdownChange(MainMenu.prevLevelIndex, LevelManager.IsEvaluation, LevelManager.NumPlayers);
     }
 }

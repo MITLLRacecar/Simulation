@@ -380,7 +380,7 @@ public class LevelManager : MonoBehaviour
 
     private void OnApplicationQuit()
     {
-        this.pythonInteraface.HandleExit();
+        this.pythonInteraface?.HandleExit();
     }
 
     /// <summary>

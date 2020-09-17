@@ -25,6 +25,15 @@ public abstract class ScreenManager : MonoBehaviour
         this.messageFadeTime = fadeTime;
     }
 
+    /// <summary>
+    /// Updates the element showing the current time elapsed in the race.
+    /// </summary>
+    /// <param name="mainTime">The overall time (in seconds) that the current level has been running.</param>
+    public void UpdateTime(float mainTime)
+    {
+        this.texts[this.mainTimeTextIndex].text = mainTime.ToString("F3");
+    }
+
     #region Abstract
     /// <summary>
     /// Update the element(s) indicating that the race is won.
@@ -58,12 +67,6 @@ public abstract class ScreenManager : MonoBehaviour
     public abstract void UpdateCheckpointTimes(float[,] checkpointTimes);
 
     /// <summary>
-    /// Updates the element showing the current time elapsed in the race.
-    /// </summary>
-    /// <param name="mainTime">The overall time (in seconds) that the current level has been running.</param>
-    public abstract void UpdateTime(float mainTime);
-
-    /// <summary>
     /// Updates the element(s) showing the current rate at which time progresses.
     /// </summary>
     /// <param name="timeScale">The current rate at which time progresses. 1 is full speed, 0.5 is half speed, and 0 is paused.</param>
@@ -85,6 +88,11 @@ public abstract class ScreenManager : MonoBehaviour
     /// The index of the message text in texts.
     /// </summary>
     protected int messageTextIndex = 0;
+
+    /// <summary>
+    /// The index of the main time text in texts.
+    /// </summary>
+    protected int mainTimeTextIndex = 1;
 
     protected virtual void Awake()
     {

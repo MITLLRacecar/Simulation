@@ -109,11 +109,6 @@ public class Hud : ScreenManager
         this.texts[(int)Texts.TimeScale].text = timeScale >= 1 ? string.Empty : $"{Mathf.Round(1 / timeScale)}x Slow Motion";
     }
 
-    public override void UpdateTime(float mainTime)
-    {
-        this.texts[(int)Texts.MainTime].text = mainTime.ToString("F3");
-    }
-
     public override void UpdateCheckpointTimes(float[,] checkpointTimes)
     {
         string checkpointsFormatted = string.Empty;
@@ -171,14 +166,14 @@ public class Hud : ScreenManager
     private enum Texts
     {
         Message = 0,
-        TimeScale = 1,
-        TrueSpeed = 6,
-        LinearAcceleration = 10,
-        AngularVelocity = 13,
-        Mode = 15,
-        Failure = 17,
-        SuccessTime = 20,
-        MainTime = 22,
+        MainTime = 1,
+        TimeScale = 2,
+        TrueSpeed = 7,
+        LinearAcceleration = 11,
+        AngularVelocity = 14,
+        Mode = 16,
+        Failure = 18,
+        SuccessTime = 21,
         LapTime = 23
     }
 
@@ -209,7 +204,6 @@ public class Hud : ScreenManager
         this.FailureMessage.SetActive(false);
         this.SuccessMessage.SetActive(false);
 
-        this.texts[(int)Texts.MainTime].text = string.Empty;
         this.texts[(int)Texts.LapTime].text = string.Empty;
 
         this.UpdateTimeScale(1.0f);

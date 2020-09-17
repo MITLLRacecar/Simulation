@@ -60,9 +60,8 @@ public class MainMenu : MonoBehaviour
 
     /// <summary>
     /// Handles when the user selects a new value in the level collection dropdown.
-    /// 
-    /// This overload exists to be called from Unity, since Unity cannot call functions with multiple parameters.
     /// </summary>
+    /// <remarks>This overload exists to be called from Unity, since Unity cannot call functions with multiple parameters.</remarks>
     public void HandleLevelCollectionDropdownChange()
     {
         this.HandleLevelCollectionDropdownChange(0, false, 1);
@@ -86,9 +85,8 @@ public class MainMenu : MonoBehaviour
 
     /// <summary>
     /// Handles when the user selects a new value in the level dropdown.
-    /// 
-    /// This overload exists to be called from Unity, since Unity cannot call functions with multiple parameters.
     /// </summary>
+    /// <remarks>This overload exists to be called from Unity, since Unity cannot call functions with multiple parameters.</remarks>
     public void HandleLevelDropdownChange()
     {
         this.HandleLevelDropdownChange(false, 1);

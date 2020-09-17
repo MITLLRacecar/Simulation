@@ -36,7 +36,7 @@ public class RaceScreen : ScreenManager
 
     public override void UpdateMode(SimulationMode mode)
     {
-        // Intentionally blank for now
+        this.images[(int)Images.WaitMessage].gameObject.SetActive(mode == SimulationMode.Wait);
     }
 
     public override void UpdateCheckpointTimes(float[,] checkpointTimes)
@@ -79,6 +79,11 @@ public class RaceScreen : ScreenManager
     }
     #endregion
 
+    private enum Images
+    {
+        WaitMessage = 9
+    }
+
     private RaceCameraView[] cameraViews;
 
     private int numCars;
@@ -86,6 +91,9 @@ public class RaceScreen : ScreenManager
     protected override void Awake()
     {
         base.Awake();
+
+        this.messageTextIndex = 5;
+        this.mainTimeTextIndex = 6;
 
         this.cameraViews = this.GetComponentsInChildren<RaceCameraView>();
 

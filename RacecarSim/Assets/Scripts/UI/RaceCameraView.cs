@@ -6,8 +6,14 @@ using UnityEngine.UI;
 /// </summary>
 public class RaceCameraView : MonoBehaviour
 {
+    /// <summary>
+    /// The image displaying the camera view.
+    /// </summary>
     public RawImage Image { get; private set; }
 
+    /// <summary>
+    /// The text overlaying the camera view.
+    /// </summary>
     public Text Text { get; private set; }
 
     private void Awake()

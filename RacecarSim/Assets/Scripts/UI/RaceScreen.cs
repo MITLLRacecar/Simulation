@@ -7,8 +7,14 @@ using UnityEngine.UI;
 public class RaceScreen : ScreenManager
 {
     #region Constants
+    /// <summary>
+    /// The color overlaid on a car's camera view when the car has not yet been connected to a Python program.
+    /// </summary>
     private static readonly Color disabledScreenColor = new Color(0.5f, 0.5f, 0.5f);
 
+    /// <summary>
+    /// The message shown over a car's camera view when the car has not yet been connected to a Python program.
+    /// </summary>
     private const string awaitingConnectionMessage = "Awaiting connection from a Python program...";
     #endregion 
 
@@ -50,6 +56,11 @@ public class RaceScreen : ScreenManager
     }
     #endregion
 
+    /// <summary>
+    /// Initializes the camera views of the race screen.
+    /// </summary>
+    /// <param name="carCameras">The textures to which each car-view camera renders, ordered by car index.</param>
+    /// <param name="raceCamera">The texture to which the race cameras render.</param>
     public void SetCameras(Texture[] carCameras, Texture raceCamera)
     {
         this.numCars = carCameras.Length;
@@ -79,13 +90,22 @@ public class RaceScreen : ScreenManager
     }
     #endregion
 
+    /// <summary>
+    /// The mutable images of the race screen manager, with values corresponding to the index in images.
+    /// </summary>
     private enum Images
     {
         WaitMessage = 9
     }
 
+    /// <summary>
+    /// The potential camera views in the race screen.
+    /// </summary>
     private RaceCameraView[] cameraViews;
 
+    /// <summary>
+    /// The number of cars in the current race.
+    /// </summary>
     private int numCars;
 
     protected override void Awake()
@@ -98,16 +118,23 @@ public class RaceScreen : ScreenManager
         this.cameraViews = this.GetComponentsInChildren<RaceCameraView>();
 
         // Unity requires one camera rendering to the display, so create a dummy camera
-        // (it will be fully blocked by the race screen background)
+        // (which is fully blocked by the race screen background)
         this.gameObject.AddComponent<Camera>();
     }
 
-    private RaceCameraView GetCameraView(int index)
+    /// <summary>
+    /// Returns the camera view corresponding to a particular car.
+    /// </summary>
+    /// <param name="carIndex">The index of the car.</param>
+    /// <returns>The camera view showing the car of the specified index.</returns>
+    /// <remarks>If carIndex is one past the last car, we return the camera view of the race camera.</remarks>
+    private RaceCameraView GetCameraView(int carIndex)
     {
-        if (this.numCars == 2 && index == 2)
+        // When there are only two cars, use the bottom middle screen (index 4) for the race camera
+        if (this.numCars == 2 && carIndex == 2)
         {
-            index = 4;
+            carIndex = 4;
         }
-        return this.cameraViews[index];
+        return this.cameraViews[carIndex];
     }
 }

@@ -8,6 +8,8 @@ public class RaceScreen : ScreenManager
 {
     #region Constants
     private static readonly Color disabledScreenColor = new Color(0.5f, 0.5f, 0.5f);
+
+    private const string awaitingConnectionMessage = "Awaiting connection from a Python program...";
     #endregion 
 
     #region Public Interface
@@ -26,19 +28,15 @@ public class RaceScreen : ScreenManager
     {
         for (int i = 0; i < numConnectedPrograms; i++)
         {
-            GetScreen(i).color = Color.white;
-            GetScreenText(i).gameObject.SetActive(false);
+            RaceCameraView view = GetCameraView(i);
+            view.Image.color = Color.white;
+            view.Text.text = string.Empty;
         }
     }
 
     public override void UpdateMode(SimulationMode mode)
     {
         // Intentionally blank for now
-    }
-
-    public override void UpdateTime(float mainTime)
-    {
-        // TODO
     }
 
     public override void UpdateCheckpointTimes(float[,] checkpointTimes)
@@ -56,50 +54,52 @@ public class RaceScreen : ScreenManager
     {
         this.numCars = carCameras.Length;
 
-        for (int i = 0; i < carCameras.Length; i++)
+        foreach (RaceCameraView cameraView in this.cameraViews)
         {
-            RawImage screen = GetScreen(i);
-            screen.gameObject.SetActive(true);
-            screen.texture = carCameras[i];
-            screen.color = RaceScreen.disabledScreenColor;
-
-            GetScreenText(i).gameObject.SetActive(true);
+            cameraView.gameObject.SetActive(false);
         }
 
-        if (this.numCars >= 3)
+        for (int i = 0; i < carCameras.Length; i++)
         {
-            GetScreen(this.numCars).texture = raceCamera;
+            RaceCameraView carCameraView = GetCameraView(i);
+            carCameraView.Image.texture = carCameras[i];
+            carCameraView.Image.color = RaceScreen.disabledScreenColor;
+            carCameraView.Text.text = RaceScreen.awaitingConnectionMessage;
+            carCameraView.gameObject.SetActive(true);
+        }
+
+        // We only have space for the race camera if there are 3 or less cars
+        if (this.numCars <= 3)
+        {
+            RaceCameraView raceCameraView = GetCameraView(this.numCars);
+            raceCameraView.Image.texture = raceCamera;
+            raceCameraView.Text.text = string.Empty;
+            raceCameraView.gameObject.SetActive(false);
         }
     }
     #endregion
+
+    private RaceCameraView[] cameraViews;
+
+    private int numCars;
 
     protected override void Awake()
     {
         base.Awake();
 
-        foreach (RawImage screen in this.images)
-        {
-            screen.gameObject.SetActive(false);
-        }
+        this.cameraViews = this.GetComponentsInChildren<RaceCameraView>();
+
+        // Unity requires one camera rendering to the display, so create a dummy camera
+        // (it will be fully blocked by the race screen background)
+        this.gameObject.AddComponent<Camera>();
     }
 
-    private int numCars;
-
-    private RawImage GetScreen(int index)
+    private RaceCameraView GetCameraView(int index)
     {
         if (this.numCars == 2 && index == 2)
         {
             index = 4;
         }
-        return this.images[index + 1]; // +1 to account for the background image
-    }
-
-    private Text GetScreenText(int index)
-    {
-        if (this.numCars == 2 && index == 2)
-        {
-            index = 4;
-        }
-        return this.texts[index];
+        return this.cameraViews[index];
     }
 }

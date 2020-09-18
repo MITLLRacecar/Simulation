@@ -167,14 +167,14 @@ public class Hud : ScreenManager
     {
         Message = 0,
         MainTime = 1,
-        TimeScale = 2,
-        TrueSpeed = 7,
-        LinearAcceleration = 11,
-        AngularVelocity = 14,
-        Mode = 16,
-        Failure = 18,
-        SuccessTime = 21,
-        LapTime = 23
+        LapTime = 2,
+        TimeScale = 3,
+        TrueSpeed = 8,
+        LinearAcceleration = 12,
+        AngularVelocity = 15,
+        Mode = 17,
+        Failure = 19,
+        SuccessTime = 22,        
     }
 
     /// <summary>

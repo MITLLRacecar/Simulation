@@ -100,6 +100,9 @@ public abstract class ScreenManager : MonoBehaviour
         this.images = this.GetComponentsInChildren<RawImage>();
 
         this.messagePersistTime = -1;
+
+        this.texts[this.messageTextIndex].text = string.Empty;
+        this.texts[this.mainTimeTextIndex].text = string.Empty;
     }
 
     protected virtual void Update()

@@ -306,7 +306,7 @@ public class LevelManager : MonoBehaviour
     /// <summary>
     /// The index of the current active race camera.
     /// </summary>
-    private int currentRaceCamera;
+    private int curRaceCamera;
 
     /// <summary>
     /// The rate at which time in the simulation progresses, independent of pausing.
@@ -406,11 +406,58 @@ public class LevelManager : MonoBehaviour
             this.screenManager.UpdateConnectedPrograms(numConnectedPrograms);
             this.wasConnectedProgramsChanged = false; // TODO: there is probably a data race here
         }
+
+        // For multi-car races, manage switching between race cameras 
+        if (LevelManager.NumPlayers > 1)
+        {
+            this.ManageRaceCameras();
+        }
     }
 
     private void OnApplicationQuit()
     {
         this.pythonInteraface?.HandleExit();
+    }
+
+    /// <summary>
+    /// Register changes between race cameras triggered by keyboard input.
+    /// </summary>
+    private void ManageRaceCameras()
+    {
+        int prevRaceCamera = this.curRaceCamera;
+
+        if (Input.GetKeyDown(KeyCode.LeftArrow))
+        {
+            this.curRaceCamera += this.raceCameras.Length - 1;
+        }
+        else if (Input.GetKeyDown(KeyCode.RightArrow))
+        {
+            this.curRaceCamera++;
+        }
+        else if (Input.GetKeyDown(KeyCode.UpArrow))
+        {
+            this.curRaceCamera = 0;
+        }
+        else if (Input.GetKeyDown(KeyCode.DownArrow))
+        {
+            this.curRaceCamera = this.raceCameras.Length - 1;
+        }
+        this.curRaceCamera %= this.raceCameras.Length;
+
+        for (int i = 0; i < this.raceCameras.Length; i++)
+        {
+            if (Input.GetKeyDown(KeyCode.Alpha1 + i))
+            {
+                this.curRaceCamera = i;
+                break;
+            }
+        }
+
+        if (prevRaceCamera != this.curRaceCamera)
+        {
+            this.raceCameras[prevRaceCamera].enabled = false;
+            this.raceCameras[this.curRaceCamera].enabled = true;
+        }
     }
 
     /// <summary>
@@ -477,7 +524,7 @@ public class LevelManager : MonoBehaviour
             if (this.raceCameras.Length > 0)
             {
                 this.raceCameras[0].enabled = true;
-                this.currentRaceCamera = 0;
+                this.curRaceCamera = 0;
             }
             for (int i = 1; i < this.raceCameras.Length; i++)
             {

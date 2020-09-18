@@ -85,7 +85,7 @@ public class RaceScreen : ScreenManager
             RaceCameraView raceCameraView = GetCameraView(this.numCars);
             raceCameraView.Image.texture = raceCamera;
             raceCameraView.Text.text = string.Empty;
-            raceCameraView.gameObject.SetActive(false);
+            raceCameraView.gameObject.SetActive(true);
         }
     }
     #endregion

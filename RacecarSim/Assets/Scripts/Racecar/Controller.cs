@@ -137,9 +137,9 @@ public static class Controller
         new string[] { "4th axis", "5th axis" }
     };
 #endif
-#endregion
+    #endregion
 
-#region Public Interface
+    #region Public Interface
     /// <summary>
     /// The buttons on an Xbox controller.
     /// </summary>

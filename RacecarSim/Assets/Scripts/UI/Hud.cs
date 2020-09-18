@@ -42,11 +42,6 @@ public class Hud : ScreenManager
     private static readonly Color waitColor = new Color(1f, 0.5f, 0);
 
     /// <summary>
-    /// The background color of the mode label when the simulation is paused.
-    /// </summary>
-    private static readonly Color pausedColor = new Color(0, 0.5f, 1f);
-
-    /// <summary>
     /// The number of times the LIDAR map is smaller than the color and depth visualizations.
     /// </summary>
     private const int lidarMapScale = 4;
@@ -89,10 +84,6 @@ public class Hud : ScreenManager
             case SimulationMode.Wait:
                 modeName = "Wait";
                 iconColor = Hud.waitColor;
-                break;
-            case SimulationMode.Paused:
-                modeName = "Paused";
-                iconColor = Hud.pausedColor;
                 break;
             default:
                 modeName = "Unrecognized";

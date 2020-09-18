@@ -11,8 +11,7 @@ public enum SimulationMode
 {
     DefaultDrive,
     UserProgram,
-    Wait,
-    Paused
+    Wait
 }
 
 public class LevelManager : MonoBehaviour
@@ -89,7 +88,15 @@ public class LevelManager : MonoBehaviour
     #endregion
 
     #region Constants
+    /// <summary>
+    /// The texture which is copied to create all race camera views.
+    /// </summary>
     private static readonly RenderTexture raceScreenTexture = new RenderTexture(960, 600, 24);
+
+    /// <summary>
+    /// The minimum time scale at which the simulation can run.
+    /// </summary>
+    private const float minTimeScale = 1.0f / 64.0f;
     #endregion
 
     #region Public Interface
@@ -302,6 +309,12 @@ public class LevelManager : MonoBehaviour
     private int currentRaceCamera;
 
     /// <summary>
+    /// The rate at which time in the simulation progresses, independent of pausing.
+    /// </summary>
+    /// <remarks>This field is necessary to store the time scale during pausing, when Time.timeScale is set to 0.</remarks>
+    private float timeScale;
+
+    /// <summary>
     /// The time in seconds since the race began, accounting for pausing and time scale changes.
     /// </summary>
     private float CurTime
@@ -317,7 +330,6 @@ public class LevelManager : MonoBehaviour
     {
         LevelManager.instance = this;
         this.mode = LevelManager.IsEvaluation ? SimulationMode.Wait : SimulationMode.DefaultDrive;
-        Time.timeScale = 1.0f;
         this.defaultFixedDeltaTime = Time.fixedDeltaTime;
 
         this.raceCameras = this.GetComponentsInChildren<Camera>();
@@ -335,6 +347,8 @@ public class LevelManager : MonoBehaviour
             this.finishTimes = new float[LevelManager.NumPlayers];
             this.screenManager.UpdateTime(0.0f);
         }
+
+        this.SetTimeScale(1.0f);
     }
 
     private void Update()
@@ -371,14 +385,14 @@ public class LevelManager : MonoBehaviour
             this.HandleBack();
         }
 
-        // Handle timeFactor change on alt keys
+        // Handle timeScale change on alt keys
         if (Input.GetKeyDown(KeyCode.LeftAlt))
         {
-            this.ScaleTimeFactor(0.5f);
+            this.ScaleTimeScale(0.5f);
         }
         else if (Input.GetKeyDown(KeyCode.RightAlt) || Input.GetKeyDown(KeyCode.AltGr))
         {
-            this.ScaleTimeFactor(2);
+            this.ScaleTimeScale(2);
         }
 
         // Handle exit on escape key
@@ -505,8 +519,7 @@ public class LevelManager : MonoBehaviour
     {
         if (LevelManager.IsEvaluation)
         {
-            this.mode = SimulationMode.Paused;
-            this.ScaleTimeFactor(0);
+            this.HandlePause();
         }
         else
         {
@@ -540,13 +553,44 @@ public class LevelManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Change the current time factor, the rate at which time progresses.
+    /// Handles when the user pauses the game (BACK in evaluation mode).
     /// </summary>
-    /// <param name="changeFactor">The number by which to multiply the current time factor.</param>
-    private void ScaleTimeFactor(float changeFactor)
+    private void HandlePause()
     {
-        Time.timeScale = Mathf.Max(Mathf.Min(Time.timeScale * changeFactor, 1.0f), 1 / 64.0f);
-        Time.fixedDeltaTime = this.defaultFixedDeltaTime * Time.timeScale;
-        this.screenManager.UpdateTimeScale(Time.timeScale);
+        if (Time.timeScale > 0)
+        {
+            Time.timeScale = 0;
+            this.screenManager.SetPause(true);
+        }
+        else
+        {
+            Time.timeScale = this.timeScale;
+            this.screenManager.SetPause(false);
+        }
+    }
+
+    /// <summary>
+    /// Adjust the current time scale by a multiplicative factor.
+    /// </summary>
+    /// <param name="scaleFactor">The number with which to multiply the current time scale.</param>
+    private void ScaleTimeScale(float scaleFactor)
+    {
+        this.SetTimeScale(Mathf.Max(Mathf.Min(Time.timeScale * scaleFactor, 1.0f), LevelManager.minTimeScale));
+    }
+
+    /// <summary>
+    /// Set the current time scale, the rate at which time progresses.
+    /// </summary>
+    /// <param name="timeScale">The new value for the time scale.</param>
+    private void SetTimeScale(float timeScale)
+    {
+        this.timeScale = timeScale;
+        Time.timeScale = timeScale;
+        Time.fixedDeltaTime = this.defaultFixedDeltaTime * timeScale;
+
+        if (timeScale > 0)
+        {
+            this.screenManager.UpdateTimeScale(timeScale);
+        }
     }
 }

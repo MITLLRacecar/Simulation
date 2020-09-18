@@ -110,10 +110,10 @@ public class RaceScreen : ScreenManager
 
     protected override void Awake()
     {
-        base.Awake();
-
         this.messageTextIndex = 5;
         this.mainTimeTextIndex = 6;
+
+        base.Awake();
 
         this.cameraViews = this.GetComponentsInChildren<RaceCameraView>();
 

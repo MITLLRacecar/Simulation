@@ -34,6 +34,15 @@ public abstract class ScreenManager : MonoBehaviour
         this.texts[this.mainTimeTextIndex].text = mainTime.ToString("F3");
     }
 
+    /// <summary>
+    /// Updates the elements showing when the simulation is paused.
+    /// </summary>
+    /// <param name="isPaused">True if the simulation is currently paused.</param>
+    public void SetPause(bool isPaused)
+    {
+        this.images[this.pauseScreenIndex].gameObject.SetActive(isPaused);
+    }
+
     #region Abstract
     /// <summary>
     /// Update the element(s) indicating that the race is won.
@@ -94,15 +103,24 @@ public abstract class ScreenManager : MonoBehaviour
     /// </summary>
     protected int mainTimeTextIndex = 1;
 
+    /// <summary>
+    /// The index of the pause screen in images.
+    /// </summary>
+    /// <remarks>By default, it is the last image in images.</remarks>
+    protected int pauseScreenIndex;
+
     protected virtual void Awake()
     {
         this.texts = GetComponentsInChildren<Text>();
         this.images = this.GetComponentsInChildren<RawImage>();
+        this.pauseScreenIndex = this.images.Length - 1;
 
         this.messagePersistTime = -1;
 
         this.texts[this.messageTextIndex].text = string.Empty;
         this.texts[this.mainTimeTextIndex].text = string.Empty;
+
+        this.SetPause(false);
     }
 
     protected virtual void Update()

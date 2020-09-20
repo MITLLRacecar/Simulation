@@ -1,19 +1,50 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
-public class KeyPoint : MonoBehaviour
+/// <summary>
+/// A key point in a race such as a checkpoint or finish line.
+/// </summary>
+public class KeyPoint : MonoBehaviour, IComparable<KeyPoint>
 {
     #region Set in Unity Editor
     /// <summary>
-    /// Whether this key point is the finish line (true) or a checkpoint (false)
+    /// The type of key point (start, checkpoint, etc.).
     /// </summary>
     [SerializeField]
-    bool isFinishLine = true;
+    private KeyPointType type;
 
     /// <summary>
     /// The index of the checkpoint. Not used for finish line.
     /// </summary>
     [SerializeField]
-    int index = 0;
+    private int checkpointIndex = 0;
+    #endregion
+
+    #region Public Interface
+    /// <summary>
+    /// The types of key points in a race.
+    /// </summary>
+    public enum KeyPointType
+    {
+        Start,
+        Checkpoint,
+        Finish
+    }
+
+    /// <summary>
+    /// The type of key point (start, checkpoint, etc.).
+    /// </summary>
+    public KeyPointType Type { get { return this.type; } }
+
+    public int CompareTo(KeyPoint other)
+    {
+        // Ordered as start, checkpoints (by index order), finish
+        if (this.Type != other.Type)
+        {
+            return this.Type - other.Type;
+        }
+        return this.checkpointIndex - other.checkpointIndex;
+    }
     #endregion
 
     private void OnTriggerEnter(Collider other)
@@ -21,13 +52,15 @@ public class KeyPoint : MonoBehaviour
         Racecar car = other.attachedRigidbody.GetComponent<Racecar>();
         if (car != null)
         {
-            if (this.isFinishLine)
+            switch (this.Type)
             {
-                LevelManager.HandleFinish(car.Index);
-            }
-            else
-            {
-                LevelManager.HandleCheckpoint(this.index, car.Index, this.transform.position, this.transform.rotation.eulerAngles);
+                case KeyPointType.Finish:
+                    LevelManager.HandleFinish(car.Index);
+                    break;
+
+                case KeyPointType.Checkpoint:
+                    LevelManager.HandleCheckpoint(this.checkpointIndex, car.Index);
+                    break;
             }
         }
     }

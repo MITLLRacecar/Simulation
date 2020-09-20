@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -35,56 +34,32 @@ public class LevelManager : MonoBehaviour
     [SerializeField]
     private GameObject raceScreenPrefab;
 
+    /// <summary>
+    /// The default start key point, with a position and rotation of zero.
+    /// </summary>
+    [SerializeField]
+    private GameObject defaultStart;
+
     // The Unity Editor does not support jagged arrays,
     // so we resort to hard coding settable positions for up to four cars.
 
     /// <summary>
-    /// The position at which a single car will be spawned.
+    /// The offsets from which two cars will be spawned from the start point.
     /// </summary>
     [SerializeField]
-    private Vector3 oneCarPosition = Vector3.zero;
+    private Vector3[] twoCarSpawnOffsets = { new Vector3(-4, 0, 0), new Vector3(4, 0, 0) };
 
     /// <summary>
-    /// The rotation with which a single car will be spawned.
+    /// The offsets from which three cars will be spawned from the start point.
     /// </summary>
     [SerializeField]
-    private Vector3 oneCarRotation = Vector3.zero;
+    private Vector3[] threeCarSpawnOffsets = { new Vector3(-5, 0, 0), new Vector3(0, 0, 0), new Vector3(5, 0, 0) };
 
     /// <summary>
-    /// The positions at which two cars will be spawned.
+    /// The offsets from which two cars will be spawned from the start point.
     /// </summary>
     [SerializeField]
-    private Vector3[] twoCarPositions = { new Vector3(-4, 0, 0), new Vector3(4, 0, 0) };
-
-    /// <summary>
-    /// The rotations with which a two cars will be spawned.
-    /// </summary>
-    [SerializeField]
-    private Vector3[] twoCarRotations = { Vector3.zero, Vector3.zero };
-
-    /// <summary>
-    /// The positions at which three cars will be spawned.
-    /// </summary>
-    [SerializeField]
-    private Vector3[] threeCarPositions = { new Vector3(-5, 0, 0), new Vector3(0, 0, 0), new Vector3(5, 0, 0) };
-
-    /// <summary>
-    /// The rotations with which a three cars will be spawned.
-    /// </summary>
-    [SerializeField]
-    private Vector3[] threeCarRotations = { Vector3.zero, Vector3.zero, Vector3.zero };
-
-    /// <summary>
-    /// The positions at which four cars will be spawned.
-    /// </summary>
-    [SerializeField]
-    private Vector3[] fourCarPositions = { new Vector3(-4, 0, 0), new Vector3(4, 0, 0), new Vector3(-4, 0, -8), new Vector3(4, 0, -8) };
-
-    /// <summary>
-    /// The rotations with which a four cars will be spawned.
-    /// </summary>
-    [SerializeField]
-    private Vector3[] fourCarRotations = { Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero};
+    private Vector3[] fourCarSpawnOffsets = { new Vector3(-4, 0, 0), new Vector3(4, 0, 0), new Vector3(-4, 0, -8), new Vector3(4, 0, -8) };
     #endregion
 
     #region Constants
@@ -133,19 +108,16 @@ public class LevelManager : MonoBehaviour
     /// </summary>
     /// <param name="carIndex">The index of the car which passed the checkpoint.</param>
     /// <param name="checkpointIndex">The index of the checkpoint which was passed.</param>
-    /// <param name="checkpointPosition">The position of the checkpoint which was passed.</param>
-    /// <param name="checkpointRotation">The rotation of the checkpoint which was passed.</param>
-    public static void HandleCheckpoint(int carIndex, int checkpointIndex, Vector3 checkpointPosition, Vector3 checkpointRotation)
+    public static void HandleCheckpoint(int carIndex, int checkpointIndex)
     {
         // Only count if we have not passed this checkpoint yet
-        if (LevelManager.instance.checkpointTimes[carIndex, checkpointIndex] == 0)
+        if (LevelManager.instance.curKeyPoint[carIndex] <= checkpointIndex)
         {
-            LevelManager.instance.resetPositions[carIndex] = checkpointPosition;
-            LevelManager.instance.resetRotations[carIndex] = checkpointRotation;
-            LevelManager.instance.checkpointTimes[carIndex, checkpointIndex] = LevelManager.instance.CurTime;
+            LevelManager.instance.curKeyPoint[carIndex] = checkpointIndex + 1; // +1 to account for the start
 
             if (LevelManager.IsEvaluation)
             {
+                LevelManager.instance.checkpointTimes[carIndex, checkpointIndex] = LevelManager.instance.CurTime;
                 LevelManager.instance.screenManager.UpdateCheckpointTimes(LevelManager.instance.checkpointTimes);
             }
         }
@@ -189,11 +161,6 @@ public class LevelManager : MonoBehaviour
         // TODO
     }
 
-    public static void RegisterCheckpoint()
-    {
-        LevelManager.instance.numCheckpoints++;
-    }
-
     /// <summary>
     /// Reset a car to its last checkpoint.
     /// </summary>
@@ -201,8 +168,9 @@ public class LevelManager : MonoBehaviour
     public static void ResetCar(int carIndex)
     {
         // Relocate the car to its current reset point
-        LevelManager.instance.players[carIndex].transform.position = LevelManager.instance.resetPositions[carIndex];
-        LevelManager.instance.players[carIndex].transform.rotation = Quaternion.Euler(LevelManager.instance.resetRotations[carIndex]);
+        Transform resetLocation = LevelManager.instance.GetResetLocation(carIndex);
+        LevelManager.instance.players[carIndex].transform.position = resetLocation.position;
+        LevelManager.instance.players[carIndex].transform.rotation = resetLocation.rotation;
 
         // Bring the car to a complete stop
         Rigidbody carRigidBody = LevelManager.instance.players[carIndex].GetComponent<Rigidbody>();
@@ -228,7 +196,7 @@ public class LevelManager : MonoBehaviour
     /// <summary>
     /// Encapsulates the interaction with Python scripts.
     /// </summary>
-    private PythonInterface pythonInteraface;
+    private PythonInterface pythonInterface;
 
     /// <summary>
     /// The object managing the 2D screen content.
@@ -246,27 +214,17 @@ public class LevelManager : MonoBehaviour
     private SimulationMode mode;
 
     /// <summary>
-    /// The number of checkpoints in the current level.
+    /// The key points in the current level.
     /// </summary>
-    private int numCheckpoints;
+    private KeyPoint[] keyPoints;
 
     /// <summary>
-    /// The position to which each car should be reset.
+    /// The most recent key point which each car passed.
     /// </summary>
-    private Vector3[] resetPositions;
+    private int[] curKeyPoint;
 
     /// <summary>
-    /// The rotation with which each car should be reset.
-    /// </summary>
-    private Vector3[] resetRotations;
-
-    /// <summary>
-    /// The most recent checkpoint which each car passed.
-    /// </summary>
-    private int[] lastCheckpoint;
-
-    /// <summary>
-    /// The time at which the race begun.
+    /// The time at which the race began.
     /// </summary>
     private float startTime;
 
@@ -337,13 +295,13 @@ public class LevelManager : MonoBehaviour
 
     private void Start()
     {
+        this.FindKeyPoints();
         this.SpawnPlayers();
-        this.pythonInteraface = new PythonInterface(this.players);
-        this.lastCheckpoint = new int[this.numCheckpoints];
+        this.pythonInterface = new PythonInterface(this.players);
 
         if (LevelManager.IsEvaluation)
         {
-            this.checkpointTimes = new float[LevelManager.NumPlayers, this.numCheckpoints];
+            this.checkpointTimes = new float[LevelManager.NumPlayers, this.keyPoints.Length];
             this.finishTimes = new float[LevelManager.NumPlayers];
             this.screenManager.UpdateTime(0.0f);
         }
@@ -363,7 +321,7 @@ public class LevelManager : MonoBehaviour
                 break;
 
             case SimulationMode.UserProgram:
-                this.pythonInteraface.HandleUpdate();
+                this.pythonInterface.HandleUpdate();
                 if (LevelManager.IsEvaluation && this.finishTimes.Contains(0))
                 {
                     this.screenManager.UpdateTime(this.CurTime);
@@ -416,7 +374,44 @@ public class LevelManager : MonoBehaviour
 
     private void OnApplicationQuit()
     {
-        this.pythonInteraface?.HandleExit();
+        this.pythonInterface?.HandleExit();
+    }
+
+
+    /// <summary>
+    /// Gets the location at which a certain car should be spawned.
+    /// </summary>
+    /// <param name="carIndex">The index of the car to spawn.</param>
+    /// <returns>The (position, rotation) at which the car should be spawned.</returns>
+    private Tuple<Vector3, Quaternion> GetSpawnLocation(int carIndex)
+    {
+        // Calculate position offset if there are multiple cars.
+        Vector3 offset = Vector3.zero;
+        switch (LevelManager.NumPlayers)
+        {
+            case 2:
+                offset = this.twoCarSpawnOffsets[carIndex];
+                break;
+            case 3:
+                offset = this.threeCarSpawnOffsets[carIndex];
+                break;
+            case 4:
+                offset = this.fourCarSpawnOffsets[carIndex];
+                break;
+        }
+
+        Transform start = this.keyPoints[0].transform;
+        return new Tuple<Vector3, Quaternion>(start.position + offset, start.rotation);
+    }
+
+    /// <summary>
+    /// Gets the location to which a certain car should be reset. 
+    /// </summary>
+    /// <param name="carIndex">The index of the car to reset.</param>
+    /// <returns>The transform of the key point at which the car should be reset.</returns>
+    private Transform GetResetLocation(int carIndex)
+    {
+        return this.keyPoints[this.curKeyPoint[carIndex]].transform;
     }
 
     /// <summary>
@@ -470,11 +465,9 @@ public class LevelManager : MonoBehaviour
         // If there is only one player, spawn a single car and create a HUD as the screen manager
         if (LevelManager.NumPlayers == 1)
         {
-            this.players[0] = GameObject.Instantiate(this.playerPrefab, this.oneCarPosition, Quaternion.Euler(this.oneCarRotation)).GetComponentInChildren<Racecar>();
+            Tuple<Vector3, Quaternion> spawnLocation = this.GetSpawnLocation(0);
+            this.players[0] = GameObject.Instantiate(this.playerPrefab, spawnLocation.Item1, spawnLocation.Item2).GetComponentInChildren<Racecar>();
             this.players[0].Index = 0;
-
-            this.resetPositions = new Vector3[1] { this.oneCarPosition };
-            this.resetRotations = new Vector3[1] { this.oneCarRotation };
             
             Hud hud = GameObject.Instantiate(this.hudPrefab).GetComponent<Hud>();
             this.players[0].GetComponentInChildren<Racecar>().Hud = hud;
@@ -484,29 +477,11 @@ public class LevelManager : MonoBehaviour
         // If there are multiple players, spawn multiple cars and create a RaceScreen as the screen manager
         else
         {
-            switch (LevelManager.NumPlayers)
-            {
-                case 2:
-                    this.resetPositions = this.twoCarPositions;
-                    this.resetRotations = this.twoCarRotations;
-                    break;
-                case 3:
-                    this.resetPositions = this.threeCarPositions;
-                    this.resetRotations = this.threeCarRotations;
-                    break;
-                case 4:
-                    this.resetPositions = this.fourCarPositions;
-                    this.resetRotations = this.fourCarRotations;
-                    break;
-                default:
-                    Debug.LogError($"{LevelManager.NumPlayers} players is not supported.");
-                    break;
-            }
-
             RenderTexture[] playerCameraTextures = new RenderTexture[LevelManager.NumPlayers];
             for (int i = 0; i < LevelManager.NumPlayers; i++)
             {
-                this.players[i] = GameObject.Instantiate(this.playerPrefab, this.resetPositions[i], Quaternion.Euler(this.resetRotations[i])).GetComponentInChildren<Racecar>();
+                Tuple<Vector3, Quaternion> spawnLocation = this.GetSpawnLocation(i);
+                this.players[i] = GameObject.Instantiate(this.playerPrefab, spawnLocation.Item1, spawnLocation.Item2).GetComponentInChildren<Racecar>();
                 this.players[i].Index = i;
 
                 playerCameraTextures[i] = new RenderTexture(LevelManager.raceScreenTexture);
@@ -548,7 +523,7 @@ public class LevelManager : MonoBehaviour
             if (this.numConnectedPrograms > 0)
             {
                 this.mode = SimulationMode.UserProgram;
-                this.pythonInteraface.HandleStart();
+                this.pythonInterface.HandleStart();
                 this.screenManager.UpdateMode(this.mode);
                 this.startTime = Time.time;
             }
@@ -585,7 +560,7 @@ public class LevelManager : MonoBehaviour
     private void HandleRestart()
     {
         // Reload current level with the ReloadBuffer
-        this.pythonInteraface.HandleExit();
+        this.pythonInterface.HandleExit();
         ReloadBuffer.BuildIndexToReload = SceneManager.GetActiveScene().buildIndex;
         SceneManager.LoadSceneAsync(ReloadBuffer.BuildIndex, LoadSceneMode.Single);
     }
@@ -595,7 +570,7 @@ public class LevelManager : MonoBehaviour
     /// </summary>
     private void HandleExit()
     {
-        this.pythonInteraface.HandleExit();
+        this.pythonInterface.HandleExit();
         SceneManager.LoadScene(0);
     }
 
@@ -639,5 +614,31 @@ public class LevelManager : MonoBehaviour
         {
             this.screenManager.UpdateTimeScale(timeScale);
         }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    private void FindKeyPoints()
+    {
+        this.keyPoints = FindObjectsOfType<KeyPoint>();
+        Array.Sort(this.keyPoints);
+
+        // If the level does not have a start key point, create and add a default one
+        if (this.keyPoints.Length == 0)
+        {
+            this.keyPoints = new KeyPoint[] { GameObject.Instantiate(this.defaultStart, Vector3.zero, Quaternion.identity).GetComponent<KeyPoint>() };
+        }
+        else if (this.keyPoints[0].Type != KeyPoint.KeyPointType.Start)
+        {
+            KeyPoint start = GameObject.Instantiate(this.defaultStart, Vector3.zero, Quaternion.identity).GetComponent<KeyPoint>();
+            KeyPoint[] existingKeyPoints = this.keyPoints;
+
+            this.keyPoints = new KeyPoint[this.keyPoints.Length + 1];
+            this.keyPoints[0] = start;
+            Array.ConstrainedCopy(existingKeyPoints, 0, this.keyPoints, 1, existingKeyPoints.Length);
+        }
+
+        this.curKeyPoint = new int[LevelManager.NumPlayers];
     }
 }

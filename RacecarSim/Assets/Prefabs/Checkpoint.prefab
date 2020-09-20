@@ -67,6 +67,11 @@ PrefabInstance:
       propertyPath: isFinishLine
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2334702365337920086, guid: ca5a6b50aa54a0547ae996b791cd091b,
+        type: 3}
+      propertyPath: type
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4863223594227826231, guid: ca5a6b50aa54a0547ae996b791cd091b,
         type: 3}
       propertyPath: m_Materials.Array.data[0]

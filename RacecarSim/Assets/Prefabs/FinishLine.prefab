@@ -58,8 +58,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a31d33edf97240443bd819a92e2680d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isFinishLine: 1
-  index: 0
+  type: 2
+  checkpointIndex: 0
 --- !u!1 &7341729645862754815
 GameObject:
   m_ObjectHideFlags: 0

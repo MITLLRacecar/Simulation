@@ -383,7 +383,7 @@ public class LevelManager : MonoBehaviour
     /// </summary>
     /// <param name="carIndex">The index of the car to spawn.</param>
     /// <returns>The (position, rotation) at which the car should be spawned.</returns>
-    private Tuple<Vector3, Quaternion> GetSpawnLocation(int carIndex)
+    private (Vector3, Quaternion) GetSpawnLocation(int carIndex)
     {
         // Calculate position offset if there are multiple cars.
         Vector3 offset = Vector3.zero;
@@ -401,7 +401,7 @@ public class LevelManager : MonoBehaviour
         }
 
         Transform start = this.keyPoints[0].transform;
-        return new Tuple<Vector3, Quaternion>(start.position + offset, start.rotation);
+        return (start.position + offset, start.rotation);
     }
 
     /// <summary>
@@ -465,8 +465,8 @@ public class LevelManager : MonoBehaviour
         // If there is only one player, spawn a single car and create a HUD as the screen manager
         if (LevelManager.NumPlayers == 1)
         {
-            Tuple<Vector3, Quaternion> spawnLocation = this.GetSpawnLocation(0);
-            this.players[0] = GameObject.Instantiate(this.playerPrefab, spawnLocation.Item1, spawnLocation.Item2).GetComponentInChildren<Racecar>();
+            (Vector3 spawnPosition, Quaternion spawnRotation) = this.GetSpawnLocation(0);
+            this.players[0] = GameObject.Instantiate(this.playerPrefab, spawnPosition, spawnRotation).GetComponentInChildren<Racecar>();
             this.players[0].Index = 0;
             
             Hud hud = GameObject.Instantiate(this.hudPrefab).GetComponent<Hud>();
@@ -480,8 +480,8 @@ public class LevelManager : MonoBehaviour
             RenderTexture[] playerCameraTextures = new RenderTexture[LevelManager.NumPlayers];
             for (int i = 0; i < LevelManager.NumPlayers; i++)
             {
-                Tuple<Vector3, Quaternion> spawnLocation = this.GetSpawnLocation(i);
-                this.players[i] = GameObject.Instantiate(this.playerPrefab, spawnLocation.Item1, spawnLocation.Item2).GetComponentInChildren<Racecar>();
+                (Vector3 spawnPosition, Quaternion spawnRotation) = this.GetSpawnLocation(0);
+                this.players[i] = GameObject.Instantiate(this.playerPrefab, spawnPosition, spawnRotation).GetComponentInChildren<Racecar>();
                 this.players[i].Index = i;
 
                 playerCameraTextures[i] = new RenderTexture(LevelManager.raceScreenTexture);

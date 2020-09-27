@@ -110,15 +110,20 @@ public class LevelManager : MonoBehaviour
     /// <param name="checkpointIndex">The index of the checkpoint which was passed.</param>
     public static void HandleCheckpoint(int carIndex, int checkpointIndex)
     {
-        // Only count if we have not passed this checkpoint yet
-        if (LevelManager.instance.curKeyPoint[carIndex] <= checkpointIndex)
+        // Only count the checkpoint if the car has not passed this checkpoint (or a later one) yet
+        if (LevelManager.instance.curKeyPoints[carIndex] <= checkpointIndex)
         {
-            LevelManager.instance.curKeyPoint[carIndex] = checkpointIndex + 1; // +1 to account for the start
+            LevelManager.instance.curKeyPoints[carIndex] = checkpointIndex + 1; // +1 to account for the start
 
             if (LevelManager.IsEvaluation)
             {
                 LevelManager.instance.checkpointTimes[carIndex, checkpointIndex] = LevelManager.instance.CurTime;
-                LevelManager.instance.screenManager.UpdateCheckpointTimes(LevelManager.instance.checkpointTimes);
+
+                // Backfill any checkpoints we skipped with the current time
+                for (int i = checkpointIndex - 1; i >= 0 && LevelManager.instance.checkpointTimes[carIndex, checkpointIndex] == 0; i++)
+                {
+                    LevelManager.instance.checkpointTimes[carIndex, checkpointIndex] = LevelManager.instance.CurTime;
+                }
             }
         }
     }
@@ -129,14 +134,21 @@ public class LevelManager : MonoBehaviour
     /// <param name="carIndex">The index of the car which passed the finish line.</param>
     public static void HandleFinish(int carIndex)
     {
-        if (LevelManager.IsEvaluation && LevelManager.instance.finishTimes[carIndex] == 0)
+        // Only count if the car has not passed the finish yet
+        if (LevelManager.instance.curKeyPoints[carIndex] < LevelManager.instance.keyPoints.Length - 1)
         {
-            LevelManager.instance.finishTimes[carIndex] = LevelManager.instance.CurTime;
+            LevelManager.instance.curKeyPoints[carIndex] = LevelManager.instance.keyPoints.Length - 1; // +1 to account for the start
 
-            if (!LevelManager.instance.finishTimes.Contains(0))
+            if (LevelManager.IsEvaluation)
             {
-                LevelManager.instance.screenManager.HandleWin(LevelManager.instance.finishTimes);
-                LevelManager.instance.screenManager.UpdateTime(LevelManager.instance.CurTime);
+                LevelManager.instance.finishTimes[carIndex] = LevelManager.instance.CurTime;
+
+                // Trigger a win when all cars have finished
+                if (!LevelManager.instance.finishTimes.Contains(0))
+                {
+                    LevelManager.instance.screenManager.HandleWin(LevelManager.instance.finishTimes);
+                    LevelManager.instance.screenManager.UpdateTime(LevelManager.instance.CurTime, LevelManager.instance.curKeyPoints, LevelManager.instance.checkpointTimes);
+                }
             }
         }
     }
@@ -221,7 +233,7 @@ public class LevelManager : MonoBehaviour
     /// <summary>
     /// The most recent key point which each car passed.
     /// </summary>
-    private int[] curKeyPoint;
+    private int[] curKeyPoints;
 
     /// <summary>
     /// The time at which the race began.
@@ -229,9 +241,7 @@ public class LevelManager : MonoBehaviour
     private float startTime;
 
     /// <summary>
-    /// The times at which each car first reaches each checkpoint.
-    /// 
-    /// Indexed by car, then by checkpoint.
+    /// The times at which each car first reaches each checkpoint, indexed by car, then by checkpoint.
     /// </summary>
     private float[,] checkpointTimes;
 
@@ -301,9 +311,9 @@ public class LevelManager : MonoBehaviour
 
         if (LevelManager.IsEvaluation)
         {
-            this.checkpointTimes = new float[LevelManager.NumPlayers, this.keyPoints.Length];
+            this.checkpointTimes = new float[LevelManager.NumPlayers, this.keyPoints.Length - 2];
             this.finishTimes = new float[LevelManager.NumPlayers];
-            this.screenManager.UpdateTime(0.0f);
+            this.screenManager.UpdateTime(0.0f, this.curKeyPoints, this.checkpointTimes);
         }
 
         this.SetTimeScale(1.0f);
@@ -324,7 +334,7 @@ public class LevelManager : MonoBehaviour
                 this.pythonInterface.HandleUpdate();
                 if (LevelManager.IsEvaluation && this.finishTimes.Contains(0))
                 {
-                    this.screenManager.UpdateTime(this.CurTime);
+                    this.screenManager.UpdateTime(this.CurTime, this.curKeyPoints, this.checkpointTimes);
                 }
                 break;
         }
@@ -411,7 +421,7 @@ public class LevelManager : MonoBehaviour
     /// <returns>The transform of the key point at which the car should be reset.</returns>
     private Transform GetResetLocation(int carIndex)
     {
-        return this.keyPoints[this.curKeyPoint[carIndex]].transform;
+        return this.keyPoints[this.curKeyPoints[carIndex]].transform;
     }
 
     /// <summary>
@@ -617,7 +627,7 @@ public class LevelManager : MonoBehaviour
     }
 
     /// <summary>
-    /// 
+    /// Initializes keyPoints and curKeyPoint by finding the key points in the level.
     /// </summary>
     private void FindKeyPoints()
     {
@@ -639,6 +649,6 @@ public class LevelManager : MonoBehaviour
             Array.ConstrainedCopy(existingKeyPoints, 0, this.keyPoints, 1, existingKeyPoints.Length);
         }
 
-        this.curKeyPoint = new int[LevelManager.NumPlayers];
+        this.curKeyPoints = new int[LevelManager.NumPlayers];
     }
 }

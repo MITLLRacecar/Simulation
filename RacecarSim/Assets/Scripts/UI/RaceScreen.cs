@@ -45,11 +45,6 @@ public class RaceScreen : ScreenManager
         this.images[(int)Images.WaitMessage].gameObject.SetActive(mode == SimulationMode.Wait);
     }
 
-    public override void UpdateCheckpointTimes(float[,] checkpointTimes)
-    {
-        // Intentionally blank for now
-    }
-
     public override void UpdateTimeScale(float timeScale)
     {
         // Intentionally blank for now

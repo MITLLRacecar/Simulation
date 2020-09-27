@@ -100,18 +100,45 @@ public class Hud : ScreenManager
         this.texts[(int)Texts.TimeScale].text = timeScale >= 1 ? string.Empty : $"{Mathf.Round(1 / timeScale)}x Slow Motion";
     }
 
-    public override void UpdateCheckpointTimes(float[,] checkpointTimes)
+    public override void UpdateTime(float mainTime, int[] curKeyPoint, float[,] checkpointTimes)
     {
-        string checkpointsFormatted = string.Empty;
-        if (checkpointTimes != null && checkpointTimes.Length > 0)
+        base.UpdateTime(mainTime, curKeyPoint, checkpointTimes);
+
+        int numCheckpoints = checkpointTimes.GetLength(1);
+        if (numCheckpoints > 0)
         {
-            checkpointsFormatted = checkpointTimes[0, 0].ToString("F3");
-            for (int i = 1; i < checkpointTimes.Length; i++)
+            // The 0-based index of the farthest checkpoint which the 0th car has passed
+            int farthestCheckpoint = Math.Min(curKeyPoint[0] - 1, numCheckpoints - 1); 
+            string text;
+
+            if (farthestCheckpoint < 0)
             {
-                checkpointsFormatted += checkpointTimes[0, i].ToString("F3");
+                // Print the time spent towards the first check point
+                text = $"1) {mainTime:F3}";
             }
+            else
+            {
+                // Print the time spent on the first check point
+                text = $"1) {checkpointTimes[0, 0]:F3}";
+
+                // Print the time spent on any additional checkpoints we have already passed
+                for (int i = 1; i <= farthestCheckpoint; i++)
+                {
+                    text += $"\n{i + 1}) {checkpointTimes[0, i] - checkpointTimes[0, i - 1]:F3}";
+                }
+
+                // Print the time spent towards the upcoming checkpoint
+                text += $"\n{farthestCheckpoint + 2}) {mainTime - checkpointTimes[0, farthestCheckpoint]:F3}";
+            }
+
+            // Print a "--" for the remaining checkpoints
+            for (int i = farthestCheckpoint + 2; i <= numCheckpoints; i++)
+            {
+                text += $"\n{i + 1}) --";
+            }
+
+            this.texts[(int)Texts.CheckpointTimes].text = text;
         }
-        this.texts[(int)Texts.LapTime].text = checkpointsFormatted;
     }
     #endregion
 
@@ -158,7 +185,7 @@ public class Hud : ScreenManager
     {
         Message = 0,
         MainTime = 1,
-        LapTime = 2,
+        CheckpointTimes = 2,
         TimeScale = 3,
         TrueSpeed = 8,
         LinearAcceleration = 12,
@@ -195,7 +222,7 @@ public class Hud : ScreenManager
         this.FailureMessage.SetActive(false);
         this.SuccessMessage.SetActive(false);
 
-        this.texts[(int)Texts.LapTime].text = string.Empty;
+        this.texts[(int)Texts.CheckpointTimes].text = string.Empty;
 
         this.UpdateTimeScale(1.0f);
         this.UpdateConnectedPrograms(0);

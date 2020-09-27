@@ -59,7 +59,7 @@ public class KeyPoint : MonoBehaviour, IComparable<KeyPoint>
                     break;
 
                 case KeyPointType.Checkpoint:
-                    LevelManager.HandleCheckpoint(this.checkpointIndex, car.Index);
+                    LevelManager.HandleCheckpoint(car.Index, this.checkpointIndex);
                     break;
             }
         }

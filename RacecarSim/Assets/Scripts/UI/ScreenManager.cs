@@ -29,9 +29,13 @@ public abstract class ScreenManager : MonoBehaviour
     /// Updates the element showing the current time elapsed in the race.
     /// </summary>
     /// <param name="mainTime">The overall time (in seconds) that the current level has been running.</param>
-    public void UpdateTime(float mainTime)
+    /// <param name="curKeyPoint">The index of the farthest key point which each car has passed, indexed by car.</param>
+    /// <param name="checkpointTimes">The time at which each car reached each checkpoint, indexed by car, then checkpoint.</param>
+    public virtual void UpdateTime(float mainTime, int[] curKeyPoint, float[,] checkpointTimes)
     {
         this.texts[this.mainTimeTextIndex].text = mainTime.ToString("F3");
+
+        // The children of this class can override this method if they wish to display checkpoint times
     }
 
     /// <summary>
@@ -68,12 +72,6 @@ public abstract class ScreenManager : MonoBehaviour
     /// </summary>
     /// <param name="mode">The current mode of the simulation.</param>
     public abstract void UpdateMode(SimulationMode mode);
-
-    /// <summary>
-    /// Update the element(s) showing the time it took each car to reach each checkpoint.
-    /// </summary>
-    /// <param name="checkpointTimes">The time at which each car reached each checkpoint, indexed by car, then checkpoint.</param>
-    public abstract void UpdateCheckpointTimes(float[,] checkpointTimes);
 
     /// <summary>
     /// Updates the element(s) showing the current rate at which time progresses.

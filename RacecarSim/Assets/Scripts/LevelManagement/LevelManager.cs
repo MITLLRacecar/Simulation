@@ -375,6 +375,20 @@ public class LevelManager : MonoBehaviour
             this.wasConnectedProgramsChanged = false; // TODO: there is probably a data race here
         }
 
+        // In non-evaluation mode, skip between checkpoints with the tab key
+        if (Input.GetKeyDown(KeyCode.Tab))
+        {
+            if (LevelManager.IsEvaluation)
+            {
+                this.screenManager.ShowMessage("Checkpoint skipping (TAB key) is disabled in evaluation mode.", Color.yellow, 2);
+            }
+            else
+            {
+                this.curKeyPoints[0] = Math.Min(this.curKeyPoints[0] + 1, this.keyPoints.Length - 2);
+                LevelManager.ResetCar(0);
+            }
+        }
+
         // For multi-car races, manage switching between race cameras 
         if (LevelManager.NumPlayers > 1)
         {

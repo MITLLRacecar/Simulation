@@ -31,6 +31,7 @@ public class ReloadBuffer : MonoBehaviour
     private void Start()
     {
         this.counter = ReloadBuffer.waitTime;
+        Time.timeScale = 1.0f;
     }
 
     private void Update()

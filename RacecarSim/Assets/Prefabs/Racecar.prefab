@@ -316,7 +316,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerCameras: []
-  Index: 0
+  chassisFront: {fileID: 6464425330067500309}
+  chassisBack: {fileID: 2160719156226768052}
 --- !u!114 &6847267400033205201
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -732,7 +733,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a21eb9f3902a6fc4ba73719b4b094364, type: 2}
+  - {fileID: 2100000, guid: 941f75c354db6a746a3ace2ae7e69c39, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1240,7 +1241,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 28e381858f62d37408ffbacaf4d17cae, type: 2}
+  - {fileID: 2100000, guid: 941f75c354db6a746a3ace2ae7e69c39, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

@@ -11,6 +11,18 @@ public class Racecar : MonoBehaviour
     /// </summary>
     [SerializeField]
     private Camera[] playerCameras;
+
+    /// <summary>
+    /// The front half of the car's chassis.
+    /// </summary>
+    [SerializeField]
+    private GameObject chassisFront;
+
+    /// <summary>
+    /// The rear half of the car's chassis.
+    /// </summary>
+    [SerializeField]
+    private GameObject chassisBack;
     #endregion
 
     #region Constants
@@ -39,7 +51,7 @@ public class Racecar : MonoBehaviour
     /// <summary>
     /// The index of the racecar.
     /// </summary>
-    public int Index;
+    public int Index { get; private set; }
 
     /// <summary>
     /// Exposes the RealSense D435i color and depth channels.
@@ -116,6 +128,26 @@ public class Racecar : MonoBehaviour
             camera.targetTexture = texture;
             camera.GetComponent<AudioListener>().enabled = enableAudio;
         }
+    }
+
+    /// <summary>
+    /// Sets the index of the car.
+    /// </summary>
+    /// <param name="index">The index of the car in the race.</param>
+    public void SetIndex(int index)
+    {
+        this.Index = index;
+
+        // Set car color and customization based on saved data
+        CarCustomization customization = SavedDataManager.Data.CarCustomizations[index];
+
+        Material frontMaterial = this.chassisFront.GetComponent<Renderer>().material;
+        frontMaterial.color = customization.FrontColor.Color;
+        frontMaterial.SetFloat("_Metallic", customization.IsFrontShiny ? 1: 0);
+
+        Material backMaterial = this.chassisBack.GetComponent<Renderer>().material;
+        backMaterial.color = customization.BackColor.Color;
+        backMaterial.SetFloat("_Metallic", customization.IsBackShiny ? 1 : 0);
     }
     #endregion
 

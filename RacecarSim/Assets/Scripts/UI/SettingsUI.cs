@@ -6,11 +6,6 @@ using UnityEngine.UI;
 /// </summary>
 public class SettingsUI : MonoBehaviour
 {
-    #region Set in Unity Editor
-    [SerializeField]
-    private Material[] carMaterials = new Material[6];
-    #endregion
-
     #region Public Interface
     /// <summary>
     /// Restore the default settings.
@@ -64,22 +59,7 @@ public class SettingsUI : MonoBehaviour
     private enum Toggles
     {
         IsRealism,
-        Car1FrontShiny,
-        Car1BackShiny,
-        Car2FrontShiny,
-        Car2BackShiny,
-        Car3FrontShiny,
-        Car3BackShiny
-    }
-
-    private enum Sliders
-    {
-        Car1Front = 0,
-        Car1Back = 3,
-        Car2Front = 6,
-        Car2Back = 9,
-        Car3Front = 12,
-        Car3Back = 15
+        FirstShiny,
     }
 
     /// <summary>
@@ -120,27 +100,50 @@ public class SettingsUI : MonoBehaviour
         this.LoadColors();
     }
 
+    /// <summary>
+    /// Applies the current customization options to the saved data.
+    /// </summary>
     private void ApplyColorInputs()
     {
-        for (int i = 0; i < this.carMaterials.Length; i++)
+        // TODO: 3 is a magic number
+        for (int i = 0; i < 3; i++)
         {
-            this.carMaterials[i].color = new Color(this.sliders[3 * i].value, this.sliders[3 * i + 1].value, this.sliders[3 * i + 2].value);
+            SavedDataManager.Data.CarCustomizations[i].FrontColor = new SerializableColor(
+                this.sliders[6 * i].value,
+                this.sliders[6 * i + 1].value,
+                this.sliders[6 * i + 2].value);
 
-            float metallic = this.toggles[(int)Toggles.Car1FrontShiny + i].isOn ? 1 : 0;
-            this.carMaterials[i].SetFloat("_Metallic", metallic);
+            SavedDataManager.Data.CarCustomizations[i].BackColor = new SerializableColor(
+                this.sliders[6 * i + 3].value,
+                this.sliders[6 * i + 4].value,
+                this.sliders[6 * i + 5].value);
+
+            SavedDataManager.Data.CarCustomizations[i].IsFrontShiny = this.toggles[(int)Toggles.FirstShiny + 2 * i].isOn;
+            SavedDataManager.Data.CarCustomizations[i].IsBackShiny = this.toggles[(int)Toggles.FirstShiny + 2 * i + 1].isOn;
         }
+
+        SavedDataManager.Save();
     }
 
+    /// <summary>
+    /// Update the customization interface with the current saved data.
+    /// </summary>
     private void LoadColors()
     {
-        for (int i = 0; i < this.carMaterials.Length; i++)
+        // TODO: 3 is a magic number
+        for (int i = 0; i < 3; i++)
         {
-            Color color = this.carMaterials[i].color;
-            this.sliders[3 * i].value = color.r;
-            this.sliders[3 * i + 1].value = color.g;
-            this.sliders[3 * i + 2].value = color.b;
+            CarCustomization customization = SavedDataManager.Data.CarCustomizations[i];
+            this.sliders[6 * i].value = customization.FrontColor.r;
+            this.sliders[6 * i + 1].value = customization.FrontColor.g;
+            this.sliders[6 * i + 2].value = customization.FrontColor.b;
 
-            this.toggles[(int)Toggles.Car1FrontShiny + i].isOn = this.carMaterials[i].GetFloat("_Metallic") > 0;
+            this.sliders[6 * i + 3].value = customization.BackColor.r;
+            this.sliders[6 * i + 4].value = customization.BackColor.g;
+            this.sliders[6 * i + 5].value = customization.BackColor.b;
+
+            this.toggles[(int)Toggles.FirstShiny + 2 * i].isOn = customization.IsFrontShiny;
+            this.toggles[(int)Toggles.FirstShiny + 2 * i + 1].isOn = customization.IsBackShiny;
         }
     }
 }

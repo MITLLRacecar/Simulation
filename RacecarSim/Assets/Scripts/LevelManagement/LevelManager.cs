@@ -13,6 +13,9 @@ public enum SimulationMode
     Wait
 }
 
+/// <summary>
+/// The top level controller managing a simulation level. 
+/// </summary>
 public class LevelManager : MonoBehaviour
 {
     #region Set in Unity Editor
@@ -491,7 +494,7 @@ public class LevelManager : MonoBehaviour
         {
             (Vector3 spawnPosition, Quaternion spawnRotation) = this.GetSpawnLocation(0);
             this.players[0] = GameObject.Instantiate(this.playerPrefab, spawnPosition, spawnRotation).GetComponentInChildren<Racecar>();
-            this.players[0].Index = 0;
+            this.players[0].SetIndex(0);
             
             Hud hud = GameObject.Instantiate(this.hudPrefab).GetComponent<Hud>();
             this.players[0].GetComponentInChildren<Racecar>().Hud = hud;
@@ -504,9 +507,9 @@ public class LevelManager : MonoBehaviour
             RenderTexture[] playerCameraTextures = new RenderTexture[LevelManager.NumPlayers];
             for (int i = 0; i < LevelManager.NumPlayers; i++)
             {
-                (Vector3 spawnPosition, Quaternion spawnRotation) = this.GetSpawnLocation(0);
+                (Vector3 spawnPosition, Quaternion spawnRotation) = this.GetSpawnLocation(i);
                 this.players[i] = GameObject.Instantiate(this.playerPrefab, spawnPosition, spawnRotation).GetComponentInChildren<Racecar>();
-                this.players[i].Index = i;
+                this.players[i].SetIndex(i);
 
                 playerCameraTextures[i] = new RenderTexture(LevelManager.raceScreenTexture);
                 this.players[i].SetPlayerCameraFeatures(playerCameraTextures[i], false);

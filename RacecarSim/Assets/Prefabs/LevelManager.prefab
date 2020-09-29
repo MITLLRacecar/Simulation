@@ -50,6 +50,15 @@ MonoBehaviour:
     type: 3}
   defaultStart: {fileID: 7273359582615171530, guid: 5883cb4f667951047be44be22dd67b7b,
     type: 3}
-  twoCarSpawnOffsets: []
-  threeCarSpawnOffsets: []
-  fourCarSpawnOffsets: []
+  twoCarSpawnOffsets:
+  - {x: -4, y: 0, z: 0}
+  - {x: 4, y: 0, z: 0}
+  threeCarSpawnOffsets:
+  - {x: -5, y: 0, z: 0}
+  - {x: 0, y: 0, z: 0}
+  - {x: 5, y: 0, z: 0}
+  fourCarSpawnOffsets:
+  - {x: -4, y: 0, z: 0}
+  - {x: 4, y: 0, z: 0}
+  - {x: -4, y: 0, z: -8}
+  - {x: 4, y: 0, z: -8}

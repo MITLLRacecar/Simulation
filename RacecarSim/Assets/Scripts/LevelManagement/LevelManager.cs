@@ -10,7 +10,8 @@ public enum SimulationMode
 {
     DefaultDrive,
     UserProgram,
-    Wait
+    Wait,
+    Finished
 }
 
 /// <summary>
@@ -116,17 +117,14 @@ public class LevelManager : MonoBehaviour
         // Only count the checkpoint if the car has not passed this checkpoint (or a later one) yet
         if (LevelManager.instance.curKeyPoints[carIndex] <= checkpointIndex)
         {
-            LevelManager.instance.curKeyPoints[carIndex] = checkpointIndex + 1; // +1 to account for the start
+            // Add 1 to account for the start, making this a key point index
+            checkpointIndex++;
+            LevelManager.instance.curKeyPoints[carIndex] = checkpointIndex;
 
-            if (LevelManager.IsEvaluation)
+            if (LevelManager.IsEvaluation && carIndex == 0)
             {
-                LevelManager.instance.checkpointTimes[carIndex, checkpointIndex] = LevelManager.instance.CurTime;
-
-                // Backfill any checkpoints we skipped with the current time
-                for (int i = checkpointIndex - 1; i >= 0 && LevelManager.instance.checkpointTimes[carIndex, checkpointIndex] == 0; i++)
-                {
-                    LevelManager.instance.checkpointTimes[carIndex, checkpointIndex] = LevelManager.instance.CurTime;
-                }
+                LevelManager.instance.keyPointDurations[checkpointIndex] = LevelManager.instance.CurTime - LevelManager.instance.prevKeyPointTime;
+                LevelManager.instance.prevKeyPointTime = LevelManager.instance.CurTime;
             }
         }
     }
@@ -137,20 +135,33 @@ public class LevelManager : MonoBehaviour
     /// <param name="carIndex">The index of the car which passed the finish line.</param>
     public static void HandleFinish(int carIndex)
     {
+        int finishIndex = LevelManager.instance.keyPoints.Length - 1;
+
         // Only count if the car has not passed the finish yet
-        if (LevelManager.instance.curKeyPoints[carIndex] < LevelManager.instance.keyPoints.Length - 1)
+        if (LevelManager.instance.curKeyPoints[carIndex] < finishIndex)
         {
-            LevelManager.instance.curKeyPoints[carIndex] = LevelManager.instance.keyPoints.Length - 1; // +1 to account for the start
+            LevelManager.instance.curKeyPoints[carIndex] = finishIndex;
 
             if (LevelManager.IsEvaluation)
             {
-                LevelManager.instance.finishTimes[carIndex] = LevelManager.instance.CurTime;
+                if (carIndex == 0)
+                {
+                    LevelManager.instance.keyPointDurations[finishIndex] = LevelManager.instance.CurTime - LevelManager.instance.prevKeyPointTime;
+                    LevelManager.instance.totalDuration = LevelManager.instance.CurTime;
+                }
 
                 // Trigger a win when all cars have finished
-                if (!LevelManager.instance.finishTimes.Contains(0))
+                if (LevelManager.instance.curKeyPoints.All(x => x == finishIndex))
                 {
-                    LevelManager.instance.screenManager.HandleWin(LevelManager.instance.finishTimes);
-                    LevelManager.instance.screenManager.UpdateTime(LevelManager.instance.CurTime, LevelManager.instance.curKeyPoints, LevelManager.instance.checkpointTimes);
+                    bool isNewBestTime =
+                        LevelManager.NumPlayers == 1 &&
+                        SavedDataManager.Data.BestTimes.ContainsKey(LevelManager.LevelInfo) &&
+                        SavedDataManager.Data.BestTimes[LevelManager.LevelInfo].OverallTime > LevelManager.instance.CurTime;
+
+                    LevelManager.instance.mode = SimulationMode.Finished;
+                    LevelManager.instance.screenManager.HandleWin(LevelManager.instance.CurTime, isNewBestTime);
+                    LevelManager.instance.screenManager.UpdateTime(LevelManager.instance.CurTime, LevelManager.instance.keyPointDurations);
+                    LevelManager.instance.screenManager.UpdateMode(LevelManager.instance.mode);
                 }
             }
         }
@@ -244,14 +255,19 @@ public class LevelManager : MonoBehaviour
     private float startTime;
 
     /// <summary>
-    /// The times at which each car first reaches each checkpoint, indexed by car, then by checkpoint.
+    /// The time in seconds which car 0 spends towards each key point after passing the previous key point, indexed by key point.
     /// </summary>
-    private float[,] checkpointTimes;
+    private float[] keyPointDurations;
 
     /// <summary>
-    /// The times at which each car passes the finish line, indexed by car.
+    /// The total time in seconds which it took car 0 to complete the race.
     /// </summary>
-    private float[] finishTimes;
+    private float totalDuration;
+
+    /// <summary>
+    /// The time in seconds since the start of the race at which car 0 passed the previous key point.
+    /// </summary>
+    private float prevKeyPointTime;
 
     /// <summary>
     /// The default fixed delta time for the current level.
@@ -297,6 +313,17 @@ public class LevelManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// The number of checkpoints in the current level.
+    /// </summary>
+    private int NumCheckpoints
+    {
+        get
+        {
+            return Math.Max(this.keyPoints.Length - 2, 0);
+        }
+    }
+
     private void Awake()
     {
         LevelManager.instance = this;
@@ -314,9 +341,8 @@ public class LevelManager : MonoBehaviour
 
         if (LevelManager.IsEvaluation)
         {
-            this.checkpointTimes = new float[LevelManager.NumPlayers, this.keyPoints.Length - 2];
-            this.finishTimes = new float[LevelManager.NumPlayers];
-            this.screenManager.UpdateTime(0.0f, this.curKeyPoints, this.checkpointTimes);
+            this.keyPointDurations = new float[this.keyPoints.Length];
+            this.screenManager.UpdateTime(0.0f, this.keyPointDurations);
         }
 
         this.SetTimeScale(1.0f);
@@ -335,9 +361,10 @@ public class LevelManager : MonoBehaviour
 
             case SimulationMode.UserProgram:
                 this.pythonInterface.HandleUpdate();
-                if (LevelManager.IsEvaluation && this.finishTimes.Contains(0))
+                if (LevelManager.IsEvaluation && this.curKeyPoints[0] < this.keyPoints.Length - 1)
                 {
-                    this.screenManager.UpdateTime(this.CurTime, this.curKeyPoints, this.checkpointTimes);
+                    this.keyPointDurations[this.curKeyPoints[0] + 1] = this.CurTime - this.prevKeyPointTime;
+                    this.screenManager.UpdateTime(this.CurTime, this.keyPointDurations);
                 }
                 break;
         }
@@ -387,7 +414,7 @@ public class LevelManager : MonoBehaviour
             }
             else
             {
-                this.curKeyPoints[0] = Math.Min(this.curKeyPoints[0] + 1, this.keyPoints.Length - 2);
+                this.curKeyPoints[0] = Math.Min(this.curKeyPoints[0] + 1, this.NumCheckpoints);
                 LevelManager.ResetCar(0);
             }
         }
@@ -401,6 +428,7 @@ public class LevelManager : MonoBehaviour
 
     private void OnApplicationQuit()
     {
+        this.UpdateBestTimes();
         this.pythonInterface?.HandleExit();
     }
 
@@ -570,15 +598,15 @@ public class LevelManager : MonoBehaviour
         {
             this.HandlePause();
         }
-        else
+        else if (this.mode == SimulationMode.UserProgram)
         {
             this.mode = SimulationMode.DefaultDrive;
             foreach (Racecar player in this.players)
             {
                 player.DefaultDriveStart();
             }
+            this.screenManager.UpdateMode(this.mode);
         }
-        this.screenManager.UpdateMode(this.mode);
     }
 
     /// <summary>
@@ -597,8 +625,9 @@ public class LevelManager : MonoBehaviour
     /// </summary>
     private void HandleExit()
     {
+        this.UpdateBestTimes();
         this.pythonInterface.HandleExit();
-        SceneManager.LoadScene(0);
+        SceneManager.LoadScene(LevelCollection.MainMenuBuildIndex);
     }
 
     /// <summary>
@@ -667,5 +696,45 @@ public class LevelManager : MonoBehaviour
         }
 
         this.curKeyPoints = new int[LevelManager.NumPlayers];
+
+        // Verify that the number of checkpoints listed in the level info is correct
+        if (LevelManager.LevelInfo.NumCheckpoints != this.NumCheckpoints)
+        {
+            Debug.LogError($"Incorrect number of checkpoints found for level [{LevelManager.LevelInfo.DisplayName}]: " +
+                $"Expected [{LevelManager.LevelInfo.NumCheckpoints}], but found [{this.NumCheckpoints}].");
+
+            LevelManager.LevelInfo.NumCheckpoints = this.NumCheckpoints;
+        }
+    }
+
+    /// <summary>
+    /// Update the level's saved best times with the current times, if necessary.
+    /// </summary>
+    private void UpdateBestTimes()
+    {
+        if (LevelManager.IsEvaluation && LevelManager.NumPlayers == 1 && this.curKeyPoints[0] > 0)
+        {
+            if (!SavedDataManager.Data.BestTimes.ContainsKey(LevelManager.LevelInfo))
+            {
+                Debug.LogWarning($"Level [{LevelManager.LevelInfo.FullName}] was not found in the best times dictionary. Adding entry now.");
+                SavedDataManager.Data.BestTimes.Add(LevelManager.LevelInfo, new BestTimeInfo(this.NumCheckpoints));
+            }
+
+            BestTimeInfo bestTimeInfo = SavedDataManager.Data.BestTimes[LevelManager.LevelInfo];
+
+            // Update overall time if we finished the level
+            if (this.curKeyPoints[0] == this.keyPoints.Length - 1)
+            {
+                bestTimeInfo.OverallTime = Mathf.Min(bestTimeInfo.OverallTime, this.totalDuration);
+            }
+
+            // Update the times for the checkpoints we completed
+            for (int i = 0; i < this.curKeyPoints[0]; i++)
+            {
+                bestTimeInfo.CheckpointTimes[i] = Mathf.Min(bestTimeInfo.CheckpointTimes[i], this.keyPointDurations[i + 1]);
+            }
+
+            SavedDataManager.Save();
+        }
     }
 }

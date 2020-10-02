@@ -1,14 +1,32 @@
 ﻿using System.Collections.Generic;
+using UnityEngine;
 
 /// <summary>
 /// Information about a collection of related levels.
 /// </summary>
 public class LevelCollection
 {
+    #region Constants
+    /// <summary>
+    /// The build index of the main menu level.
+    /// </summary>
+    public const int MainMenuBuildIndex = 0;
+
+    /// <summary>
+    /// The largest level build index.
+    /// </summary>
+    public const int LargestBuildIndex = 23;
+    #endregion
+
     /// <summary>
     /// The name of the collection displayed to users.
     /// </summary>
     public string DisplayName;
+
+    /// <summary>
+    /// A shorter name for the collection which can be prepended to the names of the levels in the collection.
+    /// </summary>
+    public string ShortName;
 
     /// <summary>
     /// The levels in the collection.
@@ -32,11 +50,12 @@ public class LevelCollection
     }
 
     #region All Level Info
-    public static LevelCollection[] LevelCollections =
+    public static readonly LevelCollection[] LevelCollections =
     {
         new LevelCollection()
         {
             DisplayName = "Miscellaneous",
+            ShortName = "Misc",
             Levels = new LevelInfo[]
             {
                 new LevelInfo()
@@ -49,6 +68,7 @@ public class LevelCollection
         new LevelCollection()
         {
             DisplayName = "Lab 1: Driving",
+            ShortName = "Lab 1",
             Levels = new LevelInfo[]
             {
                 new LevelInfo()
@@ -61,6 +81,7 @@ public class LevelCollection
         new LevelCollection()
         {
             DisplayName = "Lab 2: Color Camera",
+            ShortName = "Lab 1",
             Levels = new LevelInfo[]
             {
                 new LevelInfo()
@@ -83,6 +104,7 @@ public class LevelCollection
         new LevelCollection()
         {
             DisplayName = "Lab 3: Depth Camera",
+            ShortName = "Lab 3",
             Levels = new LevelInfo[]
             {
                 new LevelInfo()
@@ -110,6 +132,7 @@ public class LevelCollection
         new LevelCollection()
         {
             DisplayName = "Phase 1 Challenge",
+            ShortName = "P1",
             Levels = new LevelInfo[]
             {
                 new LevelInfo()
@@ -129,6 +152,7 @@ public class LevelCollection
         new LevelCollection()
         {
             DisplayName = "Lab 4: LIDAR",
+            ShortName = "Lab 4",
             Levels = new LevelInfo[]
             {
                 new LevelInfo()
@@ -152,6 +176,7 @@ public class LevelCollection
         new LevelCollection()
         {
             DisplayName = "Lab 5: AR Tags",
+            ShortName = "Lab 5",
             Levels = new LevelInfo[]
             {
                 new LevelInfo()
@@ -170,19 +195,22 @@ public class LevelCollection
         new LevelCollection()
         {
             DisplayName = "Final Challenge",
+            ShortName = "Final",
             Levels = new LevelInfo[]
             {
                 new LevelInfo()
                 {
                     DisplayName = "Time Trial",
                     BuildIndex = 17,
-                    IsWinable = true
+                    IsWinable = true,
+                    NumCheckpoints = 3
                 },
                 new LevelInfo()
                 {
                     DisplayName = "Grand Prix",
                     BuildIndex = 18,
                     IsWinable = true,
+                    NumCheckpoints = 5,
                     MaxCars = 4
                 },
             }
@@ -190,6 +218,7 @@ public class LevelCollection
         new LevelCollection()
         {
             DisplayName = "Bonus 1: IMU",
+            ShortName = "Bonus 1",
             Levels = new LevelInfo[]
             {
                 new LevelInfo()
@@ -207,6 +236,7 @@ public class LevelCollection
         new LevelCollection()
         {
             DisplayName = "Bonus 2: Sensor Fusion",
+            ShortName = "Bonus 2",
             Levels = new LevelInfo[]
             {
                 new LevelInfo()
@@ -220,6 +250,7 @@ public class LevelCollection
         new LevelCollection()
         {
             DisplayName = "Testing",
+            ShortName = "Test",
             Levels = new LevelInfo[]
             {
                 new LevelInfo()
@@ -232,17 +263,35 @@ public class LevelCollection
                 {
                     DisplayName = "Checkpoints and Finish",
                     BuildIndex = 22,
-                    IsWinable = true
+                    IsWinable = true,
+                    NumCheckpoints = 2
                 },
                 new LevelInfo()
                 {
                     DisplayName = "Race",
                     BuildIndex = 23,
                     IsWinable = true,
+                    NumCheckpoints = 2,
                     MaxCars = 4
                 },
             }
         },
     };
     #endregion
+
+    /// <summary>
+    /// Initializes the LevelCollection static field.
+    /// </summary>
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification = "Called by Unity")]
+    private static void Initialize()
+    {
+        foreach (LevelCollection collection in LevelCollection.LevelCollections)
+        {
+            foreach (LevelInfo level in collection.Levels)
+            {
+                level.CollectionName = collection.ShortName;
+            }
+        }
+    }
 }

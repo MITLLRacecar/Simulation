@@ -28,14 +28,13 @@ public abstract class ScreenManager : MonoBehaviour
     /// <summary>
     /// Updates the element showing the current time elapsed in the race.
     /// </summary>
-    /// <param name="mainTime">The overall time (in seconds) that the current level has been running.</param>
-    /// <param name="curKeyPoint">The index of the farthest key point which each car has passed, indexed by car.</param>
-    /// <param name="checkpointTimes">The time at which each car reached each checkpoint, indexed by car, then checkpoint.</param>
-    public virtual void UpdateTime(float mainTime, int[] curKeyPoint, float[,] checkpointTimes)
+    /// <param name="mainTime">The total time in seconds that the current level has been running.</param>
+    /// <param name="keyPointDurations">The time which the 0th car spent on each key point, indexed by key point.</param>
+    public virtual void UpdateTime(float mainTime, float[] keyPointDurations)
     {
         this.texts[this.mainTimeTextIndex].text = mainTime.ToString("F3");
 
-        // The children of this class can override this method if they wish to display checkpoint times
+        // The children of this class can override this method if they wish to display key point times
     }
 
     /// <summary>
@@ -51,8 +50,9 @@ public abstract class ScreenManager : MonoBehaviour
     /// <summary>
     /// Update the element(s) indicating that the race is won.
     /// </summary>
-    /// <param name="times">The finish time of each car, indexed by car.</param>
-    public abstract void HandleWin(float[] times);
+    /// <param name="time">The total time in seconds elapsed during the race.</param>
+    /// <param name="isNewBestTime">True if this completion was a new overall best time.</param>
+    public abstract void HandleWin(float time, bool isNewBestTime);
 
     /// <summary>
     /// Update the element(s) indicating that a car failed a critical objective.

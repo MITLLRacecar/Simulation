@@ -25,7 +25,7 @@ public class RaceScreen : ScreenManager
         throw new System.NotImplementedException();
     }
 
-    public override void HandleWin(float[] times)
+    public override void HandleWin(float time, bool isNewBestTime)
     {
         throw new System.NotImplementedException();
     }

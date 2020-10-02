@@ -27,19 +27,26 @@ public class Hud : ScreenManager
     public static readonly Color SensorBackgroundColor = new Color(0.2f, 0.2f, 0.2f);
 
     /// <summary>
-    /// The background color of the mode label when the simulation is in default drive mode.
+    /// The background color of the mode label when the simulation is in each SimulationMode.
     /// </summary>
-    private static readonly Color defaultDriveColor = new Color(0, 0.75f, 0.25f);
+    private static readonly Color[] modeColors =
+    {
+        new Color(0f, 0.75f, 0.25f), // default drive
+        new Color(0.75f, 0f, 0.25f), // user program
+        new Color(1f, 0.5f, 0f), // wait
+        new Color(0f, 0f, 0f) // finished
+    };
 
     /// <summary>
-    /// The background color of the mode label when the simulation is in user program mode.
+    /// The text displayed on the mode label when the simulation is in each SimulationMode.
     /// </summary>
-    private static readonly Color userProgramColor = new Color(0.75f, 0, 0.25f);
-
-    /// <summary>
-    /// The background color of the mode label when the simulation is in wait mode.
-    /// </summary>
-    private static readonly Color waitColor = new Color(1f, 0.5f, 0);
+    private static readonly string[] modeNames =
+    {
+        "Default Drive",
+        "User Program",
+        "Wait",
+        "Finished"
+    };
 
     /// <summary>
     /// The number of times the LIDAR map is smaller than the color and depth visualizations.
@@ -49,10 +56,11 @@ public class Hud : ScreenManager
 
     #region Public Interface
     #region Overrides
-    public override void HandleWin(float[] times)
+    public override void HandleWin(float time, bool isNewBestTime = false)
     {
         this.SuccessMessage.SetActive(true);
-        this.texts[(int)Texts.SuccessTime].text = $"Time: {times[0]:F3} seconds";
+        this.texts[(int)Texts.SuccessMessage].text = isNewBestTime ? "New Best Time!" : "Mission Accomplished!";
+        this.texts[(int)Texts.SuccessTime].text = $"Time: {time:F3} seconds";
     }
 
     public override void HandleFailure(int carIndex, string reason)
@@ -68,30 +76,8 @@ public class Hud : ScreenManager
 
     public override void UpdateMode(SimulationMode mode)
     {
-        string modeName;
-        Color iconColor = Color.white;
-
-        switch (mode)
-        {
-            case SimulationMode.DefaultDrive:
-                modeName = "Default Drive";
-                iconColor = Hud.defaultDriveColor;
-                break;
-            case SimulationMode.UserProgram:
-                modeName = "User Program";
-                iconColor = Hud.userProgramColor;
-                break;
-            case SimulationMode.Wait:
-                modeName = "Wait";
-                iconColor = Hud.waitColor;
-                break;
-            default:
-                modeName = "Unrecognized";
-                break;
-        }
-
-        this.texts[(int)Texts.Mode].text = modeName;
-        this.images[(int)Images.ModeBackground].color = iconColor;
+        this.texts[(int)Texts.Mode].text = Hud.modeNames[(int)mode];
+        this.images[(int)Images.ModeBackground].color = Hud.modeColors[(int)mode];
     }
 
     public override void UpdateTimeScale(float timeScale)
@@ -100,41 +86,24 @@ public class Hud : ScreenManager
         this.texts[(int)Texts.TimeScale].text = timeScale >= 1 ? string.Empty : $"{Mathf.Round(1 / timeScale)}x Slow Motion";
     }
 
-    public override void UpdateTime(float mainTime, int[] curKeyPoint, float[,] checkpointTimes)
+    public override void UpdateTime(float mainTime, float[] keyPointDurations)
     {
-        base.UpdateTime(mainTime, curKeyPoint, checkpointTimes);
+        base.UpdateTime(mainTime, keyPointDurations);
 
-        int numCheckpoints = checkpointTimes.GetLength(1);
-        if (numCheckpoints > 0)
+        // If the level contains checkpoints, show the time spent on each checkpoint
+        if (keyPointDurations.Length > 2)
         {
-            // The 0-based index of the farthest checkpoint which the 0th car has passed
-            int farthestCheckpoint = Math.Min(curKeyPoint[0] - 1, numCheckpoints - 1); 
-            string text;
-
-            if (farthestCheckpoint < 0)
+            string text = $"1) {keyPointDurations[1]:F3}";
+            for (int i = 2; i < keyPointDurations.Length; i++)
             {
-                // Print the time spent towards the first check point
-                text = $"1) {mainTime:F3}";
-            }
-            else
-            {
-                // Print the time spent on the first check point
-                text = $"1) {checkpointTimes[0, 0]:F3}";
-
-                // Print the time spent on any additional checkpoints we have already passed
-                for (int i = 1; i <= farthestCheckpoint; i++)
+                if (keyPointDurations[i] == 0)
                 {
-                    text += $"\n{i + 1}) {checkpointTimes[0, i] - checkpointTimes[0, i - 1]:F3}";
+                    text += $"\n{i}) --";
                 }
-
-                // Print the time spent towards the upcoming checkpoint
-                text += $"\n{farthestCheckpoint + 2}) {mainTime - checkpointTimes[0, farthestCheckpoint]:F3}";
-            }
-
-            // Print a "--" for the remaining checkpoints
-            for (int i = farthestCheckpoint + 2; i <= numCheckpoints; i++)
-            {
-                text += $"\n{i + 1}) --";
+                else
+                {
+                    text += $"\n{i}) {keyPointDurations[i]:F3}";
+                }
             }
 
             this.texts[(int)Texts.CheckpointTimes].text = text;
@@ -192,6 +161,7 @@ public class Hud : ScreenManager
         AngularVelocity = 15,
         Mode = 17,
         Failure = 19,
+        SuccessMessage = 21,
         SuccessTime = 22,        
     }
 

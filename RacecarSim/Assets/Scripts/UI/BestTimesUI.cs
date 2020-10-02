@@ -1,23 +1,71 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 /// <summary>
 /// Manages the best times pane of the main menu.
 /// </summary>
 public class BestTimesUI : MonoBehaviour
 {
+    #region Set in Unity Editor
+    /// <summary>
+    /// The UI template which displays the best time information for a single level.
+    /// </summary>
+    [SerializeField]
+    private GameObject bestTimeEntry;
+
+    /// <summary>
+    /// The Canvas object which contains all best time entries.
+    /// </summary>
+    [SerializeField]
+    private GameObject bestTimesContainer;
+    #endregion
+
+    #region Constants
+    /// <summary>
+    /// The width of a best time entry divided by the space between two best time entries.
+    /// </summary>
+    private const int entryWidthToBufferRatio = 4;
+
+    /// <summary>
+    /// The fraction of the container that a single best time entry should take up.
+    /// </summary>
+    private const float entryHeight = 0.12f;
+
+    /// <summary>
+    /// The fraction of the container that a best time entry should leave unoccupied on the left and right.
+    /// </summary>
+    private const float entryXBuffer = 0.02f;
+    #endregion
+
     #region Public Interface
     /// <summary>
-    /// Update text objects displaying best times.
+    /// Update objects displaying best times.
     /// </summary>
-    public void UpdateTexts()
+    public void UpdateEntries()
     {
-        this.texts[(int)Texts.Names].text = BestTimes.GetFormattedNames();
-        this.texts[(int)Texts.Times].text = BestTimes.GetFormattedTimes();
+        if (this.bestTimeEntries.Length != SavedDataManager.Data.BestTimes.Count)
+        {
+            Debug.LogError("The existing best time UI entries do not align with the best times in the saved data. Deleting the existing UI entries.");
+            foreach(BestTimeUIEntry uiEntry in this.bestTimeEntries)
+            {
+                if (uiEntry != null)
+                {
+                    GameObject.Destroy(uiEntry.gameObject);
+                }
+            }
+            this.CreateBlankEntries();
+        }
+
+        int index = 0;
+        foreach (KeyValuePair<LevelInfo, BestTimeInfo> keyValue in SavedDataManager.Data.BestTimes)
+        {
+            this.bestTimeEntries[index].SetInfo(keyValue.Key, keyValue.Value);
+            index++;
+        }
     }
 
     /// <summary>
-    /// Return to the main menu
+    /// Return to the main menu.
     /// </summary>
     public void Return()
     {
@@ -29,27 +77,60 @@ public class BestTimesUI : MonoBehaviour
     /// </summary>
     public void Clear()
     {
-        BestTimes.Clear();
-        this.UpdateTexts();
+        SavedDataManager.Data.ClearBestTimes();
+        SavedDataManager.Save();
+        this.UpdateEntries();
     }
     #endregion
 
     /// <summary>
-    /// The text objects in the best times pane.
+    /// The UI elements for each best time entry.
     /// </summary>
-    private enum Texts
+    private BestTimeUIEntry[] bestTimeEntries;
+
+    private void Start()
     {
-        Names = 1,
-        Times = 2
+        // Create best time entries on the canvas
+        this.CreateBlankEntries();
+        this.UpdateEntries();
     }
 
     /// <summary>
-    /// The text objects in the best times pane.
+    /// Creates a UI element for each best time entry.
     /// </summary>
-    private Text[] texts;
-
-    private void Awake()
+    private void CreateBlankEntries()
     {
-        this.texts = this.GetComponentsInChildren<Text>();
+        this.bestTimeEntries = new BestTimeUIEntry[SavedDataManager.Data.BestTimes.Count];
+
+        // Set anchor points of container
+        RectTransform container = (RectTransform)this.bestTimesContainer.transform;
+        container.anchorMax = new Vector2(1, 1);
+        container.anchorMin = new Vector2(0, 1 - BestTimesUI.entryHeight * this.bestTimeEntries.Length);
+        container.anchoredPosition = new Vector2(0, 0);
+        container.sizeDelta = new Vector2(0, 0);
+
+        float entryYBuffer = 1.0f / (this.bestTimeEntries.Length * (BestTimesUI.entryWidthToBufferRatio + 1) + 2);
+        float entryHeight = entryYBuffer * BestTimesUI.entryWidthToBufferRatio;
+        float anchorY = 1 - entryYBuffer;
+
+        // TODO: Handle float rounding errors
+        for (int i = 0; i < this.bestTimeEntries.Length; i++)
+        {
+            GameObject uiEntry = GameObject.Instantiate(this.bestTimeEntry, Vector3.zero, Quaternion.identity);
+
+            // Set uiEntry's anchor points inside of the container
+            uiEntry.transform.SetParent(this.bestTimesContainer.transform);
+            RectTransform rect = uiEntry.GetComponent<RectTransform>();
+            rect.anchorMax = new Vector2(1 - BestTimesUI.entryXBuffer, anchorY);
+            anchorY -= entryHeight;
+            rect.anchorMin = new Vector2(BestTimesUI.entryXBuffer, anchorY);
+            anchorY -= entryYBuffer;
+
+            // Size exactly to the anchor points
+            rect.anchoredPosition = new Vector2(0, 0);
+            rect.sizeDelta = new Vector2(0, 0);
+
+            this.bestTimeEntries[i] = uiEntry.GetComponent<BestTimeUIEntry>();
+        }
     }
 }

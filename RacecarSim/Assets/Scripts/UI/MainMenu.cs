@@ -54,7 +54,7 @@ public class MainMenu : MonoBehaviour
     /// </summary>
     public void ShowBestTimes()
     {
-        this.bestTimesPane.UpdateTexts();
+        this.bestTimesPane.UpdateEntries();
         this.bestTimesPane.gameObject.SetActive(true);
     }
 

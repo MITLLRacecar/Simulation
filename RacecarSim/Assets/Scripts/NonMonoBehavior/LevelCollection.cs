@@ -188,7 +188,8 @@ public class LevelCollection
                 {
                     DisplayName = "AR Tag Decisions",
                     BuildIndex = 16,
-                    IsWinable = true
+                    IsWinable = true,
+                    NumCheckpoints = 2
                 },
             }
         },

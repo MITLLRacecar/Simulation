@@ -68,9 +68,9 @@ public class LevelManager : MonoBehaviour
 
     #region Constants
     /// <summary>
-    /// The texture which is copied to create all race camera views.
+    /// The width and height of a race camera view texture.
     /// </summary>
-    private static readonly RenderTexture raceScreenTexture = new RenderTexture(960, 600, 24);
+    private static readonly int[] raceScreenTextureDimensions = { 960, 600 };
 
     /// <summary>
     /// The minimum time scale at which the simulation can run.
@@ -178,13 +178,20 @@ public class LevelManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Adds a time penalty for a car.
+    /// Adds a time penalty for the entire race.
     /// </summary>
-    /// <param name="carIndex">The car to penalize.</param>
     /// <param name="penalty">The time penalty in seconds.</param>
-    public static void AddTimePenalty(int carIndex, float penalty)
+    /// <remarks>If there are multiple cars in the race, this will penalize all cars.</remarks>
+    public static void AddTimePenalty(float penalty)
     {
-        // TODO
+        if (LevelManager.IsEvaluation)
+        {
+            LevelManager.instance.timePenalty += penalty;
+        }
+        else
+        {
+            LevelManager.instance.screenManager.ShowMessage($"Time penalty: -{penalty:F1} seconds", Color.red, 3);
+        }
     }
 
     /// <summary>
@@ -255,6 +262,11 @@ public class LevelManager : MonoBehaviour
     private float startTime;
 
     /// <summary>
+    /// The total time penalty in seconds added to the level.
+    /// </summary>
+    private float timePenalty;
+
+    /// <summary>
     /// The time in seconds which car 0 spends towards each key point after passing the previous key point, indexed by key point.
     /// </summary>
     private float[] keyPointDurations;
@@ -309,7 +321,7 @@ public class LevelManager : MonoBehaviour
         get
         {
             // Time.time already accounts for changes in the time scale
-            return Time.time - this.startTime;
+            return Time.time - this.startTime + this.timePenalty;
         }
     }
 
@@ -326,6 +338,13 @@ public class LevelManager : MonoBehaviour
 
     private void Awake()
     {
+        // If the level info has a negative build index, it was never set, meaning we did not start from the main menu
+        // Thus, we should return directly to the main menu
+        if (LevelManager.LevelInfo.BuildIndex < 0)
+        {
+            SceneManager.LoadScene(LevelCollection.MainMenuBuildIndex);
+        }
+
         LevelManager.instance = this;
         this.mode = LevelManager.IsEvaluation ? SimulationMode.Wait : SimulationMode.DefaultDrive;
         this.defaultFixedDeltaTime = Time.fixedDeltaTime;
@@ -533,18 +552,18 @@ public class LevelManager : MonoBehaviour
         else
         {
             RenderTexture[] playerCameraTextures = new RenderTexture[LevelManager.NumPlayers];
+            RenderTextureDescriptor textureDescriptor = new RenderTextureDescriptor(LevelManager.raceScreenTextureDimensions[0], LevelManager.raceScreenTextureDimensions[1]);
             for (int i = 0; i < LevelManager.NumPlayers; i++)
             {
                 (Vector3 spawnPosition, Quaternion spawnRotation) = this.GetSpawnLocation(i);
                 this.players[i] = GameObject.Instantiate(this.playerPrefab, spawnPosition, spawnRotation).GetComponentInChildren<Racecar>();
                 this.players[i].SetIndex(i);
-
-                playerCameraTextures[i] = new RenderTexture(LevelManager.raceScreenTexture);
+                playerCameraTextures[i] = new RenderTexture(textureDescriptor);
                 this.players[i].SetPlayerCameraFeatures(playerCameraTextures[i], false);
             }
 
             // Create a render texture for the race cameras
-            RenderTexture raceCameraTexture = new RenderTexture(LevelManager.raceScreenTexture);
+            RenderTexture raceCameraTexture = new RenderTexture(textureDescriptor);
             foreach(Camera raceCamera in this.raceCameras)
             {
                 raceCamera.targetTexture = raceCameraTexture;

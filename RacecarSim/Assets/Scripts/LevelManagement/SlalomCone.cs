@@ -60,7 +60,7 @@ public class SlalomCone : MonoBehaviour
                     LevelManager.ResetCar(player.Index);
                     break;
                 case SlalomConePenalty.TimePenalty:
-                    LevelManager.AddTimePenalty(player.Index, this.timePenalty);
+                    LevelManager.AddTimePenalty(this.timePenalty);
                     Destroy(this.gameObject);
                     break;
             }

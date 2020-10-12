@@ -275,6 +275,13 @@ public class LevelCollection
                     NumCheckpoints = 2,
                     MaxCars = 4
                 },
+                new LevelInfo()
+                {
+                    DisplayName = "Objectives",
+                    BuildIndex = 24,
+                    IsWinable = true,
+                    NumCheckpoints = 2,
+                },
             }
         },
     };

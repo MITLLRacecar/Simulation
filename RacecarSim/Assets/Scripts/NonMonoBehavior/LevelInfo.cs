@@ -37,6 +37,11 @@ public class LevelInfo
     public string CollectionName;
 
     /// <summary>
+    /// The message shown at the beginning of the level describing any special features or requirements.
+    /// </summary>
+    public string HelpMessage;
+
+    /// <summary>
     /// The full name of the level, including the level collection to which it belongs.
     /// </summary>
     public string FullName

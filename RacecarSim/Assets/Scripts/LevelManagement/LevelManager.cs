@@ -365,6 +365,11 @@ public class LevelManager : MonoBehaviour
         }
 
         this.SetTimeScale(1.0f);
+
+        if (LevelManager.LevelInfo.HelpMessage != null)
+        {
+            this.screenManager.ShowMessage(LevelManager.LevelInfo.HelpMessage, Color.white);
+        }
     }
 
     private void Update()

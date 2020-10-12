@@ -281,6 +281,7 @@ public class LevelCollection
                     BuildIndex = 24,
                     IsWinable = true,
                     NumCheckpoints = 2,
+                    HelpMessage = "Pass red cones on the right and blue cones on the left"
                 },
             }
         },

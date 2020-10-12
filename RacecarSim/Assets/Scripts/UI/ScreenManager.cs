@@ -114,7 +114,6 @@ public abstract class ScreenManager : MonoBehaviour
         this.pauseScreenIndex = this.images.Length - 1;
 
         this.messagePersistTime = -1;
-
         this.texts[this.messageTextIndex].text = string.Empty;
         this.texts[this.mainTimeTextIndex].text = string.Empty;
 
@@ -136,7 +135,7 @@ public abstract class ScreenManager : MonoBehaviour
         else if (this.messagePersistTime == 0 && this.messageCounter < this.messageFadeTime)
         {
             this.messageCounter += Time.deltaTime;
-            this.texts[0].color = Color.Lerp(this.messageColor, Color.clear, this.messageCounter / this.messageFadeTime);
+            this.texts[this.messageTextIndex].color = Color.Lerp(this.messageColor, Color.clear, this.messageCounter / this.messageFadeTime);
         }
     }
 

@@ -42,27 +42,45 @@ EditorBuildSettings:
     path: Assets/Scenes/Lab3C.unity
     guid: 54ab88a43a4717e45abcb27d77a75591
   - enabled: 1
-    path: Assets/Scenes/Lab4A.unity
-    guid: b7f292a9490f60d499d2f260aada3b71
-  - enabled: 1
     path: Assets/Scenes/Phase1Easy.unity
     guid: 22c7f8ad16cf0e74eb355819a1ef6c79
   - enabled: 1
     path: Assets/Scenes/Phase1Hard.unity
     guid: bcf246b186421d14cb1aa25b9a51aa90
   - enabled: 1
-    path: Assets/Scenes/Lab5B.unity
+    path: Assets/Scenes/Lab4Jupyter.unity
+    guid: 20c42e9b58aaf4449a97d616c0742c63
+  - enabled: 1
+    path: Assets/Scenes/Lab4B.unity
     guid: 6afb13d8bf6d33a47947b9e96d5851d0
   - enabled: 1
-    path: Assets/Scenes/Lab6B.unity
-    guid: 61428b9256688c54b8ed1a256d7347bc
-  - enabled: 1
-    path: Assets/Scenes/Lab7Jupyter.unity
+    path: Assets/Scenes/Lab5Jupyter.unity
     guid: 418006b3308733041a83b03b5ca1623d
   - enabled: 1
-    path: Assets/Scenes/Phase2.unity
+    path: Assets/Scenes/Lab5.unity
+    guid: b0e65fae3d06128498261fbc3ab6fec7
+  - enabled: 1
+    path: Assets/Scenes/TimeTrial.unity
     guid: 98ed6aa31e448844dbb78b887df775ca
   - enabled: 1
     path: Assets/Scenes/GrandPrix.unity
     guid: d66aacdc67c45f94e91e170b7c9ae645
+  - enabled: 1
+    path: Assets/Scenes/Bonus1A.unity
+    guid: b7f292a9490f60d499d2f260aada3b71
+  - enabled: 1
+    path: Assets/Scenes/Bonus2.unity
+    guid: 61428b9256688c54b8ed1a256d7347bc
+  - enabled: 1
+    path: Assets/Scenes/Test1.unity
+    guid: 27a3f32ce1508dd47bec4becdb965e62
+  - enabled: 1
+    path: Assets/Scenes/Test2.unity
+    guid: 9def6296790f3cc47adda8c4161e2b54
+  - enabled: 1
+    path: Assets/Scenes/Test3.unity
+    guid: e203c6c4f0144374483a2648659c5717
+  - enabled: 1
+    path: Assets/Scenes/Test4.unity
+    guid: 390bc5b4e67cc0742a763680534f85cb
   m_configObjects: {}

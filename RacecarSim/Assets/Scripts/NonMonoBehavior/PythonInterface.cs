@@ -232,19 +232,19 @@ public class PythonInterface
                     // Always return null controller data when in evaluation mode
                     case Header.controller_is_down:
                         Controller.Button buttonDown = (Controller.Button)data[1];
-                        sendData = BitConverter.GetBytes(Controller.IsDown(buttonDown) && LevelManager.IsEvaluation);
+                        sendData = BitConverter.GetBytes(Controller.IsDown(buttonDown) && !LevelManager.IsEvaluation);
                         this.udpClient.Send(sendData, sendData.Length, endPoint);
                         break;
 
                     case Header.controller_was_pressed:
                         Controller.Button buttonPressed = (Controller.Button)data[1];
-                        sendData = BitConverter.GetBytes(Controller.WasPressed(buttonPressed) && LevelManager.IsEvaluation);
+                        sendData = BitConverter.GetBytes(Controller.WasPressed(buttonPressed) && !LevelManager.IsEvaluation);
                         this.udpClient.Send(sendData, sendData.Length, endPoint);
                         break;
 
                     case Header.controller_was_released:
                         Controller.Button buttonReleased = (Controller.Button)data[1];
-                        sendData = BitConverter.GetBytes(Controller.WasReleased(buttonReleased) && LevelManager.IsEvaluation);
+                        sendData = BitConverter.GetBytes(Controller.WasReleased(buttonReleased) && !LevelManager.IsEvaluation);
                         this.udpClient.Send(sendData, sendData.Length, endPoint);
                         break;
 

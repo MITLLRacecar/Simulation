@@ -97,7 +97,7 @@ public class LevelManager : MonoBehaviour
     /// <summary>
     /// Displays a simulation error to the screen manager and logs it to standard error.
     /// </summary>
-    /// <param name="errorText"></param>
+    /// <param name="errorText">A message describing the error.</param>
     public static void HandleError(string errorText)
     {
         LevelManager.instance.mode = LevelManager.IsEvaluation ? SimulationMode.Wait : SimulationMode.DefaultDrive;
@@ -218,6 +218,16 @@ public class LevelManager : MonoBehaviour
         // We cannot update the screen manager immediately since this may not be the main thread,
         // so we instead wait until the next call to Update
         LevelManager.instance.wasConnectedProgramsChanged = true;
+    }
+
+    /// <summary>
+    /// Returns a racecar in the current level.
+    /// </summary>
+    /// <param name="index">The index of the racecar to return.</param>
+    /// <returns>The racecar with the specified index.</returns>
+    public static Racecar GetCar(int index = 0)
+    {
+        return LevelManager.instance.players[index];
     }
     #endregion
 

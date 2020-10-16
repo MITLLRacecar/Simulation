@@ -30,13 +30,31 @@ public class RaceScreen : ScreenManager
         throw new System.NotImplementedException();
     }
 
-    public override void UpdateConnectedPrograms(int numConnectedPrograms)
+    public override void UpdateConnectedPrograms(bool[] connectedPrograms)
     {
-        for (int i = 0; i < numConnectedPrograms; i++)
+        int index = 0;
+        foreach (bool isConnected in connectedPrograms)
         {
-            RaceCameraView view = GetCameraView(i);
-            view.Image.color = Color.white;
-            view.Text.text = string.Empty;
+            RaceCameraView view = GetCameraView(index);
+            if (isConnected)
+            {
+                view.Image.color = Color.white;
+                view.Text.text = string.Empty;
+            }
+            else
+            {
+                view.Image.color = RaceScreen.disabledScreenColor;
+                view.Text.text = RaceScreen.awaitingConnectionMessage;
+            }
+            index++;
+        }
+
+        // Any remaining screens beyond the end of the array are not connected
+        for (; index < this.numCars; index++)
+        {
+            RaceCameraView view = GetCameraView(index);
+            view.Image.color = RaceScreen.disabledScreenColor;
+            view.Text.text = RaceScreen.awaitingConnectionMessage;
         }
     }
 

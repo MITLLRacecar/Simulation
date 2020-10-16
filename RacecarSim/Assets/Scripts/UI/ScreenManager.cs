@@ -62,10 +62,10 @@ public abstract class ScreenManager : MonoBehaviour
     public abstract void HandleFailure(int carIndex, string reason);
 
     /// <summary>
-    /// Update the element(s) indicating how many Python programs are connected to RacecarSim.
+    /// Update the element(s) indicating the Python script(s) connected to RacecarSim.
     /// </summary>
-    /// <param name="numConnectedPrograms"></param>
-    public abstract void UpdateConnectedPrograms(int numConnectedPrograms);
+    /// <param name="connectedPrograms">An array in which each element indicates whether the racecar of the same index is connected to a Python script.</param>
+    public abstract void UpdateConnectedPrograms(bool[] connectedPrograms);
 
     /// <summary>
     /// Updates the element(s) showing the current simulation mode.

@@ -211,9 +211,13 @@ public class LevelManager : MonoBehaviour
         carRigidBody.angularVelocity = Vector3.zero;
     }
 
-    public static void UpdateNumConnectedPrograms(int numConnectedPrograms)
+    /// <summary>
+    /// Updates which cars are connected to a Python script.
+    /// </summary>
+    /// <param name="connectedPrograms">An array in which each entry indicates whether the car of the same index is connected to a Python script.</param>
+    public static void UpdateConnectedPrograms(bool[] connectedPrograms)
     {
-        LevelManager.instance.numConnectedPrograms = numConnectedPrograms;
+        LevelManager.instance.connectedPrograms = connectedPrograms;
 
         // We cannot update the screen manager immediately since this may not be the main thread,
         // so we instead wait until the next call to Update
@@ -297,9 +301,9 @@ public class LevelManager : MonoBehaviour
     private float defaultFixedDeltaTime;
 
     /// <summary>
-    /// The number of Python programs currently connected to RacecarSim.
+    /// An array indicating which cars are currently connected to a python script.
     /// </summary>
-    private int numConnectedPrograms;
+    private bool[] connectedPrograms = new bool[0];
 
     /// <summary>
     /// True when the number of Python programs connected to the sync client changed since the last call to Update.
@@ -435,7 +439,12 @@ public class LevelManager : MonoBehaviour
 
         if (this.wasConnectedProgramsChanged)
         {
-            this.screenManager.UpdateConnectedPrograms(numConnectedPrograms);
+            this.screenManager.UpdateConnectedPrograms(this.connectedPrograms);
+            if (this.connectedPrograms.Length == 0)
+            {
+                // If the user forcibly exits all programs, this is equivalent to pressing back
+                this.HandleBack();
+            }
             this.wasConnectedProgramsChanged = false; // TODO: there is probably a data race here
         }
 
@@ -609,7 +618,7 @@ public class LevelManager : MonoBehaviour
     {
         if (this.mode != SimulationMode.UserProgram)
         {
-            if (this.numConnectedPrograms > 0)
+            if (this.connectedPrograms.Length > 0)
             {
                 this.mode = SimulationMode.UserProgram;
                 this.pythonInterface.HandleStart();

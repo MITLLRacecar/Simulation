@@ -22,6 +22,16 @@ public class Hud : ScreenManager
 
     #region Constants
     /// <summary>
+    /// The number of times the LIDAR map is smaller than the color and depth visualizations.
+    /// </summary>
+    private const int lidarMapScale = 4;
+
+    /// <summary>
+    /// The alpha (transparency) of the Python icon when no script is connected.
+    /// </summary>
+    private const float unconnectedScriptAlpha = 0.25f;
+
+    /// <summary>
     /// The color used for the background of sensor visualizations.
     /// </summary>
     public static readonly Color SensorBackgroundColor = new Color(0.2f, 0.2f, 0.2f);
@@ -47,11 +57,6 @@ public class Hud : ScreenManager
         "Wait",
         "Finished"
     };
-
-    /// <summary>
-    /// The number of times the LIDAR map is smaller than the color and depth visualizations.
-    /// </summary>
-    private const int lidarMapScale = 4;
     #endregion
 
     #region Public Interface
@@ -69,9 +74,9 @@ public class Hud : ScreenManager
         this.texts[(int)Texts.Failure].text = reason;
     }
 
-    public override void UpdateConnectedPrograms(int numConnectedPrograms)
+    public override void UpdateConnectedPrograms(bool[] connectedPrograms)
     {
-        this.images[(int)Images.ConnectedProgram].color = numConnectedPrograms > 0 ? new Color(1, 1, 1, 1) : new Color(1, 1, 1, 0.25f);
+        this.images[(int)Images.ConnectedProgram].color = connectedPrograms.Length > 0 ? new Color(1, 1, 1, 1) : new Color(1, 1, 1, Hud.unconnectedScriptAlpha);
     }
 
     public override void UpdateMode(SimulationMode mode)
@@ -195,7 +200,7 @@ public class Hud : ScreenManager
         this.texts[(int)Texts.CheckpointTimes].text = string.Empty;
 
         this.UpdateTimeScale(1.0f);
-        this.UpdateConnectedPrograms(0);
+        this.UpdateConnectedPrograms(new bool[0]);
     }
 
     protected override void Update()

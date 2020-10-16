@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
@@ -68,7 +69,10 @@ public class PythonInterface
             {
                 try
                 {
-                    this.udpClient.Send(new byte[] { (byte)Header.unity_exit }, 1, endpoint);
+                    if (endpoint != null)
+                    {
+                        this.udpClient.Send(new byte[] { (byte)Header.unity_exit }, 1, endpoint);
+                    }
                 }
                 catch (Exception e)
                 {
@@ -76,7 +80,7 @@ public class PythonInterface
                 }
             }
             this.pythonEndPoints.Clear();
-            LevelManager.UpdateNumConnectedPrograms(this.pythonEndPoints.Count);
+            LevelManager.UpdateConnectedPrograms(this.ConnectedPrograms);
 
             this.udpClient.Close();
             this.udpClientAsync.Close();
@@ -113,6 +117,7 @@ public class PythonInterface
         unity_exit,
         python_finished,
         python_send_next,
+        python_exit,
         racecar_go,
         racecar_set_start_update,
         racecar_get_delta_time,
@@ -145,26 +150,100 @@ public class PythonInterface
     /// <summary>
     /// The RACECAR(s) controlled by the user Python script(s).
     /// </summary>
-    private Racecar[] racecars;
+    private readonly Racecar[] racecars;
 
     /// <summary>
     /// The UDP client used to send packets to Python.
     /// </summary>
-    private UdpClient udpClient;
+    private readonly UdpClient udpClient;
 
     /// <summary>
     /// The UDP endpoints of the Python scripts(s) currently connected to RacecarSim.
     /// </summary>
-    private List<IPEndPoint> pythonEndPoints;
+    private readonly List<IPEndPoint> pythonEndPoints;
+
+    /// <summary>
+    /// An array in which each entry indicates whether the racecar of the same index is connected to a Python script.
+    /// </summary>
+    private bool[] ConnectedPrograms
+    {
+        get
+        {
+            return this.pythonEndPoints.Select(x => x != null).ToArray();
+        }
+    }
 
     /// <summary>
     /// Connect the sync client to a Python script.
     /// </summary>
     /// <param name="pythonPort">The port used by the Python script.</param>
-    private void ConnectSyncClient(int pythonPort)
+    /// <returns>The index of the car with which the script is paired, or null if the script could not be paired.</returns>
+    private int? ConnectSyncClient(int pythonPort)
     {
-        this.pythonEndPoints.Add(new IPEndPoint(PythonInterface.ipAddress, pythonPort));
-        LevelManager.UpdateNumConnectedPrograms(this.pythonEndPoints.Count);
+        IPEndPoint endPoint = new IPEndPoint(PythonInterface.ipAddress, pythonPort);
+        int index = -1;
+
+        // Replace the first null end point, if any exist
+        for (int i = 0; i < this.pythonEndPoints.Count; i++)
+        {
+            if (this.pythonEndPoints[i] == null)
+            {
+                this.pythonEndPoints[i] = endPoint;
+                index = i;
+                break;
+            }
+        }
+
+        // Otherwise, add the end point to the end of the list
+        if (index == -1)
+        {
+            if (this.pythonEndPoints.Count < this.racecars.Length)
+            {
+                index = this.pythonEndPoints.Count;
+                this.pythonEndPoints.Add(endPoint);
+            }
+            else
+            {
+                // Every race car is already connected
+                return null;
+            }
+        }
+        
+        LevelManager.UpdateConnectedPrograms(this.ConnectedPrograms);
+        return index;
+    }
+
+    /// <summary>
+    /// Disconnects a Python script from the sync client.
+    /// </summary>
+    /// <param name="pythonPort">The port of the Python script to remove.</param>
+    private void RemoveSyncClient(int pythonPort)
+    {
+        // Set the endpoint to null rather than removing it from the list to maintain
+        // the mapping of remaining endpoints to cars
+        for (int i = 0; i < this.pythonEndPoints.Count; i++)
+        {
+            if (this.pythonEndPoints[i]?.Port == pythonPort)
+            {
+                this.pythonEndPoints[i] = null;
+                break;
+            }
+        }
+
+        // We can safely remove any trailing null endpoints at the end of the list
+        for (int i = this.pythonEndPoints.Count - 1; i >= 0; i--)
+        {
+            if (this.pythonEndPoints[i] == null)
+            {
+                this.pythonEndPoints.RemoveAt(i);
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        LevelManager.UpdateConnectedPrograms(this.ConnectedPrograms);
     }
 
     /// <summary>
@@ -174,7 +253,12 @@ public class PythonInterface
     private void PythonCall(Header function)
     {
         for (int i = 0; i < this.pythonEndPoints.Count; i++)
-        { 
+        {
+            if (this.pythonEndPoints[i] == null)
+            {
+                continue;
+            }
+
             Racecar racecar = this.racecars[i];
             IPEndPoint endPoint = this.pythonEndPoints[i];
 
@@ -383,7 +467,7 @@ public class PythonInterface
         LevelManager.HandleError(errorText);
 
         this.pythonEndPoints.Clear();
-        LevelManager.UpdateNumConnectedPrograms(this.pythonEndPoints.Count);
+        LevelManager.UpdateConnectedPrograms(this.ConnectedPrograms);
     }
     #endregion
 
@@ -396,7 +480,7 @@ public class PythonInterface
     /// <summary>
     /// A thread containing a UDP client to process asynchronous API calls from Python.
     /// </summary>
-    private Thread asyncClientThread;
+    private readonly Thread asyncClientThread;
 
     /// <summary>
     /// Creates a UDP client to process asynchronous API calls from Python (for use by Jupyter).
@@ -417,9 +501,15 @@ public class PythonInterface
             switch (header)
             {
                 case Header.connect:
-                    this.ConnectSyncClient(receiveEndPoint.Port);
-                    sendData = new byte[1] { (byte)Header.connect };
+                    int? index = this.ConnectSyncClient(receiveEndPoint.Port);
+                    sendData = index.HasValue ?
+                        new byte[2] { (byte)Header.connect, (byte)index } :
+                        new byte[1] { (byte)Header.error };
                     this.udpClientAsync.Send(sendData, sendData.Length, receiveEndPoint);
+                    break;
+
+                case Header.python_exit:
+                    this.RemoveSyncClient(receiveEndPoint.Port);
                     break;
 
                 case Header.camera_get_color_image:

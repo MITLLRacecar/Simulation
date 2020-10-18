@@ -101,10 +101,11 @@ public class LevelManager : MonoBehaviour
     public static void HandleError(string errorText)
     {
         LevelManager.instance.mode = LevelManager.IsEvaluation ? SimulationMode.Wait : SimulationMode.DefaultDrive;
+        LevelManager.instance.screenManager.UpdateMode(LevelManager.instance.mode);
+        
         errorText = $">> Error: {errorText} Returning to {LevelManager.instance.mode} mode.";
-
         Debug.LogError(errorText);
-        LevelManager.instance.screenManager.ShowMessage(errorText, Color.red, 5, 1);
+        LevelManager.instance.screenManager.ShowError(errorText);
     }
 
     /// <summary>
@@ -190,7 +191,7 @@ public class LevelManager : MonoBehaviour
         }
         else
         {
-            LevelManager.instance.screenManager.ShowMessage($"Time penalty: -{penalty:F1} seconds", Color.red, 3);
+            LevelManager.instance.screenManager.ShowWarning($"Time penalty: -{penalty:F1} seconds");
         }
     }
 
@@ -453,7 +454,7 @@ public class LevelManager : MonoBehaviour
         {
             if (LevelManager.IsEvaluation)
             {
-                this.screenManager.ShowMessage("Checkpoint skipping (TAB key) is disabled in evaluation mode.", Color.yellow, 2);
+                this.screenManager.ShowWarning("Checkpoint skipping (TAB key) is disabled in evaluation mode.");
             }
             else
             {
@@ -627,7 +628,7 @@ public class LevelManager : MonoBehaviour
             }
             else
             {
-                this.screenManager.ShowMessage("You must connect a Python program before entering User Program mode.", Color.yellow, 5);
+                this.screenManager.ShowWarning("You must connect a Python program before entering User Program mode.");
             }
         }
     }

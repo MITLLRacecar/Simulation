@@ -6,6 +6,18 @@ using UnityEngine.UI;
 /// </summary>
 public abstract class ScreenManager : MonoBehaviour
 {
+    #region Constant
+    private const float secondsPerChar = 0.08f;
+
+    private const float minErrorTime = 5;
+
+    private static readonly Color errorColor = new Color(1, 0.25f, 0.25f);
+
+    private const float minWarningTime = 3;
+
+    private static readonly Color warningColor = Color.yellow;
+    #endregion
+
     #region Public Interface
     /// <summary>
     /// Show a text message to the user.
@@ -23,6 +35,18 @@ public abstract class ScreenManager : MonoBehaviour
         this.messageCounter = 0;
         this.messagePersistTime = persistTime;
         this.messageFadeTime = fadeTime;
+    }
+
+    public void ShowError(string errorText)
+    {
+        float persistTime = Mathf.Max(ScreenManager.minErrorTime, errorText.Length * ScreenManager.secondsPerChar);
+        this.ShowMessage(errorText, ScreenManager.errorColor, persistTime);
+    }
+
+    public void ShowWarning(string warningText)
+    {
+        float persistTime = Mathf.Max(ScreenManager.minWarningTime, warningText.Length * ScreenManager.secondsPerChar);
+        this.ShowMessage(warningText, ScreenManager.warningColor, persistTime);
     }
 
     /// <summary>

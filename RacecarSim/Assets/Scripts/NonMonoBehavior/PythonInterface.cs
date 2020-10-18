@@ -315,13 +315,18 @@ public class PythonInterface
                         pythonFinished = true;
                         break;
 
+                    case Header.python_exit:
+                        this.RemoveSyncClient(endPoint.Port);
+                        pythonFinished = true;
+                        break;
+
                     case Header.racecar_get_delta_time:
                         sendData = BitConverter.GetBytes(Time.deltaTime);
                         this.udpClient.Send(sendData, sendData.Length, endPoint);
                         break;
 
                     case Header.camera_get_color_image:
-                        this.SendFragmented(racecar.Camera.ColorImageRaw, 32, endPoint);
+                        pythonFinished = !this.SendFragmented(racecar.Camera.ColorImageRaw, 32, endPoint);
                         break;
 
                     case Header.camera_get_depth_image:
@@ -426,7 +431,8 @@ public class PythonInterface
     /// <param name="bytes">The bytes to send (must be divisible by numPackets).</param>
     /// <param name="numPackets">The number of packets to split the data across.</param>
     /// <param name="endPoint">The end point of the Python script to which to send data.</param>
-    private void SendFragmented(byte[] bytes, int numPackets, IPEndPoint endPoint)
+    /// <returns>True if the entire message was sent successfully.</returns>
+    private bool SendFragmented(byte[] bytes, int numPackets, IPEndPoint endPoint)
     {
         int blockSize = bytes.Length / numPackets;
         byte[] sendData = new byte[blockSize];
@@ -436,12 +442,22 @@ public class PythonInterface
             this.udpClient.Send(sendData, sendData.Length, endPoint);
 
             byte[] response = this.SafeRecieve(endPoint);
-            if (response == null || (Header)response[0] != Header.python_send_next)
+            Header responseHeader = (Header)response[0];
+            switch(responseHeader)
             {
-                this.HandleError("Unity and Python became out of sync while sending a block message.", Error.fragment_mismatch);
-                break;
+                case Header.python_send_next:
+                    continue;
+
+                case Header.python_exit:
+                    this.RemoveSyncClient(endPoint.Port);
+                    return false;
+
+                default:
+                    this.HandleError("Unity and Python became out of sync while sending a block message.", Error.fragment_mismatch);
+                    return false;
             }
         }
+        return true;
     }
 
     /// <summary>

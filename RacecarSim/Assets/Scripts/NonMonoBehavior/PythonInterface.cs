@@ -13,6 +13,16 @@ public class PythonInterface
 {
     #region Constants
     /// <summary>
+    /// The current version of the protocol used to communicate with racecar_core.
+    /// </summary>
+    /// <remarks>
+    /// When the communication protocol between RacecarSim and racecar_core are changed, this version number
+    /// should be incremented both here and in racecar_core_sim.py. This allows us to immediately detect
+    /// if a user attempts to use incompatible versions of RacecarSim and racecar_core.
+    /// </remarks>
+    private const int version = 1;
+
+    /// <summary>
     /// The UDP port used by the Unity simulation (this program).
     /// </summary>
     private const int unityPort = 5065;
@@ -106,7 +116,7 @@ public class PythonInterface
     #endregion
 
     /// <summary>
-    /// Header bytes used in our communication protocol.
+    /// Header bytes used in the communication protocol.
     /// </summary>
     private enum Header
     {
@@ -139,6 +149,20 @@ public class PythonInterface
         lidar_get_samples,
         physics_get_linear_acceleration,
         physics_get_angular_velocity,
+    }
+
+    /// <summary>
+    /// The error codes used in the communication protocol.
+    /// </summary>
+    private enum Error
+    {
+        generic,
+        timeout,
+        python_exception,
+        no_free_car,
+        python_outdated,
+        racecarsim_outdated,
+        fragment_mismatch
     }
 
     /// <summary>
@@ -282,7 +306,9 @@ public class PythonInterface
                 switch (header)
                 {
                     case Header.error:
-                        HandleError($"Error code sent from the Python script controlling car {i}.");
+                        Error errorCode = (Error)data[1];
+                        HandleError($"Error code [{errorCode}] sent from the Python script controlling car {i}.", errorCode);
+                        pythonFinished = true;
                         break;
 
                     case Header.python_finished:
@@ -387,6 +413,7 @@ public class PythonInterface
 
                     default:
                         Debug.LogError($">> Error: The function {header} is not supported by RacecarSim.");
+                        pythonFinished = true;
                         break;
                 }
             }
@@ -411,7 +438,7 @@ public class PythonInterface
             byte[] response = this.SafeRecieve(endPoint);
             if (response == null || (Header)response[0] != Header.python_send_next)
             {
-                this.HandleError("Unity and Python became out of sync while sending a block message.");
+                this.HandleError("Unity and Python became out of sync while sending a block message.", Error.fragment_mismatch);
                 break;
             }
         }
@@ -432,7 +459,7 @@ public class PythonInterface
         {
             if (e.SocketErrorCode == SocketError.TimedOut)
             {
-                this.HandleError("No message received from Python within the alloted time.");
+                this.HandleError("No message received from Python within the alloted time.", Error.timeout);
                 Debug.LogError(">> Troubleshooting:" +
                     "\n1. Make sure that your Python program does not block or wait. For example, your program should never call time.sleep()." +
                     "\n2. Make sure that your program is not too computationally intensive. Your start and update functions should be able to run in under 10 milliseconds." +
@@ -441,7 +468,8 @@ public class PythonInterface
             }
             else
             {
-                this.HandleError("An error occurred when attempting to receive data from Python.");
+                this.HandleError("An error occurred when attempting to receive data from Python.", Error.generic);
+                Debug.LogError($"SocketException: [{e}]");
             }
         }
         return null;
@@ -451,13 +479,14 @@ public class PythonInterface
     /// Sends an error response to all Python scripts and passes the error to the LevelManager.
     /// </summary>
     /// <param name="errorText">The error text to show.</param>
-    private void HandleError(string errorText)
+    /// <param name="errorCode">The error code to send to the Python scripts.</param>
+    private void HandleError(string errorText, Error errorCode)
     {
         foreach (IPEndPoint endPoint in this.pythonEndPoints)
         {
             try
             {
-                this.udpClient.Send(new byte[] { (byte)Header.error }, 1, endPoint);
+                this.udpClient.Send(new byte[] { (byte)Header.error, (byte)errorCode }, 1, endPoint);
             }
             catch (Exception e)
             {
@@ -501,10 +530,33 @@ public class PythonInterface
             switch (header)
             {
                 case Header.connect:
-                    int? index = this.ConnectSyncClient(receiveEndPoint.Port);
-                    sendData = index.HasValue ?
-                        new byte[2] { (byte)Header.connect, (byte)index } :
-                        new byte[1] { (byte)Header.error };
+                    int pythonVersion = data.Length > 1 ? data[1] : 0;
+                    if (PythonInterface.version == pythonVersion)
+                    {
+                        int? index = this.ConnectSyncClient(receiveEndPoint.Port);
+                        if (index.HasValue)
+                        {
+                            sendData = new byte[] { (byte)Header.connect, (byte)index };
+                        }
+                        else
+                        {
+                            // TODO: display this message to the screen?
+                            Debug.LogError($"Attempted to connect a Python script from port [{receiveEndPoint.Port}], but every racecar already has a connected Python script.");
+                            sendData = new byte[] { (byte)Header.error, (byte)Error.no_free_car };
+                        }
+                    }
+                    else if (PythonInterface.version > pythonVersion)
+                    {
+                        // TODO: display this message to the screen?
+                        Debug.LogError("The Python script is using an outdated and incompatible version of racecar_core. Please update you Python racecar libraries to the newest version.");
+                        sendData = new byte[] { (byte)Header.error, (byte)Error.python_outdated };
+                    }
+                    else
+                    {
+                        // TODO: display this message to the screen?
+                        Debug.LogError("The Python script is using a newer and incompatible version of racecar_core. Please download the newest version of RacecarSim.");
+                        sendData = new byte[] { (byte)Header.error, (byte)Error.racecarsim_outdated };
+                    }
                     this.udpClientAsync.Send(sendData, sendData.Length, receiveEndPoint);
                     break;
 
@@ -551,7 +603,7 @@ public class PythonInterface
             byte[] response = this.udpClientAsync.Receive(ref destination);
             if (response == null || (Header)response[0] != Header.python_send_next)
             {
-                this.udpClientAsync.Send(new byte[] { (byte)Header.error }, 1, destination);
+                this.udpClientAsync.Send(new byte[] { (byte)Header.error, (byte)Error.fragment_mismatch }, 1, destination);
                 break;
             }
         }

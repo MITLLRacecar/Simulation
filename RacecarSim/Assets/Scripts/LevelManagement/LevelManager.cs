@@ -109,6 +109,17 @@ public class LevelManager : MonoBehaviour
     }
 
     /// <summary>
+    /// Show a text message to the user on the screen.
+    /// </summary>
+    /// <param name="message">The text to show.</param>
+    /// <param name="color">The color of the text.</param>
+    /// <param name="persistTime">The time in seconds the text is shown.</param>
+    public static void ShowMessage(string text, Color color, float persistTime)
+    {
+        LevelManager.instance.screenManager.ShowMessage(text, color, persistTime);
+    }
+
+    /// <summary>
     /// Handles when a car passes a checkpoint.
     /// </summary>
     /// <param name="carIndex">The index of the car which passed the checkpoint.</param>

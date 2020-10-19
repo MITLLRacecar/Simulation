@@ -5494,7 +5494,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Car 1 Back
+  m_Text: Car 3 Back
 --- !u!222 &556732324
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -9792,7 +9792,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Car 1 Front
+  m_Text: Car 3 Front
 --- !u!222 &1117507610
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -18457,7 +18457,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Car 1 Back
+  m_Text: Car 2 Back
 --- !u!222 &2064512854
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -19123,7 +19123,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Car 1 Front
+  m_Text: Car 2 Front
 --- !u!222 &2107744124
 CanvasRenderer:
   m_ObjectHideFlags: 0

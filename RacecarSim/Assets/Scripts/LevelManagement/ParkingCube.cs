@@ -21,11 +21,6 @@ public class ParkingCube : MonoBehaviour
 
     #region Constants
     /// <summary>
-    /// Distance to offset the angle/distance display from the wall closest point.
-    /// </summary>
-    private static readonly Vector3 canvasOffset = new Vector3(0, 2f, 0.01f);
-
-    /// <summary>
     /// The angle that the car should attempt to reach with the wall
     /// </summary>
     private const float goalAngle = 0;
@@ -44,17 +39,12 @@ public class ParkingCube : MonoBehaviour
     /// The threshold around goalDistance we will consider an acceptable distance.
     /// </summary>
     private const float distanceThreshold = 5;
-    #endregion
 
     /// <summary>
-    /// The racecar from which to measure distance and angle.
+    /// The distance (in dm) above the ground at which we cast rays to measure the car's distance from the wall.
     /// </summary>
-    private Racecar player;
-
-    private void Awake()
-    {
-        this.player = GameObject.FindGameObjectWithTag("Player").GetComponent<Racecar>();
-    }
+    private const float rayCastHeight = 2;
+    #endregion
 
     private void Start()
     {
@@ -71,7 +61,8 @@ public class ParkingCube : MonoBehaviour
 
     private void Update()
     {
-        float angle = Mathf.Abs(this.transform.rotation.eulerAngles.y - this.player.transform.rotation.eulerAngles.y);
+        Racecar player = LevelManager.GetCar();
+        float angle = Mathf.Abs(this.transform.rotation.eulerAngles.y - player.transform.rotation.eulerAngles.y);
         if (angle > 180)
         {
             angle = 360 - angle;
@@ -79,19 +70,18 @@ public class ParkingCube : MonoBehaviour
 
         // Cast a ray from the car to the wall to find the closest point on the wall
         float distance = -1;
-        if (Physics.Raycast(this.player.transform.position, this.transform.forward, out RaycastHit secondHit, 1000))
+        if (Physics.Raycast(player.transform.position + Vector3.up * ParkingCube.rayCastHeight, this.transform.forward, out RaycastHit hit, 1000))
         {
-            distance = (secondHit.distance - Racecar.radius) * 10;
+            distance = (hit.distance - Racecar.radius) * 10;
         }
 
-        this.player.Hud.ShowMessage($"Angle: {angle:F1} degrees\nDistance: {distance:F1} cm", Color.white);
+        LevelManager.ShowMessage($"Angle: {angle:F1} degrees\nDistance: {distance:F1} cm", Color.white, -1);
 
-        print(this.player.Physics.LinearVelocity.magnitude);
         if (Mathf.Abs(ParkingCube.goalAngle - angle) < ParkingCube.angleThreshold 
             && Mathf.Abs(ParkingCube.goalDistance - distance) < ParkingCube.distanceThreshold
-            && this.player.Physics.LinearVelocity.magnitude < 0.01f)
+            && player.Physics.LinearVelocity.magnitude < 0.01f)
         {
-            LevelManager.HandleFinish(this.player.Index);
+            LevelManager.HandleFinish(player.Index);
         }
     }
 }

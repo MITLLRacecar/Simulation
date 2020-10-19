@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -9,9 +8,9 @@ using UnityEngine;
 public class SavedData
 {
     /// <summary>
-    /// Maps evaluable levels to the best time information for that level.
+    /// The best time information for each winnable level, with indexed by the level WinableIndex.
     /// </summary>
-    public Dictionary<LevelInfo, BestTimeInfo> BestTimes;
+    public BestTimeInfo[] BestTimes;
 
     /// <summary>
     /// The customization for each car, indexed by car.
@@ -27,7 +26,6 @@ public class SavedData
         {
             SavedData data = new SavedData()
             {
-                BestTimes = new Dictionary<LevelInfo, BestTimeInfo>(),
                 CarCustomizations = new CarCustomization[]
                 {
                     new CarCustomization(Color.white),
@@ -47,17 +45,10 @@ public class SavedData
     /// </summary>
     public void ClearBestTimes()
     {
-        this.BestTimes.Clear();
-
-        foreach (LevelCollection collection in LevelCollection.LevelCollections)
+        this.BestTimes = new BestTimeInfo[LevelInfo.WinableLevels.Count];
+        foreach (LevelInfo level in LevelInfo.WinableLevels)
         {
-            foreach (LevelInfo level in collection.Levels)
-            {
-                if (level.IsWinable)
-                {
-                    this.BestTimes.Add(level, new BestTimeInfo(level.NumCheckpoints));
-                }
-            }
+            this.BestTimes[level.WinableIndex] = new BestTimeInfo(level.NumCheckpoints);
         }
     }
 }

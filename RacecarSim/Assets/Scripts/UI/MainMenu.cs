@@ -220,6 +220,13 @@ public class MainMenu : MonoBehaviour
         this.controllsPane = this.GetComponentInChildren<ControllsUI>();
         this.settingsPane = this.GetComponentInChildren<SettingsUI>();
         this.bestTimesPane = this.GetComponentInChildren<BestTimesUI>();
+
+        if (LevelInfo.WinableLevels.Count != SavedDataManager.Data.BestTimes.Length)
+        {
+            Debug.LogError("Best times do not align with current levels. Clearing best time data.");
+            SavedDataManager.Data.ClearBestTimes();
+            SavedDataManager.Save();
+        }
     }
 
     private void Start()

@@ -43,24 +43,19 @@ public class BestTimesUI : MonoBehaviour
     /// </summary>
     public void UpdateEntries()
     {
-        if (this.bestTimeEntries.Length != SavedDataManager.Data.BestTimes.Count)
+        if (this.bestTimeEntries.Length != SavedDataManager.Data.BestTimes.Length)
         {
             Debug.LogError("The existing best time UI entries do not align with the best times in the saved data. Deleting the existing UI entries.");
             foreach(BestTimeUIEntry uiEntry in this.bestTimeEntries)
             {
-                if (uiEntry != null)
-                {
-                    GameObject.Destroy(uiEntry.gameObject);
-                }
+                GameObject.Destroy(uiEntry.gameObject);
             }
             this.CreateBlankEntries();
         }
 
-        int index = 0;
-        foreach (KeyValuePair<LevelInfo, BestTimeInfo> keyValue in SavedDataManager.Data.BestTimes)
+        for(int i = 0; i < this.bestTimeEntries.Length; i++)
         {
-            this.bestTimeEntries[index].SetInfo(keyValue.Key, keyValue.Value);
-            index++;
+            this.bestTimeEntries[i].SetInfo(LevelInfo.WinableLevels[i], SavedDataManager.Data.BestTimes[i]);
         }
     }
 
@@ -100,7 +95,7 @@ public class BestTimesUI : MonoBehaviour
     /// </summary>
     private void CreateBlankEntries()
     {
-        this.bestTimeEntries = new BestTimeUIEntry[SavedDataManager.Data.BestTimes.Count];
+        this.bestTimeEntries = new BestTimeUIEntry[LevelInfo.WinableLevels.Count];
 
         // Set anchor points of container
         RectTransform container = (RectTransform)this.bestTimesContainer.transform;

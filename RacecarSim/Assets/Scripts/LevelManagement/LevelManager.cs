@@ -167,8 +167,7 @@ public class LevelManager : MonoBehaviour
                 {
                     bool isNewBestTime =
                         LevelManager.NumPlayers == 1 &&
-                        SavedDataManager.Data.BestTimes.ContainsKey(LevelManager.LevelInfo) &&
-                        SavedDataManager.Data.BestTimes[LevelManager.LevelInfo].OverallTime > LevelManager.instance.CurTime;
+                        SavedDataManager.Data.BestTimes[LevelManager.LevelInfo.WinableIndex].OverallTime > LevelManager.instance.CurTime;
 
                     LevelManager.instance.mode = SimulationMode.Finished;
                     LevelManager.instance.screenManager.HandleWin(LevelManager.instance.CurTime, isNewBestTime);
@@ -769,13 +768,7 @@ public class LevelManager : MonoBehaviour
     {
         if (LevelManager.IsEvaluation && LevelManager.NumPlayers == 1 && this.curKeyPoints[0] > 0)
         {
-            if (!SavedDataManager.Data.BestTimes.ContainsKey(LevelManager.LevelInfo))
-            {
-                Debug.LogWarning($"Level [{LevelManager.LevelInfo.FullName}] was not found in the best times dictionary. Adding entry now.");
-                SavedDataManager.Data.BestTimes.Add(LevelManager.LevelInfo, new BestTimeInfo(this.NumCheckpoints));
-            }
-
-            BestTimeInfo bestTimeInfo = SavedDataManager.Data.BestTimes[LevelManager.LevelInfo];
+            BestTimeInfo bestTimeInfo = SavedDataManager.Data.BestTimes[LevelManager.LevelInfo.WinableIndex];
 
             // Update overall time if we finished the level
             if (this.curKeyPoints[0] == this.keyPoints.Length - 1)

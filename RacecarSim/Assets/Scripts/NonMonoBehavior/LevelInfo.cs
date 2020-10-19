@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 /// <summary>
 /// Information about a level.
@@ -6,6 +7,11 @@
 [Serializable]
 public class LevelInfo
 {
+    /// <summary>
+    /// A list of the levels for which IsWinable is true.
+    /// </summary>
+    public static List<LevelInfo> WinableLevels = new List<LevelInfo>();
+
     /// <summary>
     /// The name of the level displayed to users.
     /// </summary>
@@ -20,6 +26,11 @@ public class LevelInfo
     /// True if the level has a completable objective.
     /// </summary>
     public bool IsWinable = false;
+
+    /// <summary>
+    /// The index of a winable level in LevelInfo.WinableLevels.
+    /// </summary>
+    public int WinableIndex = -1;
 
     /// <summary>
     /// The maximum number of cars the level supports.

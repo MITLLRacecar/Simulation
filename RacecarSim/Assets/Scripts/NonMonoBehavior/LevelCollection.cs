@@ -98,6 +98,7 @@ public class LevelCollection
                 {
                     DisplayName = "B: Cone Parking",
                     BuildIndex = 6,
+                    HelpMessage = "Left-click on the screen to move the cone"
                 }
             }
         },
@@ -121,6 +122,7 @@ public class LevelCollection
                 {
                     DisplayName = "B: Cone Parking (Revisited)",
                     BuildIndex = 9,
+                    HelpMessage = "Left-click on the screen to move the cone and scroll to resize the cone"
                 },
                 new LevelInfo()
                 {
@@ -145,7 +147,8 @@ public class LevelCollection
                 {
                     DisplayName = "Cone Slalom: Hard",
                     BuildIndex = 12,
-                    IsWinable = true
+                    IsWinable = true,
+                    NumCheckpoints = 2
                 }
             }
         },
@@ -159,6 +162,7 @@ public class LevelCollection
                 {
                     DisplayName = "Jupyter Notebook",
                     BuildIndex = 13,
+                    HelpMessage = "You can switch the 3rd person camera view by pressing the space bar"
                 },
                 new LevelInfo()
                 {
@@ -169,7 +173,8 @@ public class LevelCollection
                 {
                     DisplayName = "B: Wall Following",
                     BuildIndex = 14,
-                    IsWinable = true
+                    IsWinable = true,
+                    NumCheckpoints = 2
                 }
             }
         },
@@ -183,6 +188,7 @@ public class LevelCollection
                 {
                     DisplayName = "Jupyter Notebook",
                     BuildIndex = 15,
+                    HelpMessage = "Left-click a block to select it, then: left-click it to change it's tag, right-click it to change it's color, or scroll to rotate"
                 },
                 new LevelInfo()
                 {
@@ -226,6 +232,7 @@ public class LevelCollection
                 {
                     DisplayName = "A: Roll Prevention",
                     BuildIndex = 19,
+                    HelpMessage = "The car's center of mass has been artificially raised dramatically"
                 },
                 new LevelInfo()
                 {
@@ -289,7 +296,7 @@ public class LevelCollection
     #endregion
 
     /// <summary>
-    /// Initializes the LevelCollection static field.
+    /// Initializes static level-related fields.
     /// </summary>
     [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification = "Called by Unity")]
@@ -300,6 +307,11 @@ public class LevelCollection
             foreach (LevelInfo level in collection.Levels)
             {
                 level.CollectionName = collection.ShortName;
+                if (level.IsWinable)
+                {
+                    level.WinableIndex = LevelInfo.WinableLevels.Count;
+                    LevelInfo.WinableLevels.Add(level);
+                }
             }
         }
     }

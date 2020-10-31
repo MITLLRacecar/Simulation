@@ -387,6 +387,11 @@ PrefabInstance:
       propertyPath: isTimePenalty
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 7764447054066755471, guid: b4e0570226fc6384fba75050215b3ae2,
+        type: 3}
+      propertyPath: penalty
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b4e0570226fc6384fba75050215b3ae2, type: 3}
 --- !u!1001 &15386871
@@ -460,6 +465,11 @@ PrefabInstance:
         type: 3}
       propertyPath: isTimePenalty
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7764447054066755471, guid: b4e0570226fc6384fba75050215b3ae2,
+        type: 3}
+      propertyPath: penalty
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b4e0570226fc6384fba75050215b3ae2, type: 3}
@@ -1556,6 +1566,11 @@ PrefabInstance:
       propertyPath: isTimePenalty
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 7764447054066755471, guid: b4e0570226fc6384fba75050215b3ae2,
+        type: 3}
+      propertyPath: penalty
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b4e0570226fc6384fba75050215b3ae2, type: 3}
 --- !u!4 &132974164 stripped
@@ -1641,6 +1656,11 @@ PrefabInstance:
         type: 3}
       propertyPath: isTimePenalty
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7764447054066755471, guid: b4e0570226fc6384fba75050215b3ae2,
+        type: 3}
+      propertyPath: penalty
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b4e0570226fc6384fba75050215b3ae2, type: 3}
@@ -2654,6 +2674,11 @@ PrefabInstance:
       propertyPath: isTimePenalty
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 8215774953257661754, guid: 78b96a2b0d60e6443997c6f67c18f29b,
+        type: 3}
+      propertyPath: penalty
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 78b96a2b0d60e6443997c6f67c18f29b, type: 3}
 --- !u!1001 &340410016
@@ -3249,6 +3274,11 @@ PrefabInstance:
         type: 3}
       propertyPath: isTimePenalty
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7764447054066755471, guid: b4e0570226fc6384fba75050215b3ae2,
+        type: 3}
+      propertyPath: penalty
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b4e0570226fc6384fba75050215b3ae2, type: 3}
@@ -3849,6 +3879,11 @@ PrefabInstance:
         type: 3}
       propertyPath: isTimePenalty
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8215774953257661754, guid: 78b96a2b0d60e6443997c6f67c18f29b,
+        type: 3}
+      propertyPath: penalty
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 78b96a2b0d60e6443997c6f67c18f29b, type: 3}
@@ -5261,6 +5296,11 @@ PrefabInstance:
       propertyPath: isTimePenalty
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 8215774953257661754, guid: 78b96a2b0d60e6443997c6f67c18f29b,
+        type: 3}
+      propertyPath: penalty
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 78b96a2b0d60e6443997c6f67c18f29b, type: 3}
 --- !u!4 &559722026 stripped
@@ -5941,6 +5981,11 @@ PrefabInstance:
       propertyPath: isTimePenalty
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 8215774953257661754, guid: 78b96a2b0d60e6443997c6f67c18f29b,
+        type: 3}
+      propertyPath: penalty
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 78b96a2b0d60e6443997c6f67c18f29b, type: 3}
 --- !u!1 &614781779
@@ -6049,6 +6094,11 @@ PrefabInstance:
         type: 3}
       propertyPath: isTimePenalty
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7764447054066755471, guid: b4e0570226fc6384fba75050215b3ae2,
+        type: 3}
+      propertyPath: penalty
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b4e0570226fc6384fba75050215b3ae2, type: 3}
@@ -7447,6 +7497,11 @@ PrefabInstance:
       propertyPath: isTimePenalty
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 7764447054066755471, guid: b4e0570226fc6384fba75050215b3ae2,
+        type: 3}
+      propertyPath: penalty
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b4e0570226fc6384fba75050215b3ae2, type: 3}
 --- !u!4 &755440473 stripped
@@ -8205,6 +8260,11 @@ PrefabInstance:
         type: 3}
       propertyPath: isTimePenalty
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7764447054066755471, guid: b4e0570226fc6384fba75050215b3ae2,
+        type: 3}
+      propertyPath: penalty
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b4e0570226fc6384fba75050215b3ae2, type: 3}
@@ -9667,6 +9727,11 @@ PrefabInstance:
       propertyPath: isTimePenalty
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 8215774953257661754, guid: 78b96a2b0d60e6443997c6f67c18f29b,
+        type: 3}
+      propertyPath: penalty
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 78b96a2b0d60e6443997c6f67c18f29b, type: 3}
 --- !u!1001 &986060063
@@ -10048,6 +10113,11 @@ PrefabInstance:
       propertyPath: isTimePenalty
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 8215774953257661754, guid: 78b96a2b0d60e6443997c6f67c18f29b,
+        type: 3}
+      propertyPath: penalty
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 78b96a2b0d60e6443997c6f67c18f29b, type: 3}
 --- !u!1 &1049438234
@@ -10365,6 +10435,11 @@ PrefabInstance:
         type: 3}
       propertyPath: isTimePenalty
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7764447054066755471, guid: b4e0570226fc6384fba75050215b3ae2,
+        type: 3}
+      propertyPath: penalty
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b4e0570226fc6384fba75050215b3ae2, type: 3}
@@ -10888,6 +10963,11 @@ PrefabInstance:
       propertyPath: isTimePenalty
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 8215774953257661754, guid: 78b96a2b0d60e6443997c6f67c18f29b,
+        type: 3}
+      propertyPath: penalty
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 78b96a2b0d60e6443997c6f67c18f29b, type: 3}
 --- !u!4 &1131599551 stripped
@@ -11072,6 +11152,11 @@ PrefabInstance:
         type: 3}
       propertyPath: isTimePenalty
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8215774953257661754, guid: 78b96a2b0d60e6443997c6f67c18f29b,
+        type: 3}
+      propertyPath: penalty
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 78b96a2b0d60e6443997c6f67c18f29b, type: 3}
@@ -13376,6 +13461,11 @@ PrefabInstance:
       propertyPath: isTimePenalty
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 8215774953257661754, guid: 78b96a2b0d60e6443997c6f67c18f29b,
+        type: 3}
+      propertyPath: penalty
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 78b96a2b0d60e6443997c6f67c18f29b, type: 3}
 --- !u!1001 &1428126773
@@ -13614,6 +13704,11 @@ PrefabInstance:
         type: 3}
       propertyPath: isTimePenalty
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8215774953257661754, guid: 78b96a2b0d60e6443997c6f67c18f29b,
+        type: 3}
+      propertyPath: penalty
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 78b96a2b0d60e6443997c6f67c18f29b, type: 3}
@@ -14748,6 +14843,11 @@ PrefabInstance:
       propertyPath: isTimePenalty
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 7764447054066755471, guid: b4e0570226fc6384fba75050215b3ae2,
+        type: 3}
+      propertyPath: penalty
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b4e0570226fc6384fba75050215b3ae2, type: 3}
 --- !u!4 &1551314407 stripped
@@ -15045,6 +15145,11 @@ PrefabInstance:
       propertyPath: isTimePenalty
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 8215774953257661754, guid: 78b96a2b0d60e6443997c6f67c18f29b,
+        type: 3}
+      propertyPath: penalty
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 78b96a2b0d60e6443997c6f67c18f29b, type: 3}
 --- !u!4 &1596727659 stripped
@@ -15228,6 +15333,11 @@ PrefabInstance:
         type: 3}
       propertyPath: isTimePenalty
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8215774953257661754, guid: 78b96a2b0d60e6443997c6f67c18f29b,
+        type: 3}
+      propertyPath: penalty
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 78b96a2b0d60e6443997c6f67c18f29b, type: 3}
@@ -15644,6 +15754,11 @@ PrefabInstance:
       propertyPath: isTimePenalty
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 8215774953257661754, guid: 78b96a2b0d60e6443997c6f67c18f29b,
+        type: 3}
+      propertyPath: penalty
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 78b96a2b0d60e6443997c6f67c18f29b, type: 3}
 --- !u!4 &1640853488 stripped
@@ -16015,6 +16130,11 @@ PrefabInstance:
       propertyPath: isTimePenalty
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 7764447054066755471, guid: b4e0570226fc6384fba75050215b3ae2,
+        type: 3}
+      propertyPath: penalty
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b4e0570226fc6384fba75050215b3ae2, type: 3}
 --- !u!1001 &1685107101
@@ -16089,6 +16209,11 @@ PrefabInstance:
       propertyPath: isTimePenalty
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 7764447054066755471, guid: b4e0570226fc6384fba75050215b3ae2,
+        type: 3}
+      propertyPath: penalty
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b4e0570226fc6384fba75050215b3ae2, type: 3}
 --- !u!1001 &1704979944
@@ -16162,6 +16287,11 @@ PrefabInstance:
         type: 3}
       propertyPath: isTimePenalty
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7764447054066755471, guid: b4e0570226fc6384fba75050215b3ae2,
+        type: 3}
+      propertyPath: penalty
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b4e0570226fc6384fba75050215b3ae2, type: 3}
@@ -16968,6 +17098,11 @@ PrefabInstance:
       propertyPath: isTimePenalty
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 8215774953257661754, guid: 78b96a2b0d60e6443997c6f67c18f29b,
+        type: 3}
+      propertyPath: penalty
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 78b96a2b0d60e6443997c6f67c18f29b, type: 3}
 --- !u!1001 &1824695432
@@ -17140,6 +17275,11 @@ PrefabInstance:
         type: 3}
       propertyPath: isTimePenalty
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8215774953257661754, guid: 78b96a2b0d60e6443997c6f67c18f29b,
+        type: 3}
+      propertyPath: penalty
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 78b96a2b0d60e6443997c6f67c18f29b, type: 3}
@@ -17393,6 +17533,11 @@ PrefabInstance:
         type: 3}
       propertyPath: isTimePenalty
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8215774953257661754, guid: 78b96a2b0d60e6443997c6f67c18f29b,
+        type: 3}
+      propertyPath: penalty
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 78b96a2b0d60e6443997c6f67c18f29b, type: 3}
@@ -18792,6 +18937,11 @@ PrefabInstance:
       propertyPath: isTimePenalty
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 7764447054066755471, guid: b4e0570226fc6384fba75050215b3ae2,
+        type: 3}
+      propertyPath: penalty
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b4e0570226fc6384fba75050215b3ae2, type: 3}
 --- !u!1 &1984870862
@@ -19761,6 +19911,11 @@ PrefabInstance:
         type: 3}
       propertyPath: isTimePenalty
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7764447054066755471, guid: b4e0570226fc6384fba75050215b3ae2,
+        type: 3}
+      propertyPath: penalty
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b4e0570226fc6384fba75050215b3ae2, type: 3}

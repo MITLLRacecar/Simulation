@@ -250,6 +250,7 @@ public class PythonInterface
             if (this.pythonEndPoints[i]?.Port == pythonPort)
             {
                 this.pythonEndPoints[i] = null;
+                LevelManager.GetCar(i).Drive.Stop();
                 break;
             }
         }

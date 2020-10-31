@@ -127,7 +127,7 @@ public class LevelManager : MonoBehaviour
     public static void HandleCheckpoint(int carIndex, int checkpointIndex)
     {
         // Only count the checkpoint if the car has not passed this checkpoint (or a later one) yet
-        if (LevelManager.instance.curKeyPoints[carIndex] <= checkpointIndex)
+        if (!LevelManager.instance.failed && LevelManager.instance.curKeyPoints[carIndex] <= checkpointIndex)
         {
             // Add 1 to account for the start, making this a key point index
             checkpointIndex++;
@@ -150,7 +150,7 @@ public class LevelManager : MonoBehaviour
         int finishIndex = LevelManager.instance.keyPoints.Length - 1;
 
         // Only count if the car has not passed the finish yet
-        if (LevelManager.instance.curKeyPoints[carIndex] < finishIndex)
+        if (!LevelManager.instance.failed && LevelManager.instance.curKeyPoints[carIndex] < finishIndex)
         {
             LevelManager.instance.curKeyPoints[carIndex] = finishIndex;
 
@@ -185,7 +185,20 @@ public class LevelManager : MonoBehaviour
     /// <param name="failureMessage">The message to display describing the reason the objective was failed.</param>
     public static void HandleFailure(int carIndex, string failureMessage)
     {
-        LevelManager.instance.screenManager.HandleFailure(carIndex, failureMessage);
+        // Do not count the failure if the car has already finished
+        if (!(LevelManager.IsEvaluation && LevelManager.instance.curKeyPoints[carIndex] == LevelManager.instance.keyPoints.Length - 1))
+        {
+            LevelManager.instance.screenManager.HandleFailure(carIndex, failureMessage);
+
+            if (LevelManager.NumPlayers > 1)
+            {
+                LevelManager.ResetCar(carIndex);
+            }
+            else if (LevelManager.IsEvaluation)
+            {
+                LevelManager.instance.failed = true;
+            }
+        }
     }
 
     /// <summary>
@@ -282,6 +295,11 @@ public class LevelManager : MonoBehaviour
     private int[] curKeyPoints;
 
     /// <summary>
+    /// True if the level has been failed.
+    /// </summary>
+    private bool failed;
+
+    /// <summary>
     /// The time at which the race began.
     /// </summary>
     private float startTime;
@@ -305,11 +323,6 @@ public class LevelManager : MonoBehaviour
     /// The time in seconds since the start of the race at which car 0 passed the previous key point.
     /// </summary>
     private float prevKeyPointTime;
-
-    /// <summary>
-    /// The default fixed delta time for the current level.
-    /// </summary>
-    private float defaultFixedDeltaTime;
 
     /// <summary>
     /// An array indicating which cars are currently connected to a python script.
@@ -372,7 +385,6 @@ public class LevelManager : MonoBehaviour
 
         LevelManager.instance = this;
         this.mode = LevelManager.IsEvaluation ? SimulationMode.Wait : SimulationMode.DefaultDrive;
-        this.defaultFixedDeltaTime = Time.fixedDeltaTime;
 
         this.raceCameras = this.GetComponentsInChildren<Camera>();
     }
@@ -410,7 +422,7 @@ public class LevelManager : MonoBehaviour
 
             case SimulationMode.UserProgram:
                 this.pythonInterface.HandleUpdate();
-                if (LevelManager.IsEvaluation && this.curKeyPoints[0] < this.keyPoints.Length - 1)
+                if (LevelManager.IsEvaluation && !LevelManager.instance.failed && this.curKeyPoints[0] < this.keyPoints.Length - 1)
                 {
                     this.keyPointDurations[this.curKeyPoints[0] + 1] = this.CurTime - this.prevKeyPointTime;
                     this.screenManager.UpdateTime(this.CurTime, this.keyPointDurations);
@@ -459,7 +471,7 @@ public class LevelManager : MonoBehaviour
             this.wasConnectedProgramsChanged = false; // TODO: there is probably a data race here
         }
 
-        // In non-evaluation mode, skip between checkpoints with the tab key
+        // In non-evaluation mode, skip between checkpoints on tab key
         if (Input.GetKeyDown(KeyCode.Tab))
         {
             if (LevelManager.IsEvaluation)
@@ -469,6 +481,19 @@ public class LevelManager : MonoBehaviour
             else
             {
                 this.curKeyPoints[0] = Math.Min(this.curKeyPoints[0] + 1, this.NumCheckpoints);
+                LevelManager.ResetCar(0);
+            }
+        }
+
+        // In non-evaluation mode, reset to current checkpoint on Caps Lock key
+        if (Input.GetKeyDown(KeyCode.CapsLock))
+        {
+            if (LevelManager.IsEvaluation)
+            {
+                this.screenManager.ShowWarning("Checkpoint reset (CAPS LOCK key) is disabled in evaluation mode.");
+            }
+            else
+            {
                 LevelManager.ResetCar(0);
             }
         }
@@ -627,6 +652,7 @@ public class LevelManager : MonoBehaviour
     /// </summary>
     private void HandleStart()
     {
+        this.HandleUnpause();
         if (this.mode != SimulationMode.UserProgram)
         {
             if (this.connectedPrograms.Length > 0)
@@ -634,7 +660,11 @@ public class LevelManager : MonoBehaviour
                 this.mode = SimulationMode.UserProgram;
                 this.pythonInterface.HandleStart();
                 this.screenManager.UpdateMode(this.mode);
-                this.startTime = Time.time;
+
+                if (this.startTime == 0)
+                {
+                    this.startTime = Time.time;
+                }
             }
             else
             {
@@ -650,7 +680,7 @@ public class LevelManager : MonoBehaviour
     {
         if (LevelManager.IsEvaluation)
         {
-            this.HandlePause();
+            this.TogglePause();
         }
         else if (this.mode == SimulationMode.UserProgram)
         {
@@ -679,15 +709,16 @@ public class LevelManager : MonoBehaviour
     /// </summary>
     private void HandleExit()
     {
+        this.SetTimeScale(1.0f);
         this.UpdateBestTimes();
         this.pythonInterface.HandleExit();
         SceneManager.LoadScene(LevelCollection.MainMenuBuildIndex);
     }
 
     /// <summary>
-    /// Handles when the user pauses the game (BACK in evaluation mode).
+    /// Toggles whether the game is paused (BACK in evaluation mode).
     /// </summary>
-    private void HandlePause()
+    private void TogglePause()
     {
         if (Time.timeScale > 0)
         {
@@ -695,6 +726,18 @@ public class LevelManager : MonoBehaviour
             this.screenManager.SetPause(true);
         }
         else
+        {
+            Time.timeScale = this.timeScale;
+            this.screenManager.SetPause(false);
+        }
+    }
+
+    /// <summary>
+    /// Unpauses the game if it is currently paused.
+    /// </summary>
+    private void HandleUnpause()
+    {
+        if (Time.timeScale == 0)
         {
             Time.timeScale = this.timeScale;
             this.screenManager.SetPause(false);
@@ -718,7 +761,7 @@ public class LevelManager : MonoBehaviour
     {
         this.timeScale = timeScale;
         Time.timeScale = timeScale;
-        Time.fixedDeltaTime = this.defaultFixedDeltaTime * timeScale;
+        Time.fixedDeltaTime = Settings.DefaultFixedDeltaTime * timeScale;
 
         if (timeScale > 0)
         {

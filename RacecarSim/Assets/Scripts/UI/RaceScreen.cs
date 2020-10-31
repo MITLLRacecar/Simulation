@@ -22,12 +22,12 @@ public class RaceScreen : ScreenManager
     #region Overrides
     public override void HandleFailure(int carIndex, string reason)
     {
-        throw new System.NotImplementedException();
+        // Intentionally left blank (for now)
     }
 
     public override void HandleWin(float time, bool isNewBestTime)
     {
-        throw new System.NotImplementedException();
+        this.ShowMessage($"Race completed in {time:F3} seconds!", Color.green);
     }
 
     public override void UpdateConnectedPrograms(bool[] connectedPrograms)

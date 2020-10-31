@@ -100,11 +100,6 @@ public class Racecar : MonoBehaviour
             print("Kachow!");
         }
 
-        if (Controller.WasPressed(Controller.Button.Y))
-        {
-            LevelManager.ResetCar(this.Index);
-        }
-
         // Use the bumpers to adjust max speed
         if (Controller.WasPressed(Controller.Button.RB))
         {

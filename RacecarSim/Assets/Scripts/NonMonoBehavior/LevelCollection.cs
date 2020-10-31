@@ -188,7 +188,7 @@ public class LevelCollection
                 {
                     DisplayName = "Jupyter Notebook",
                     BuildIndex = 15,
-                    HelpMessage = "Left-click a block to select it, then: left-click it to change it's tag, right-click it to change it's color, or scroll to rotate"
+                    HelpMessage = "Click a block to select it, then: left-click it to change it's tag, right-click it to change it's color, or scroll to rotate"
                 },
                 new LevelInfo()
                 {

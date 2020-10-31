@@ -7,14 +7,29 @@ using UnityEngine.UI;
 public abstract class ScreenManager : MonoBehaviour
 {
     #region Constant
+    /// <summary>
+    /// The number of seconds we expect a user to read each character in a message.
+    /// </summary>
     private const float secondsPerChar = 0.08f;
 
+    /// <summary>
+    /// The minimum time (in seconds) that an error message can be shown.
+    /// </summary>
     private const float minErrorTime = 5;
 
+    /// <summary>
+    /// The color of text used in an error message.
+    /// </summary>
     private static readonly Color errorColor = new Color(1, 0.25f, 0.25f);
 
+    /// <summary>
+    /// The minimum time (in seconds) that a warning message can be shown.
+    /// </summary>
     private const float minWarningTime = 3;
 
+    /// <summary>
+    /// The color of text used in a warning message.
+    /// </summary>
     private static readonly Color warningColor = Color.yellow;
     #endregion
 

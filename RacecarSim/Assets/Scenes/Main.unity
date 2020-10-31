@@ -8893,10 +8893,12 @@ MonoBehaviour:
     <b>Right-Alt</b>: Decrease
     slow motion
 
-    <b>Tab</b>: Skip to the next checkpoint
+    <b>Caps Lock</b>: Reset to checkpoint
 
-    <b>Arrow keys</b>:
-    Toggle race camera
+    <b>Tab</b>: Skip
+    to the next checkpoint
+
+    <b>Arrow keys</b>: Toggle race camera
 
 '
 --- !u!222 &1045483923

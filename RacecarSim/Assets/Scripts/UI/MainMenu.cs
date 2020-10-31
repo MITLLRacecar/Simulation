@@ -45,8 +45,8 @@ public class MainMenu : MonoBehaviour
         MainMenu.prevCollectionIndex = this.dropdowns[(int)Dropdowns.CollectionSelect].value;
         MainMenu.prevLevelIndex = this.dropdowns[(int)Dropdowns.LevelSelect].value;
 
-        LevelManager.IsEvaluation = this.toggles[(int)Toggles.IsEvaluation].isOn;
         LevelManager.NumPlayers = this.dropdowns[(int)Dropdowns.NumCars].value + 1;
+        LevelManager.IsEvaluation = this.toggles[(int)Toggles.IsEvaluation].isOn || LevelManager.NumPlayers > 1;
 
         LevelManager.LevelInfo = this.SelectedLevel;
         SceneManager.LoadScene(this.SelectedLevel.BuildIndex, LoadSceneMode.Single);
@@ -145,6 +145,15 @@ public class MainMenu : MonoBehaviour
 
         // Regardless of whether it is shown, we always set the dropdown value since it determines NumPlayers when the level is loaded
         numCarDropdown.value = numCars - 1;
+    }
+
+    /// <summary>
+    /// Handles when the user selects a new value in the num cars dropdown.
+    /// </summary>
+    public void HandleNumCarsChange()
+    {
+        // Hide the evaluation mode toggle if we have selected multiple cars
+        this.toggles[(int)Toggles.IsEvaluation].gameObject.SetActive(this.dropdowns[(int)Dropdowns.NumCars].value == 0);
     }
 
     /// <summary>

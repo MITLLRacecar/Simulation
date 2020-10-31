@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public static class NormalDist
 {
@@ -20,5 +21,10 @@ public static class NormalDist
         {
             return mean - sdev * Mathf.Sqrt(-1.57079632679f * Mathf.Log(1 - Mathf.Pow(2 * x - 1, 2), Mathf.Exp(1)));
         }
+    }
+
+    static NormalDist()
+    {
+        UnityEngine.Random.InitState(DateTime.Now.Millisecond);
     }
 }

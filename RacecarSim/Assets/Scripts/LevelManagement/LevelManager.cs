@@ -766,7 +766,10 @@ public class LevelManager : MonoBehaviour
     /// </summary>
     private void UpdateBestTimes()
     {
-        if (LevelManager.IsEvaluation && LevelManager.NumPlayers == 1 && this.curKeyPoints[0] > 0)
+        if (LevelManager.IsEvaluation &&
+            LevelManager.NumPlayers == 1 &&
+            this.curKeyPoints[0] > 0 &&
+            !Settings.CheatMode)
         {
             BestTimeInfo bestTimeInfo = SavedDataManager.Data.BestTimes[LevelManager.LevelInfo.WinableIndex];
 

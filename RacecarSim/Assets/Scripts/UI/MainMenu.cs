@@ -16,6 +16,25 @@ public class MainMenu : MonoBehaviour
     private GameObject numCars;
     #endregion
 
+    #region Constants
+    /// <summary>
+    /// The keys of the Konami Code.
+    /// </summary>
+    public static KeyCode[] KonamiCodes =
+    {
+        KeyCode.UpArrow,
+        KeyCode.UpArrow,
+        KeyCode.DownArrow,
+        KeyCode.DownArrow,
+        KeyCode.LeftArrow,
+        KeyCode.RightArrow,
+        KeyCode.LeftArrow,
+        KeyCode.RightArrow,
+        KeyCode.B,
+        KeyCode.A
+    };
+    #endregion
+
     #region Public Interface
     /// <summary>
     /// Loads the level selected in the dropdown menu.
@@ -212,6 +231,11 @@ public class MainMenu : MonoBehaviour
     /// </summary>
     private BestTimesUI bestTimesPane;
 
+    /// <summary>
+    /// The index of the next key in the Konami Code which the user must press.
+    /// </summary>
+    private int konamiCodeIndex = 0;
+
     private void Awake()
     {
         this.dropdowns = this.GetComponentsInChildren<Dropdown>();
@@ -251,5 +275,23 @@ public class MainMenu : MonoBehaviour
 
         // Begin with the previous level selection
         this.HandleLevelCollectionDropdownChange(MainMenu.prevLevelIndex, LevelManager.IsEvaluation, LevelManager.NumPlayers);
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(MainMenu.KonamiCodes[this.konamiCodeIndex]))
+        {
+            this.konamiCodeIndex++;
+            if (this.konamiCodeIndex == MainMenu.KonamiCodes.Length)
+            {
+                print("Cheat mode activated");
+                Settings.CheatMode = true;
+                this.konamiCodeIndex = 0;
+            }
+        }
+        else if (Input.anyKeyDown)
+        {
+            this.konamiCodeIndex = 0;
+        }
     }
 }

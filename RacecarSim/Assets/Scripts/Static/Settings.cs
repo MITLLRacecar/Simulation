@@ -41,6 +41,11 @@ public static class Settings
     public static bool IsRealism = true;
 
     /// <summary>
+    /// If true, controller input is still sent in evaluation mode but best times are not recorded.
+    /// </summary>
+    public static bool CheatMode = false;
+
+    /// <summary>
     /// The resolution to use for the depth camera.
     /// </summary>
     public static DepthResolution DepthRes;

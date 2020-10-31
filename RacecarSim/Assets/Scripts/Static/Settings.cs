@@ -14,6 +14,11 @@ public static class Settings
     private const bool defaultIsRealism = true;
 
     /// <summary>
+    /// The default fixed delta time (in seconds) chosen by Unity.
+    /// </summary>
+    public static readonly float DefaultFixedDeltaTime = Time.fixedDeltaTime;
+
+    /// <summary>
     /// The divide factor corresponding to each DepthResolution.
     /// </summary>
     private static readonly int[] depthDivideFactors =

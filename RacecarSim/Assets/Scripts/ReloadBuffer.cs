@@ -32,6 +32,7 @@ public class ReloadBuffer : MonoBehaviour
     {
         this.counter = ReloadBuffer.waitTime;
         Time.timeScale = 1.0f;
+        Time.fixedDeltaTime = Settings.DefaultFixedDeltaTime;
     }
 
     private void Update()

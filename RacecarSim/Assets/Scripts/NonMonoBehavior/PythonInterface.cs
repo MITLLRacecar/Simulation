@@ -302,6 +302,8 @@ public class PythonInterface
                 }
                 Header header = (Header)data[0];
 
+                bool shouldSendController = LevelManager.LevelManagerMode != LevelManagerMode.Race || Settings.CheatMode;
+
                 // Send the appropriate response if it was an API call, or break if it was a python_finished message
                 byte[] sendData;
                 switch (header)
@@ -345,35 +347,35 @@ public class PythonInterface
                         this.udpClient.Send(sendData, sendData.Length, endPoint);
                         break;
 
-                    // Always return null controller data when in evaluation mode (except in cheat mode)
+                    // Always return null controller data when in race mode (except in cheat mode)
                     case Header.controller_is_down:
                         Controller.Button buttonDown = (Controller.Button)data[1];
-                        sendData = BitConverter.GetBytes(Controller.IsDown(buttonDown) && (!LevelManager.IsEvaluation || Settings.CheatMode));
+                        sendData = BitConverter.GetBytes(Controller.IsDown(buttonDown) && shouldSendController);
                         this.udpClient.Send(sendData, sendData.Length, endPoint);
                         break;
 
                     case Header.controller_was_pressed:
                         Controller.Button buttonPressed = (Controller.Button)data[1];
-                        sendData = BitConverter.GetBytes(Controller.WasPressed(buttonPressed) && (!LevelManager.IsEvaluation || Settings.CheatMode));
+                        sendData = BitConverter.GetBytes(Controller.WasPressed(buttonPressed) && shouldSendController);
                         this.udpClient.Send(sendData, sendData.Length, endPoint);
                         break;
 
                     case Header.controller_was_released:
                         Controller.Button buttonReleased = (Controller.Button)data[1];
-                        sendData = BitConverter.GetBytes(Controller.WasReleased(buttonReleased) && (!LevelManager.IsEvaluation || Settings.CheatMode));
+                        sendData = BitConverter.GetBytes(Controller.WasReleased(buttonReleased) && shouldSendController);
                         this.udpClient.Send(sendData, sendData.Length, endPoint);
                         break;
 
                     case Header.controller_get_trigger:
                         Controller.Trigger trigger = (Controller.Trigger)data[1];
-                        float triggerValue = (!LevelManager.IsEvaluation || Settings.CheatMode) ? Controller.GetTrigger(trigger) : 0;
+                        float triggerValue = shouldSendController ? Controller.GetTrigger(trigger) : 0;
                         sendData = BitConverter.GetBytes(triggerValue);
                         this.udpClient.Send(sendData, sendData.Length, endPoint);
                         break;
 
                     case Header.controller_get_joystick:
                         Controller.Joystick joystick = (Controller.Joystick)data[1];
-                        Vector2 joystickValues = (!LevelManager.IsEvaluation || Settings.CheatMode) ? Controller.GetJoystick(joystick) : Vector2.zero;
+                        Vector2 joystickValues = shouldSendController ? Controller.GetJoystick(joystick) : Vector2.zero;
                         sendData = new byte[sizeof(float) * 2];
                         Buffer.BlockCopy(new float[] { joystickValues.x, joystickValues.y }, 0, sendData, 0, sendData.Length);
                         this.udpClient.Send(sendData, sendData.Length, endPoint);

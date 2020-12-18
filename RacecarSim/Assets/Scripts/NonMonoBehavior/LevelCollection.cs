@@ -141,13 +141,13 @@ public class LevelCollection
                 {
                     DisplayName = "Cone Slalom: Regular",
                     BuildIndex = 11,
-                    IsWinable = true
+                    IsRaceable = true
                 },
                 new LevelInfo()
                 {
                     DisplayName = "Cone Slalom: Hard",
                     BuildIndex = 12,
-                    IsWinable = true,
+                    IsRaceable = true,
                     NumCheckpoints = 2
                 }
             }
@@ -173,7 +173,7 @@ public class LevelCollection
                 {
                     DisplayName = "B: Wall Following",
                     BuildIndex = 14,
-                    IsWinable = true,
+                    IsRaceable = true,
                     NumCheckpoints = 2
                 }
             }
@@ -194,7 +194,7 @@ public class LevelCollection
                 {
                     DisplayName = "AR Tag Decisions",
                     BuildIndex = 16,
-                    IsWinable = true,
+                    IsRaceable = true,
                     NumCheckpoints = 2
                 },
             }
@@ -209,14 +209,14 @@ public class LevelCollection
                 {
                     DisplayName = "Time Trial",
                     BuildIndex = 17,
-                    IsWinable = true,
+                    IsRaceable = true,
                     NumCheckpoints = 3
                 },
                 new LevelInfo()
                 {
                     DisplayName = "Grand Prix",
                     BuildIndex = 18,
-                    IsWinable = true,
+                    IsRaceable = true,
                     NumCheckpoints = 5,
                     MaxCars = 4
                 },
@@ -251,7 +251,7 @@ public class LevelCollection
                 {
                     DisplayName = "Speed Limit",
                     BuildIndex = 20,
-                    IsWinable = true
+                    IsRaceable = true
                 },
             }
         },
@@ -265,20 +265,20 @@ public class LevelCollection
                 {
                     DisplayName = "Basic Finish",
                     BuildIndex = 21,
-                    IsWinable = true
+                    IsRaceable = true
                 },
                 new LevelInfo()
                 {
                     DisplayName = "Checkpoints and Finish",
                     BuildIndex = 22,
-                    IsWinable = true,
+                    IsRaceable = true,
                     NumCheckpoints = 2
                 },
                 new LevelInfo()
                 {
                     DisplayName = "Race",
                     BuildIndex = 23,
-                    IsWinable = true,
+                    IsRaceable = true,
                     NumCheckpoints = 2,
                     MaxCars = 4
                 },
@@ -286,7 +286,7 @@ public class LevelCollection
                 {
                     DisplayName = "Objectives",
                     BuildIndex = 24,
-                    IsWinable = true,
+                    IsRaceable = true,
                     NumCheckpoints = 2,
                     HelpMessage = "Pass red cones on the right and blue cones on the left"
                 },
@@ -307,7 +307,7 @@ public class LevelCollection
             foreach (LevelInfo level in collection.Levels)
             {
                 level.CollectionName = collection.ShortName;
-                if (level.IsWinable)
+                if (level.IsRaceable)
                 {
                     level.WinableIndex = LevelInfo.WinableLevels.Count;
                     LevelInfo.WinableLevels.Add(level);

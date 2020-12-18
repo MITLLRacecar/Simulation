@@ -23,9 +23,9 @@ public class LevelInfo
     public int BuildIndex;
 
     /// <summary>
-    /// True if the level has a completable objective.
+    /// True if the level supports LevelManagerMode.Race.
     /// </summary>
-    public bool IsWinable = false;
+    public bool IsRaceable = false;
 
     /// <summary>
     /// The index of a winable level in LevelInfo.WinableLevels.
@@ -70,6 +70,6 @@ public class LevelInfo
     {
         DisplayName = "Default Level",
         BuildIndex = -1,
-        IsWinable = false
+        IsRaceable = false
     };
 }

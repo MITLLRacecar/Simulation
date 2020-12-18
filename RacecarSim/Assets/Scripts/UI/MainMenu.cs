@@ -33,6 +33,25 @@ public class MainMenu : MonoBehaviour
         KeyCode.B,
         KeyCode.A
     };
+
+    /// <summary>
+    /// The LevelManagerModes are shown for a raceable level.
+    /// </summary>
+    private static List<Dropdown.OptionData> ModeOptionsWithRace = new List<Dropdown.OptionData>()
+    {
+        new Dropdown.OptionData("Exploration"),
+        new Dropdown.OptionData("Autograder"),
+        new Dropdown.OptionData("Race")
+    };
+
+    /// <summary>
+    /// The LevelManagerModes shown for a non-raceable level.
+    /// </summary>
+    private static List<Dropdown.OptionData> ModeOptionsWithoutRace = new List<Dropdown.OptionData>()
+    {
+        new Dropdown.OptionData("Exploration"),
+        new Dropdown.OptionData("Autograder")
+    };
     #endregion
 
     #region Public Interface
@@ -46,7 +65,7 @@ public class MainMenu : MonoBehaviour
         MainMenu.prevLevelIndex = this.dropdowns[(int)Dropdowns.LevelSelect].value;
 
         LevelManager.NumPlayers = this.dropdowns[(int)Dropdowns.NumCars].value + 1;
-        LevelManager.IsEvaluation = this.toggles[(int)Toggles.IsEvaluation].isOn || LevelManager.NumPlayers > 1;
+        LevelManager.LevelManagerMode = (LevelManagerMode)this.dropdowns[(int)Dropdowns.Mode].value;
 
         LevelManager.LevelInfo = this.SelectedLevel;
         SceneManager.LoadScene(this.SelectedLevel.BuildIndex, LoadSceneMode.Single);
@@ -83,23 +102,23 @@ public class MainMenu : MonoBehaviour
     /// <remarks>This overload exists to be called from Unity, since Unity cannot call functions with multiple parameters.</remarks>
     public void HandleLevelCollectionDropdownChange()
     {
-        this.HandleLevelCollectionDropdownChange(0, false, 1);
+        this.HandleLevelCollectionDropdownChange(0, LevelManagerMode.Exploration, 1);
     }
 
     /// <summary>
     /// Handles when the user selects a new value in the level collection dropdown.
     /// </summary>
     /// <param name="selectedLevel">The index of the level which should be selected by default in the level select menu.</param>
-    /// <param name="isEvaluation">True if the isEvaluation toggle should be checked.</param>
-    /// <param name="numCars">The number of cars to spawn in the level.</param>
-    public void HandleLevelCollectionDropdownChange(int selectedLevel, bool isEvaluation, int numCars)
+    /// <param name="mode">The LevelManagerMode which should be selected.</param>
+    /// <param name="numCars">The number of cars which should be selected.</param>
+    public void HandleLevelCollectionDropdownChange(int selectedLevel, LevelManagerMode mode, int numCars)
     {
         Dropdown levelSelect = this.dropdowns[(int)Dropdowns.LevelSelect];
         levelSelect.ClearOptions();
         levelSelect.AddOptions(this.SelectedLevelCollection.LevelNames);
         levelSelect.value = selectedLevel;
 
-        this.HandleLevelDropdownChange(isEvaluation, numCars);
+        this.HandleLevelDropdownChange(mode, numCars);
     }
 
     /// <summary>
@@ -108,19 +127,25 @@ public class MainMenu : MonoBehaviour
     /// <remarks>This overload exists to be called from Unity, since Unity cannot call functions with multiple parameters.</remarks>
     public void HandleLevelDropdownChange()
     {
-        this.HandleLevelDropdownChange(false, 1);
+        this.HandleLevelDropdownChange(LevelManagerMode.Exploration, 1);
     }
 
     /// <summary>
     /// Handles when the user selects a new value in the level dropdown.
     /// </summary>
-    /// <param name="isEvaluation">True if the isEvaluation toggle should be checked.</param>
-    /// <param name="numCars">The number of cars to spawn in the level.</param>
-    public void HandleLevelDropdownChange(bool isEvaluation, int numCars)
+    /// <param name="mode">The LevelManagerMode which should be selected.</param>
+    /// <param name="numCars">The number of cars which should be selected.</param>
+    public void HandleLevelDropdownChange(LevelManagerMode mode, int numCars)
     {
-        // Show and set the IsEvaluation toggle if the level is winnable
-        this.toggles[(int)Toggles.IsEvaluation].gameObject.SetActive(this.SelectedLevel.IsWinable);
-        this.toggles[(int)Toggles.IsEvaluation].isOn = isEvaluation;
+        // Adjust mode dropdown to show/hide "Race" option based on level
+        Dropdown modeDropdown = this.dropdowns[(int)Dropdowns.Mode];
+        List<Dropdown.OptionData> modeOptions = SelectedLevel.IsRaceable ? MainMenu.ModeOptionsWithRace : MainMenu.ModeOptionsWithoutRace;
+        if (modeDropdown.options.Count != modeOptions.Count)
+        {
+            modeDropdown.options = modeOptions;
+        }
+
+        modeDropdown.value = (int)mode;
 
         // Show and populate the numCars dropdown if the level supports multiple cars
         Dropdown numCarDropdown = this.dropdowns[(int)Dropdowns.NumCars];
@@ -152,8 +177,17 @@ public class MainMenu : MonoBehaviour
     /// </summary>
     public void HandleNumCarsChange()
     {
-        // Hide the evaluation mode toggle if we have selected multiple cars
-        this.toggles[(int)Toggles.IsEvaluation].gameObject.SetActive(this.dropdowns[(int)Dropdowns.NumCars].value == 0);
+        // Lock the mode dropdown to "Race" if the user chcose multiple cars
+        Dropdown modeDropdown = this.dropdowns[(int)Dropdowns.Mode];
+        if (this.dropdowns[(int)Dropdowns.NumCars].value > 0)
+        {
+            modeDropdown.value = (int)LevelManagerMode.Race;
+            modeDropdown.interactable = false;
+        }
+        else
+        {
+            modeDropdown.interactable = true;
+        }
     }
 
     /// <summary>
@@ -194,15 +228,8 @@ public class MainMenu : MonoBehaviour
     {
         CollectionSelect = 0,
         LevelSelect = 1,
-        NumCars = 2
-    }
-
-    /// <summary>
-    /// The toggles (check boxes) in the main menu, with values corresponding to the index in toggles.
-    /// </summary>
-    private enum Toggles
-    {
-        IsEvaluation = 0
+        Mode = 2,
+        NumCars = 3
     }
 
     /// <summary>
@@ -283,7 +310,7 @@ public class MainMenu : MonoBehaviour
         collectionSelect.value = MainMenu.prevCollectionIndex;
 
         // Begin with the previous level selection
-        this.HandleLevelCollectionDropdownChange(MainMenu.prevLevelIndex, LevelManager.IsEvaluation, LevelManager.NumPlayers);
+        this.HandleLevelCollectionDropdownChange(MainMenu.prevLevelIndex, LevelManager.LevelManagerMode, LevelManager.NumPlayers);
     }
 
     private void Update()

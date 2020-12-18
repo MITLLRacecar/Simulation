@@ -15,7 +15,17 @@ public enum SimulationMode
 }
 
 /// <summary>
-/// The top level controller managing a simulation level. 
+/// The possible modes in which a level can be run.
+/// </summary>
+public enum LevelManagerMode
+{
+    Exploration,
+    Autograder,
+    Race
+}
+
+/// <summary>
+/// The top level controller managing a simulation level.
 /// </summary>
 public class LevelManager : MonoBehaviour
 {
@@ -87,7 +97,7 @@ public class LevelManager : MonoBehaviour
     /// <summary>
     /// True if the current simulation is an evaluation run.
     /// </summary>
-    public static bool IsEvaluation = false;
+    public static LevelManagerMode LevelManagerMode;
 
     /// <summary>
     /// The info of the current level.
@@ -100,10 +110,10 @@ public class LevelManager : MonoBehaviour
     /// <param name="errorText">A message describing the error.</param>
     public static void HandleError(string errorText)
     {
-        LevelManager.instance.mode = LevelManager.IsEvaluation ? SimulationMode.Wait : SimulationMode.DefaultDrive;
-        LevelManager.instance.screenManager.UpdateMode(LevelManager.instance.mode);
-        
-        errorText = $">> Error: {errorText} Returning to {LevelManager.instance.mode} mode.";
+        LevelManager.instance.simulationMode = LevelManager.LevelManagerMode == LevelManagerMode.Exploration ? SimulationMode.DefaultDrive : SimulationMode.Wait;
+        LevelManager.instance.screenManager.UpdateMode(LevelManager.instance.simulationMode);
+
+        errorText = $">> Error: {errorText} Returning to {LevelManager.instance.simulationMode} mode.";
         Debug.LogError(errorText);
         LevelManager.instance.screenManager.ShowError(errorText);
     }
@@ -133,7 +143,7 @@ public class LevelManager : MonoBehaviour
             checkpointIndex++;
             LevelManager.instance.curKeyPoints[carIndex] = checkpointIndex;
 
-            if (LevelManager.IsEvaluation && carIndex == 0)
+            if (LevelManager.LevelManagerMode == LevelManagerMode.Race && carIndex == 0)
             {
                 LevelManager.instance.keyPointDurations[checkpointIndex] = LevelManager.instance.CurTime - LevelManager.instance.prevKeyPointTime;
                 LevelManager.instance.prevKeyPointTime = LevelManager.instance.CurTime;
@@ -154,7 +164,7 @@ public class LevelManager : MonoBehaviour
         {
             LevelManager.instance.curKeyPoints[carIndex] = finishIndex;
 
-            if (LevelManager.IsEvaluation)
+            if (LevelManager.LevelManagerMode == LevelManagerMode.Race)
             {
                 if (carIndex == 0)
                 {
@@ -169,10 +179,10 @@ public class LevelManager : MonoBehaviour
                         LevelManager.NumPlayers == 1 &&
                         SavedDataManager.Data.BestTimes[LevelManager.LevelInfo.WinableIndex].OverallTime > LevelManager.instance.CurTime;
 
-                    LevelManager.instance.mode = SimulationMode.Finished;
+                    LevelManager.instance.simulationMode = SimulationMode.Finished;
                     LevelManager.instance.screenManager.HandleWin(LevelManager.instance.CurTime, isNewBestTime);
                     LevelManager.instance.screenManager.UpdateTime(LevelManager.instance.CurTime, LevelManager.instance.keyPointDurations);
-                    LevelManager.instance.screenManager.UpdateMode(LevelManager.instance.mode);
+                    LevelManager.instance.screenManager.UpdateMode(LevelManager.instance.simulationMode);
                 }
             }
         }
@@ -186,7 +196,7 @@ public class LevelManager : MonoBehaviour
     public static void HandleFailure(int carIndex, string failureMessage)
     {
         // Do not count the failure if the car has already finished
-        if (!(LevelManager.IsEvaluation && LevelManager.instance.curKeyPoints[carIndex] == LevelManager.instance.keyPoints.Length - 1))
+        if (!(LevelManager.LevelManagerMode == LevelManagerMode.Race && LevelManager.instance.curKeyPoints[carIndex] == LevelManager.instance.keyPoints.Length - 1))
         {
             LevelManager.instance.screenManager.HandleFailure(carIndex, failureMessage);
 
@@ -194,7 +204,7 @@ public class LevelManager : MonoBehaviour
             {
                 LevelManager.ResetCar(carIndex);
             }
-            else if (LevelManager.IsEvaluation)
+            else if (LevelManager.LevelManagerMode == LevelManagerMode.Race)
             {
                 LevelManager.instance.failed = true;
             }
@@ -208,7 +218,7 @@ public class LevelManager : MonoBehaviour
     /// <remarks>If there are multiple cars in the race, this will penalize all cars.</remarks>
     public static void AddTimePenalty(float penalty)
     {
-        if (LevelManager.IsEvaluation)
+        if (LevelManager.LevelManagerMode == LevelManagerMode.Race)
         {
             LevelManager.instance.timePenalty += penalty;
         }
@@ -282,7 +292,7 @@ public class LevelManager : MonoBehaviour
     /// <summary>
     /// The current simulation mode.
     /// </summary>
-    private SimulationMode mode;
+    private SimulationMode simulationMode;
 
     /// <summary>
     /// The key points in the current level.
@@ -384,7 +394,7 @@ public class LevelManager : MonoBehaviour
         }
 
         LevelManager.instance = this;
-        this.mode = LevelManager.IsEvaluation ? SimulationMode.Wait : SimulationMode.DefaultDrive;
+        this.simulationMode = LevelManager.LevelManagerMode == LevelManagerMode.Exploration ? SimulationMode.DefaultDrive : SimulationMode.Wait;
 
         this.raceCameras = this.GetComponentsInChildren<Camera>();
     }
@@ -395,7 +405,7 @@ public class LevelManager : MonoBehaviour
         this.SpawnPlayers();
         this.pythonInterface = new PythonInterface(this.players);
 
-        if (LevelManager.IsEvaluation)
+        if (LevelManager.LevelManagerMode == LevelManagerMode.Race)
         {
             this.keyPointDurations = new float[this.keyPoints.Length];
             this.screenManager.UpdateTime(0.0f, this.keyPointDurations);
@@ -411,7 +421,7 @@ public class LevelManager : MonoBehaviour
 
     private void Update()
     {
-        switch (this.mode)
+        switch (this.simulationMode)
         {
             case SimulationMode.DefaultDrive:
                 foreach (Racecar player in this.players)
@@ -422,7 +432,7 @@ public class LevelManager : MonoBehaviour
 
             case SimulationMode.UserProgram:
                 this.pythonInterface.HandleUpdate();
-                if (LevelManager.IsEvaluation && !LevelManager.instance.failed && this.curKeyPoints[0] < this.keyPoints.Length - 1)
+                if (LevelManager.LevelManagerMode == LevelManagerMode.Race && !LevelManager.instance.failed && this.curKeyPoints[0] < this.keyPoints.Length - 1)
                 {
                     this.keyPointDurations[this.curKeyPoints[0] + 1] = this.CurTime - this.prevKeyPointTime;
                     this.screenManager.UpdateTime(this.CurTime, this.keyPointDurations);
@@ -474,31 +484,31 @@ public class LevelManager : MonoBehaviour
         // In non-evaluation mode, skip between checkpoints on tab key
         if (Input.GetKeyDown(KeyCode.Tab))
         {
-            if (LevelManager.IsEvaluation)
-            {
-                this.screenManager.ShowWarning("Checkpoint skipping (TAB key) is disabled in evaluation mode.");
-            }
-            else
+            if (LevelManager.LevelManagerMode == LevelManagerMode.Exploration)
             {
                 this.curKeyPoints[0] = Math.Min(this.curKeyPoints[0] + 1, this.NumCheckpoints);
                 LevelManager.ResetCar(0);
+            }
+            else
+            {
+                this.screenManager.ShowWarning("Checkpoint skipping (TAB key) is only available in exploration mode.");
             }
         }
 
         // In non-evaluation mode, reset to current checkpoint on Caps Lock key
         if (Input.GetKeyDown(KeyCode.CapsLock))
         {
-            if (LevelManager.IsEvaluation)
-            {
-                this.screenManager.ShowWarning("Checkpoint reset (CAPS LOCK key) is disabled in evaluation mode.");
-            }
-            else
+            if (LevelManager.LevelManagerMode == LevelManagerMode.Exploration)
             {
                 LevelManager.ResetCar(0);
             }
+            else
+            {
+                this.screenManager.ShowWarning("Checkpoint reset (CAPS LOCK key) is only available in exploration mode.");
+            }
         }
 
-        // For multi-car races, manage switching between race cameras 
+        // For multi-car races, manage switching between race cameras
         if (LevelManager.NumPlayers > 1)
         {
             this.ManageRaceCameras();
@@ -539,7 +549,7 @@ public class LevelManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Gets the location to which a certain car should be reset. 
+    /// Gets the location to which a certain car should be reset.
     /// </summary>
     /// <param name="carIndex">The index of the car to reset.</param>
     /// <returns>The transform of the key point at which the car should be reset.</returns>
@@ -602,7 +612,7 @@ public class LevelManager : MonoBehaviour
             (Vector3 spawnPosition, Quaternion spawnRotation) = this.GetSpawnLocation(0);
             this.players[0] = GameObject.Instantiate(this.playerPrefab, spawnPosition, spawnRotation).GetComponentInChildren<Racecar>();
             this.players[0].SetIndex(0);
-            
+    
             Hud hud = GameObject.Instantiate(this.hudPrefab).GetComponent<Hud>();
             this.players[0].GetComponentInChildren<Racecar>().Hud = hud;
             this.screenManager = hud;
@@ -644,7 +654,7 @@ public class LevelManager : MonoBehaviour
             raceScreen.SetCameras(playerCameraTextures, raceCameraTexture);
             this.screenManager = raceScreen;
         }
-        this.screenManager.UpdateMode(this.mode);
+        this.screenManager.UpdateMode(this.simulationMode);
     }
 
     /// <summary>
@@ -653,13 +663,13 @@ public class LevelManager : MonoBehaviour
     private void HandleStart()
     {
         this.HandleUnpause();
-        if (this.mode != SimulationMode.UserProgram)
+        if (this.simulationMode != SimulationMode.UserProgram)
         {
             if (this.connectedPrograms.Length > 0)
             {
-                this.mode = SimulationMode.UserProgram;
+                this.simulationMode = SimulationMode.UserProgram;
                 this.pythonInterface.HandleStart();
-                this.screenManager.UpdateMode(this.mode);
+                this.screenManager.UpdateMode(this.simulationMode);
 
                 if (this.startTime == 0)
                 {
@@ -678,18 +688,18 @@ public class LevelManager : MonoBehaviour
     /// </summary>
     private void HandleBack()
     {
-        if (LevelManager.IsEvaluation)
+        if (LevelManager.LevelManagerMode == LevelManagerMode.Race)
         {
             this.TogglePause();
         }
-        else if (this.mode == SimulationMode.UserProgram)
+        else if (this.simulationMode == SimulationMode.UserProgram)
         {
-            this.mode = SimulationMode.DefaultDrive;
+            this.simulationMode = SimulationMode.DefaultDrive;
             foreach (Racecar player in this.players)
             {
                 player.DefaultDriveStart();
             }
-            this.screenManager.UpdateMode(this.mode);
+            this.screenManager.UpdateMode(this.simulationMode);
         }
     }
 
@@ -809,7 +819,7 @@ public class LevelManager : MonoBehaviour
     /// </summary>
     private void UpdateBestTimes()
     {
-        if (LevelManager.IsEvaluation &&
+        if (LevelManager.LevelManagerMode == LevelManagerMode.Race &&
             LevelManager.NumPlayers == 1 &&
             this.curKeyPoints[0] > 0 &&
             !Settings.CheatMode)

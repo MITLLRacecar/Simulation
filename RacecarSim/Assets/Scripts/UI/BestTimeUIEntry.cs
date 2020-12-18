@@ -10,13 +10,13 @@ public class BestTimeUIEntry : MonoBehaviour
     /// </summary>
     public void HandleBegin()
     {
-        LevelManager.IsEvaluation = true;
+        LevelManager.LevelManagerMode = LevelManagerMode.Race;
         LevelManager.NumPlayers = 1;
 
         LevelManager.LevelInfo = this.level;
         SceneManager.LoadScene(this.level.BuildIndex, LoadSceneMode.Single);
     }
-    
+
     /// <summary>
     /// Initializes the entry with best time and level information.
     /// </summary>

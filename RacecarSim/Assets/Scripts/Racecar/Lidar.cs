@@ -8,7 +8,7 @@ public class Lidar : RacecarModule
 {
     #region Constants
     /// <summary>
-    /// The bitmask which ignores the UI Layer.
+    /// A bitmask which ignores the UI Layer.
     /// </summary>
     public const int IgnoreUIMask = ~(1 << 5);
 

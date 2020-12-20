@@ -8,6 +8,11 @@ public class Lidar : RacecarModule
 {
     #region Constants
     /// <summary>
+    /// The bitmask which ignores the UI Layer.
+    /// </summary>
+    public const int IgnoreUIMask = ~(1 << 5);
+
+    /// <summary>
     /// The number of samples captured in a single rotation.
     /// Based on the YDLIDAR X4 datasheet.
     /// </summary>
@@ -155,10 +160,10 @@ public class Lidar : RacecarModule
     /// <returns>The distance (in cm) of the object directly in view of the LIDAR.</returns>
     private float TakeSample()
     {
-        if(Physics.Raycast(this.transform.position, this.transform.forward, out RaycastHit raycastHit, Lidar.maxRange))
+        if (Physics.Raycast(this.transform.position, this.transform.forward, out RaycastHit raycastHit, Lidar.maxRange, Lidar.IgnoreUIMask))
         {
             float distance = Settings.IsRealism 
-                ? raycastHit.distance * NormalDist.Random(1, Lidar.averageErrorFactor) 
+                ? raycastHit.distance * NormalDist.Random(1, Lidar.averageErrorFactor)
                 : raycastHit.distance;
             return distance > Lidar.minRange ? distance * 10 : Lidar.minCode;
         }

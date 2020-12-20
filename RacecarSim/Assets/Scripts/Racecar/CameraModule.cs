@@ -365,7 +365,7 @@ public class CameraModule : RacecarModule
                     (CameraModule.DepthHeight - r - 1.0f) / (CameraModule.DepthHeight - 1),
                     0));
 
-                if (Physics.Raycast(ray, out RaycastHit raycastHit, CameraModule.maxRange))
+                if (Physics.Raycast(ray, out RaycastHit raycastHit, CameraModule.maxRange, Lidar.IgnoreUIMask))
                 {
                     float distance = Settings.IsRealism 
                         ? raycastHit.distance * NormalDist.Random(1, CameraModule.averageErrorFactor) 

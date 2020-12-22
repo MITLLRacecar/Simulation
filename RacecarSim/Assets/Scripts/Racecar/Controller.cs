@@ -182,6 +182,11 @@ public static class Controller
     /// <returns>True if the provided button is currently pressed.</returns>
     public static bool IsDown(Button button)
     {
+        if (Controller.Override != null)
+        {
+            return Controller.Override.IsDown(button);
+        }
+
         int index = (int)button;
         if (button == Button.BACK)
         {
@@ -197,6 +202,11 @@ public static class Controller
     /// <returns>True if the provided button was pressed this frame.</returns>
     public static bool WasPressed(Button button)
     {
+        if (Controller.Override != null)
+        {
+            Controller.Override.WasPressed(button);
+        }
+
         int index = (int)button;
         if (button == Button.BACK)
         {
@@ -212,6 +222,11 @@ public static class Controller
     /// <returns>True if the provided button was released this frame.</returns>
     public static bool WasReleased(Button button)
     {
+        if (Controller.Override != null)
+        {
+            return Controller.Override.WasReleased(button);
+        }
+
         int index = (int)button;
         if (button == Button.BACK)
         {
@@ -227,6 +242,11 @@ public static class Controller
     /// <returns>The value of the provided trigger, ranging from 0 (unpressed) to 1 (fully pressed).</returns>
     public static float GetTrigger(Trigger trigger)
     {
+        if (Controller.Override != null)
+        {
+            return Controller.Override.GetTrigger(trigger);
+        }
+
         int index = (int)trigger;
         float triggerValue = Input.GetAxis(Controller.triggerMap[index]);
 
@@ -246,6 +266,11 @@ public static class Controller
     /// <returns>The x and y coordinates of the provided joystick, ranging from (-1, -1) (bottom left) to (1, 1) (top right)</returns>
     public static Vector2 GetJoystick(Joystick joystick)
     {
+        if (Controller.Override != null)
+        {
+            return Controller.Override.GetJoystick(joystick);
+        }
+
         int index = (int)joystick;
         float xAxis = Input.GetAxis(Controller.joystickMap[index][0]);
         float yAxis = Input.GetAxis(Controller.joystickMap[index][1]);
@@ -261,5 +286,10 @@ public static class Controller
 
         return new Vector2(xAxis, yAxis);
     }
+
+    /// <summary>
+    /// If non-null, a predefined set of inputs which overrides the user's input.
+    /// </summary>
+    public static ControllerOverride Override { private get; set; }
     #endregion
 }

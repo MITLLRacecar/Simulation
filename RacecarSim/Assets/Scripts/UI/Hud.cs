@@ -198,9 +198,6 @@ public class Hud : ScreenManager
         this.SuccessMessage.SetActive(false);
 
         this.texts[(int)Texts.CheckpointTimes].text = string.Empty;
-
-        this.UpdateTimeScale(1.0f);
-        this.UpdateConnectedPrograms(new bool[0]);
     }
 
     protected override void Update()

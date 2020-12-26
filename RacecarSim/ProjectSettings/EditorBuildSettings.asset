@@ -83,4 +83,31 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Test4.unity
     guid: 390bc5b4e67cc0742a763680534f85cb
+  - enabled: 1
+    path: Assets/Scenes/AutograderSummary.unity
+    guid: 4d8aed8fc2cac9a46b703439e1f16cf7
+  - enabled: 1
+    path: Assets/Scenes/Level1Autograder/Level1_1_Straight.unity
+    guid: 7c102a123953d0644868df59b602ab4d
+  - enabled: 1
+    path: Assets/Scenes/Level1Autograder/Level1_2_Reverse.unity
+    guid: eedfc05da3571cd438a69044222b8149
+  - enabled: 1
+    path: Assets/Scenes/Level1Autograder/Level1_3_Left.unity
+    guid: 5f43d5a5f1827a74d842cdbc2a0c053b
+  - enabled: 1
+    path: Assets/Scenes/Level1Autograder/Level1_4_Right.unity
+    guid: 02718cb809e0711418608669bfe78b7a
+  - enabled: 1
+    path: Assets/Scenes/Level1Autograder/Level1_5_Circle.unity
+    guid: 1b07e0b6efd5cdd429d659cebbb72df1
+  - enabled: 1
+    path: Assets/Scenes/Level1Autograder/Level1_6_Square.unity
+    guid: 69af2cd520f7211448c5ec87b068346f
+  - enabled: 1
+    path: Assets/Scenes/Level1Autograder/Level1_7_Figure8.unity
+    guid: e71ac2ecc6205e249a57c1ef922e27d7
+  - enabled: 1
+    path: Assets/Scenes/Level1Autograder/Level1_8_ChosenShape.unity
+    guid: 84aa6c5653a664240a7cb2a97f886eaa
   m_configObjects: {}

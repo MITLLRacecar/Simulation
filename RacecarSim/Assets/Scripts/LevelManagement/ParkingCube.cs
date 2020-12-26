@@ -79,7 +79,7 @@ public class ParkingCube : MonoBehaviour
 
         if (Mathf.Abs(ParkingCube.goalAngle - angle) < ParkingCube.angleThreshold 
             && Mathf.Abs(ParkingCube.goalDistance - distance) < ParkingCube.distanceThreshold
-            && player.Physics.LinearVelocity.magnitude < 0.01f)
+            && player.Physics.LinearVelocity.magnitude < Constants.MaxStopSeed)
         {
             LevelManager.HandleFinish(player.Index);
         }

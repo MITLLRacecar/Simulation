@@ -7,11 +7,6 @@ public class DestinationStop : AutograderTask
 {
     #region Constants
     /// <summary>
-    /// The maximum speed which the car can travel and still be considered "stopped".
-    /// </summary>
-    private const float maxStopSeed = 0.1f;
-
-    /// <summary>
     /// The time in seconds which the car must stop at the point to complete the task.
     /// </summary>
     private const float stopDuration = 1.0f;
@@ -60,7 +55,7 @@ public class DestinationStop : AutograderTask
         Racecar racecar = other.GetComponentInParent<Racecar>();
         if (racecar != null)
         {
-            if (racecar.Physics.LinearVelocity.magnitude < DestinationStop.maxStopSeed)
+            if (racecar.Physics.LinearVelocity.magnitude < Constants.MaxStopSeed)
             {
                 this.startTime = Mathf.Min(this.startTime, Time.time);
                 if (Time.time - this.startTime >= DestinationStop.stopDuration)

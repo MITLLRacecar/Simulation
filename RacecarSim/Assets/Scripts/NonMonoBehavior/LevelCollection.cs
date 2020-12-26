@@ -118,13 +118,13 @@ public class LevelCollection
                             MaxPoints = 2.5f,
                             TimeLimit = 35
                         },
-                        //new AutograderLevelInfo()
-                        //{
-                        //    Name = "Chosen Shape",
-                        //    Description = "Drive in a shape of your choice when the Y button is pressed.",
-                        //    MaxPoints = 1,
-                        //    TimeLimit = 30
-                        //}
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Chosen Shape",
+                            Description = "Drive in a shape of your choice when the Y button is pressed.",
+                            MaxPoints = 1,
+                            TimeLimit = 15
+                        }
                     }
                 }
             }

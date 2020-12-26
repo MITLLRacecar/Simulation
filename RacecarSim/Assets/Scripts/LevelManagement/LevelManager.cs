@@ -313,8 +313,14 @@ public class LevelManager : MonoBehaviour
     /// </summary>
     private static LevelManager instance;
 
+    /// <summary>
+    /// A reference to the python interface carried over from the previous level.
+    /// </summary>
     private static PythonInterface cachedPythonInterface = null;
 
+    /// <summary>
+    /// The build index of the current autograder level.
+    /// </summary>
     private static int autograderBuildIndex;
 
     /// <summary>
@@ -322,6 +328,9 @@ public class LevelManager : MonoBehaviour
     /// </summary>
     private PythonInterface pythonInterface;
 
+    /// <summary>
+    /// The autograder manager for the current level, if relevant.
+    /// </summary>
     private AutograderManager autograderManager;
 
     /// <summary>

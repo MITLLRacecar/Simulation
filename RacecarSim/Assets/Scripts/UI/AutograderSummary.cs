@@ -71,15 +71,9 @@ public class AutograderSummary : MonoBehaviour
 
     private void Start()
     {
-        this.PopulateLevelEntries(LevelManager.LevelInfo.AutograderLevels, AutograderManager.levelScores.ToArray(), out float totalScore, out float totalMaxScore, out float totalTime);
-
-        if (totalMaxScore != LevelManager.LevelInfo.AutograderMaxScore)
-        {
-            Debug.LogError($"AutograderTotalScore does not match the sum of each level's max score. AutograderTotalScore = [{LevelManager.LevelInfo.AutograderMaxScore}]; sum of max scores = [{totalScore}]");
-        }
-
+        this.PopulateLevelEntries(LevelManager.LevelInfo.AutograderLevels, AutograderManager.levelScores.ToArray(), out float totalScore, out float totalTime);
         this.texts[(int)Texts.Title].text = $"{LevelManager.LevelInfo.FullName} Autograder";
-        this.texts[(int)Texts.Total].text = $"{totalScore:F2}/{totalMaxScore:F2}; {totalTime} seconds";
+        this.texts[(int)Texts.Total].text = $"{totalScore:F2}/{LevelManager.LevelInfo.AutograderMaxScore:F2}; {totalTime} seconds";
         this.texts[(int)Texts.Key].text = this.GenerateKey(LevelManager.LevelInfo, totalScore).ToString();
     }
 
@@ -91,9 +85,8 @@ public class AutograderSummary : MonoBehaviour
     /// <param name="totalMaxScore">The sum of the max score of each autograder level.</param>
     /// <param name="totalScore">The sum of the user's score on each level.</param>
     /// <param name="totalTime">The sum of the user's time spent on each level.</param>
-    private void PopulateLevelEntries(AutograderLevelInfo[] levelInfos, AutograderLevelScore[] levelScores, out float totalMaxScore, out float totalScore, out float totalTime)
+    private void PopulateLevelEntries(AutograderLevelInfo[] levelInfos, AutograderLevelScore[] levelScores, out float totalScore, out float totalTime)
     {
-        totalMaxScore = 0;
         totalScore = 0;
         totalTime = 0;
 
@@ -125,7 +118,6 @@ public class AutograderSummary : MonoBehaviour
             rect.sizeDelta = new Vector2(0, 0);
 
             // Set entry
-            totalMaxScore += levelInfos[i].MaxPoints;
             if (i < levelScores.Length)
             {
                 totalScore += levelScores[i].Score;

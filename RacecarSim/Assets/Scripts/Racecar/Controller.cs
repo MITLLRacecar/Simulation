@@ -182,7 +182,7 @@ public static class Controller
     /// <returns>True if the provided button is currently pressed.</returns>
     public static bool IsDown(Button button)
     {
-        if (Controller.Override != null)
+        if (Controller.Override != null && button < Button.START)
         {
             return Controller.Override.IsDown(button);
         }
@@ -202,9 +202,9 @@ public static class Controller
     /// <returns>True if the provided button was pressed this frame.</returns>
     public static bool WasPressed(Button button)
     {
-        if (Controller.Override != null)
+        if (Controller.Override != null && button < Button.START)
         {
-            Controller.Override.WasPressed(button);
+            return Controller.Override.WasPressed(button);
         }
 
         int index = (int)button;
@@ -222,7 +222,7 @@ public static class Controller
     /// <returns>True if the provided button was released this frame.</returns>
     public static bool WasReleased(Button button)
     {
-        if (Controller.Override != null)
+        if (Controller.Override != null && button < Button.START)
         {
             return Controller.Override.WasReleased(button);
         }

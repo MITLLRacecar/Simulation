@@ -11,11 +11,6 @@ public class LevelCollection
     /// The build index of the main menu level.
     /// </summary>
     public const int MainMenuBuildIndex = 0;
-
-    /// <summary>
-    /// The largest level build index.
-    /// </summary>
-    public const int LargestBuildIndex = 23;
     #endregion
 
     /// <summary>
@@ -75,6 +70,62 @@ public class LevelCollection
                 {
                     DisplayName = "Driving in Shapes",
                     BuildIndex = 3,
+                    AutograderBuildIndex = 26,
+                    AutograderLevels = new AutograderLevelInfo[]
+                    {
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Straight",
+                            Description = "Drive straight when RT is down.",
+                            MaxPoints = 0.5f
+                        },
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Reverse",
+                            Description = "Drive backward when LT is down.",
+                            MaxPoints = 0.5f
+                        },
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Left",
+                            Description = "Turn left when the left joystick is pushed to the left.",
+                            MaxPoints = 0.5f
+                        },
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Right",
+                            Description = "Turn right when the left joystick is pushed to the right.",
+                            MaxPoints = 0.5f
+                        },
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Circle",
+                            Description = "Drive in a clockwise circle when the A button is pressed.",
+                            MaxPoints = 2,
+                            TimeLimit = 15
+                        },
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Square",
+                            Description = "Drive in a clockwise square when the B button is pressed.",
+                            MaxPoints = 2.5f,
+                            TimeLimit = 25
+                        },
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Figure 8",
+                            Description = "Drive in a figure 8 when the X button is pressed.",
+                            MaxPoints = 2.5f,
+                            TimeLimit = 35
+                        },
+                        //new AutograderLevelInfo()
+                        //{
+                        //    Name = "Chosen Shape",
+                        //    Description = "Drive in a shape of your choice when the Y button is pressed.",
+                        //    MaxPoints = 1,
+                        //    TimeLimit = 30
+                        //}
+                    }
                 }
             }
         },

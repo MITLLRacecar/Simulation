@@ -110,12 +110,21 @@ public class LevelManager : MonoBehaviour
     /// <param name="errorText">A message describing the error.</param>
     public static void HandleError(string errorText)
     {
-        LevelManager.instance.simulationMode = LevelManager.LevelManagerMode == LevelManagerMode.Exploration ? SimulationMode.DefaultDrive : SimulationMode.Wait;
-        LevelManager.instance.screenManager.UpdateMode(LevelManager.instance.simulationMode);
+        if (LevelManager.LevelManagerMode == LevelManagerMode.Autograder)
+        {
+            LevelManager.instance.autograderManager.HandleError();
+            LevelManager.FinishAutograder();
+        }
+        else
+        {
+            LevelManager.instance.simulationMode = LevelManager.LevelManagerMode == LevelManagerMode.Exploration ? SimulationMode.DefaultDrive : SimulationMode.Wait;
+            LevelManager.instance.screenManager.UpdateMode(LevelManager.instance.simulationMode);
 
-        errorText = $">> Error: {errorText} Returning to {LevelManager.instance.simulationMode} mode.";
+            errorText = $">> Error: {errorText} Returning to {LevelManager.instance.simulationMode} mode.";
+            LevelManager.instance.screenManager.ShowError(errorText);
+        }
+
         Debug.LogError(errorText);
-        LevelManager.instance.screenManager.ShowError(errorText);
     }
 
     /// <summary>
@@ -195,8 +204,13 @@ public class LevelManager : MonoBehaviour
     /// <param name="failureMessage">The message to display describing the reason the objective was failed.</param>
     public static void HandleFailure(int carIndex, string failureMessage)
     {
+        if (LevelManager.LevelManagerMode == LevelManagerMode.Autograder)
+        {
+            LevelManager.instance.autograderManager.HandleFailure();
+        }
+
         // Do not count the failure if the car has already finished
-        if (!(LevelManager.LevelManagerMode == LevelManagerMode.Race && LevelManager.instance.curKeyPoints[carIndex] == LevelManager.instance.keyPoints.Length - 1))
+        else if (!(LevelManager.LevelManagerMode == LevelManagerMode.Race && LevelManager.instance.curKeyPoints[carIndex] == LevelManager.instance.keyPoints.Length - 1))
         {
             LevelManager.instance.screenManager.HandleFailure(carIndex, failureMessage);
 
@@ -246,13 +260,10 @@ public class LevelManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Updates which cars are connected to a Python script.
+    /// Notifies the LevelManager that number of connected Python script(s) have changed.
     /// </summary>
-    /// <param name="connectedPrograms">An array in which each entry indicates whether the car of the same index is connected to a Python script.</param>
-    public static void UpdateConnectedPrograms(bool[] connectedPrograms)
+    public static void UpdateConnectedPrograms()
     {
-        LevelManager.instance.connectedPrograms = connectedPrograms;
-
         // We cannot update the screen manager immediately since this may not be the main thread,
         // so we instead wait until the next call to Update
         LevelManager.instance.wasConnectedProgramsChanged = true;
@@ -267,6 +278,34 @@ public class LevelManager : MonoBehaviour
     {
         return LevelManager.instance.players[index];
     }
+
+    /// <summary>
+    /// Move to the next autograder level.
+    /// </summary>
+    public static void NextAutograderLevel()
+    {
+        if (LevelManager.LevelManagerMode != LevelManagerMode.Autograder)
+        {
+            Debug.LogError("[NextAutograderLevel]: this method should only be called in when the LevelManager is in Autograder mode.");
+            return;
+        }
+
+        LevelManager.cachedPythonInterface = LevelManager.instance.pythonInterface;
+        LevelManager.autograderBuildIndex++;
+        SceneManager.LoadScene(LevelManager.autograderBuildIndex, LoadSceneMode.Single);
+
+    }
+
+    /// <summary>
+    /// Finish the autograder for the current lab and display the autograder summary.
+    /// </summary>
+    public static void FinishAutograder()
+    {
+        LevelManager.instance.SetTimeScale(1.0f);
+        LevelManager.instance.pythonInterface.HandleExit();
+        LevelManager.cachedPythonInterface = null;
+        SceneManager.LoadScene(AutograderManager.AutograderSummaryBuildIndex, LoadSceneMode.Single);
+    }
     #endregion
 
     /// <summary>
@@ -274,10 +313,16 @@ public class LevelManager : MonoBehaviour
     /// </summary>
     private static LevelManager instance;
 
+    private static PythonInterface cachedPythonInterface = null;
+
+    private static int autograderBuildIndex;
+
     /// <summary>
     /// Encapsulates the interaction with Python scripts.
     /// </summary>
     private PythonInterface pythonInterface;
+
+    private AutograderManager autograderManager;
 
     /// <summary>
     /// The object managing the 2D screen content.
@@ -335,11 +380,6 @@ public class LevelManager : MonoBehaviour
     private float prevKeyPointTime;
 
     /// <summary>
-    /// An array indicating which cars are currently connected to a python script.
-    /// </summary>
-    private bool[] connectedPrograms = new bool[0];
-
-    /// <summary>
     /// True when the number of Python programs connected to the sync client changed since the last call to Update.
     /// </summary>
     private bool wasConnectedProgramsChanged;
@@ -390,7 +430,7 @@ public class LevelManager : MonoBehaviour
         // Thus, we should return directly to the main menu
         if (LevelManager.LevelInfo.BuildIndex < 0)
         {
-            SceneManager.LoadScene(LevelCollection.MainMenuBuildIndex);
+            SceneManager.LoadScene(LevelCollection.MainMenuBuildIndex, LoadSceneMode.Single);
         }
 
         LevelManager.instance = this;
@@ -402,20 +442,47 @@ public class LevelManager : MonoBehaviour
     private void Start()
     {
         this.FindKeyPoints();
-        this.SpawnPlayers();
-        this.pythonInterface = new PythonInterface(this.players);
+        this.SpawnPlayers();  // Depends on FindKeyPoints to find the start keypoint
+        this.SetTimeScale(1.0f);  // Depends on SpawnPlayers to create the screen manager
 
-        if (LevelManager.LevelManagerMode == LevelManagerMode.Race)
+        switch (LevelManager.LevelManagerMode)
         {
-            this.keyPointDurations = new float[this.keyPoints.Length];
-            this.screenManager.UpdateTime(0.0f, this.keyPointDurations);
+            case LevelManagerMode.Exploration:
+                if (LevelManager.LevelInfo.HelpMessage != null)
+                {
+                    this.screenManager.ShowMessage(LevelManager.LevelInfo.HelpMessage, Color.white);
+                }
+                break;
+
+            case LevelManagerMode.Autograder:
+                this.autograderManager = GetComponentInChildren<AutograderManager>();
+
+                // First autograder trial for level: set build index, wait for user to start
+                if (LevelManager.cachedPythonInterface == null)
+                {
+                    LevelManager.autograderBuildIndex = LevelManager.LevelInfo.AutograderBuildIndex;
+                    AutograderManager.ResetAutograder();
+                }
+
+                // Not the first autograder trial for level: load python interface from cache, automatically start
+                else
+                {
+                    this.pythonInterface = LevelManager.cachedPythonInterface;
+                    this.screenManager.UpdateConnectedPrograms(this.pythonInterface.ConnectedPrograms);
+                    this.HandleStart();
+                }
+                break;
+
+            case LevelManagerMode.Race:
+                this.keyPointDurations = new float[this.keyPoints.Length];
+                this.screenManager.UpdateTime(0.0f, this.keyPointDurations);
+                break;
         }
-
-        this.SetTimeScale(1.0f);
-
-        if (LevelManager.LevelInfo.HelpMessage != null)
+        
+        if (this.pythonInterface == null)
         {
-            this.screenManager.ShowMessage(LevelManager.LevelInfo.HelpMessage, Color.white);
+            this.pythonInterface = new PythonInterface();
+            this.screenManager.UpdateConnectedPrograms(this.pythonInterface.ConnectedPrograms);
         }
     }
 
@@ -472,8 +539,8 @@ public class LevelManager : MonoBehaviour
 
         if (this.wasConnectedProgramsChanged)
         {
-            this.screenManager.UpdateConnectedPrograms(this.connectedPrograms);
-            if (this.connectedPrograms.Length == 0)
+            this.screenManager.UpdateConnectedPrograms(this.pythonInterface.ConnectedPrograms);
+            if (this.pythonInterface.ConnectedPrograms.Length == 0)
             {
                 // If the user forcibly exits all programs, this is equivalent to pressing back
                 this.HandleBack();
@@ -481,7 +548,7 @@ public class LevelManager : MonoBehaviour
             this.wasConnectedProgramsChanged = false; // TODO: there is probably a data race here
         }
 
-        // In non-evaluation mode, skip between checkpoints on tab key
+        // In exploration mode, skip between checkpoints on tab key
         if (Input.GetKeyDown(KeyCode.Tab))
         {
             if (LevelManager.LevelManagerMode == LevelManagerMode.Exploration)
@@ -495,7 +562,7 @@ public class LevelManager : MonoBehaviour
             }
         }
 
-        // In non-evaluation mode, reset to current checkpoint on Caps Lock key
+        // In exploration mode, reset to current checkpoint on Caps Lock key
         if (Input.GetKeyDown(KeyCode.CapsLock))
         {
             if (LevelManager.LevelManagerMode == LevelManagerMode.Exploration)
@@ -665,7 +732,7 @@ public class LevelManager : MonoBehaviour
         this.HandleUnpause();
         if (this.simulationMode != SimulationMode.UserProgram)
         {
-            if (this.connectedPrograms.Length > 0)
+            if (this.pythonInterface.ConnectedPrograms.Length > 0)
             {
                 this.simulationMode = SimulationMode.UserProgram;
                 this.pythonInterface.HandleStart();
@@ -674,6 +741,11 @@ public class LevelManager : MonoBehaviour
                 if (this.startTime == 0)
                 {
                     this.startTime = Time.time;
+                }
+
+                if (LevelManager.LevelManagerMode == LevelManagerMode.Autograder)
+                {
+                    this.autograderManager.HandleStart((IAutograderHud)this.screenManager);
                 }
             }
             else
@@ -711,7 +783,7 @@ public class LevelManager : MonoBehaviour
         // Reload current level with the ReloadBuffer
         this.pythonInterface.HandleExit();
         ReloadBuffer.BuildIndexToReload = SceneManager.GetActiveScene().buildIndex;
-        SceneManager.LoadSceneAsync(ReloadBuffer.BuildIndex, LoadSceneMode.Single);
+        SceneManager.LoadScene(ReloadBuffer.BuildIndex, LoadSceneMode.Single);
     }
 
     /// <summary>
@@ -722,7 +794,8 @@ public class LevelManager : MonoBehaviour
         this.SetTimeScale(1.0f);
         this.UpdateBestTimes();
         this.pythonInterface.HandleExit();
-        SceneManager.LoadScene(LevelCollection.MainMenuBuildIndex);
+        LevelManager.cachedPythonInterface = null;
+        SceneManager.LoadScene(LevelCollection.MainMenuBuildIndex, LoadSceneMode.Single);
     }
 
     /// <summary>

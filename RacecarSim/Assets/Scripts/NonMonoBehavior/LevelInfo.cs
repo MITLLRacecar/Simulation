@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 /// <summary>
 /// Information about a level.
@@ -21,6 +22,16 @@ public class LevelInfo
     /// The index of the level in the build settings.
     /// </summary>
     public int BuildIndex;
+
+    /// <summary>
+    /// The index of the first corresponding autograder level in the build settings.
+    /// </summary>
+    public int AutograderBuildIndex;
+
+    /// <summary>
+    /// The information about each autograder level for this lab.
+    /// </summary>
+    public AutograderLevelInfo[] AutograderLevels;
 
     /// <summary>
     /// True if the level supports LevelManagerMode.Race.
@@ -60,6 +71,17 @@ public class LevelInfo
         get
         {
             return $"{this.CollectionName}-{this.DisplayName}";
+        }
+    }
+
+    /// <summary>
+    /// The sum of the max score for each autograder level for this lab.
+    /// </summary>
+    public float AutograderMaxScore
+    {
+        get
+        {
+            return this.AutograderLevels.Aggregate(0.0f, (total, next) => total + next.MaxPoints);
         }
     }
 

@@ -49,10 +49,20 @@ public class PythonInterface
     #endregion
 
     #region Public
-    public PythonInterface(Racecar[] cars)
+    /// <summary>
+    /// An array in which each entry indicates whether the racecar of the same index is connected to a Python script.
+    /// </summary>
+    public bool[] ConnectedPrograms
+    {
+        get
+        {
+            return this.pythonEndPoints.Select(x => x != null).ToArray();
+        }
+    }
+
+    public PythonInterface()
     {
         this.wasExitHandled = false;
-        this.racecars = cars;
         this.pythonEndPoints = new List<IPEndPoint>();
 
         // Create a UDP client for handling sync calls
@@ -90,7 +100,7 @@ public class PythonInterface
                 }
             }
             this.pythonEndPoints.Clear();
-            LevelManager.UpdateConnectedPrograms(this.ConnectedPrograms);
+            LevelManager.UpdateConnectedPrograms();
 
             this.udpClient.Close();
             this.udpClientAsync.Close();
@@ -172,11 +182,6 @@ public class PythonInterface
 
     #region Sync
     /// <summary>
-    /// The RACECAR(s) controlled by the user Python script(s).
-    /// </summary>
-    private readonly Racecar[] racecars;
-
-    /// <summary>
     /// The UDP client used to send packets to Python.
     /// </summary>
     private readonly UdpClient udpClient;
@@ -185,17 +190,6 @@ public class PythonInterface
     /// The UDP endpoints of the Python scripts(s) currently connected to RacecarSim.
     /// </summary>
     private readonly List<IPEndPoint> pythonEndPoints;
-
-    /// <summary>
-    /// An array in which each entry indicates whether the racecar of the same index is connected to a Python script.
-    /// </summary>
-    private bool[] ConnectedPrograms
-    {
-        get
-        {
-            return this.pythonEndPoints.Select(x => x != null).ToArray();
-        }
-    }
 
     /// <summary>
     /// Connect the sync client to a Python script.
@@ -221,7 +215,7 @@ public class PythonInterface
         // Otherwise, add the end point to the end of the list
         if (index == -1)
         {
-            if (this.pythonEndPoints.Count < this.racecars.Length)
+            if (this.pythonEndPoints.Count < LevelManager.NumPlayers)
             {
                 index = this.pythonEndPoints.Count;
                 this.pythonEndPoints.Add(endPoint);
@@ -233,7 +227,7 @@ public class PythonInterface
             }
         }
         
-        LevelManager.UpdateConnectedPrograms(this.ConnectedPrograms);
+        LevelManager.UpdateConnectedPrograms();
         return index;
     }
 
@@ -268,7 +262,7 @@ public class PythonInterface
             }
         }
 
-        LevelManager.UpdateConnectedPrograms(this.ConnectedPrograms);
+        LevelManager.UpdateConnectedPrograms();
     }
 
     /// <summary>
@@ -284,7 +278,7 @@ public class PythonInterface
                 continue;
             }
 
-            Racecar racecar = this.racecars[i];
+            Racecar racecar = LevelManager.GetCar(i);
             IPEndPoint endPoint = this.pythonEndPoints[i];
 
             // Tell Python what function to call
@@ -515,7 +509,7 @@ public class PythonInterface
         LevelManager.HandleError(errorText);
 
         this.pythonEndPoints.Clear();
-        LevelManager.UpdateConnectedPrograms(this.ConnectedPrograms);
+        LevelManager.UpdateConnectedPrograms();
     }
     #endregion
 
@@ -543,7 +537,7 @@ public class PythonInterface
             byte[] data = this.udpClientAsync.Receive(ref receiveEndPoint);
             Header header = (Header)data[0];
 
-            Racecar racecar = this.racecars[0];
+            Racecar racecar = LevelManager.GetCar();
 
             byte[] sendData;
             switch (header)

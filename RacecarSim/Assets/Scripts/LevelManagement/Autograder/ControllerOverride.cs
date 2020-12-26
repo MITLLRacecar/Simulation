@@ -1,7 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
+/// <summary>
+/// Predefined controller inputs which are used instead of the physical controller.
+/// </summary>
 public class ControllerOverride : MonoBehaviour
 {
     #region Set in Unity Editor
@@ -46,7 +47,7 @@ public class ControllerOverride : MonoBehaviour
     /// <returns>True if the provided button is currently pressed.</returns>
     public bool IsDown(Controller.Button button)
     {
-        return button == this.HeldButton || button == this.pressedButton;
+        return button == this.HeldButton || (button == this.pressedButton && this.pressedButtonState != ButtonState.Released);
     }
 
     /// <summary>
@@ -56,13 +57,22 @@ public class ControllerOverride : MonoBehaviour
     /// <returns>True if the provided button was pressed this frame.</returns>
     public bool WasPressed(Controller.Button button)
     {
-        if (this.buttonPressIndex < this.buttonPresses.Length && this.buttonPresses[this.buttonPressIndex] == button)
+        // This button press was already registered earlier this frame
+        if (this.pressedButton == button && this.pressedButtonState == ButtonState.Pressed)
+        {
+            return true;
+        }
+
+        // No button currently pressed and this is the next button to be pressed
+        if (!this.pressedButton.HasValue && this.buttonPressIndex < this.buttonPresses.Length && this.buttonPresses[this.buttonPressIndex] == button)
         {
             this.pressedButton = this.buttonPresses[this.buttonPressIndex];
+            this.pressedButtonState = ButtonState.Pressed;
             this.pressedButtonTime = Time.time;
             this.buttonPressIndex++;
             return true;
         }
+
         return false;
     }
 
@@ -73,7 +83,7 @@ public class ControllerOverride : MonoBehaviour
     /// <returns>True if the provided button was released this frame.</returns>
     public bool WasReleased(Controller.Button button)
     {
-        return button == this.releasedButton;
+        return button == this.pressedButton && this.pressedButtonState == ButtonState.Released;
     }
 
     /// <summary>
@@ -98,6 +108,16 @@ public class ControllerOverride : MonoBehaviour
     #endregion
 
     /// <summary>
+    /// The three stages of a button press.
+    /// </summary>
+    private enum ButtonState
+    {
+        Pressed,
+        Held,
+        Released
+    }
+
+    /// <summary>
     /// The index of the button in buttonPresses which is next to be pressed.
     /// </summary>
     private int buttonPressIndex = 0;
@@ -113,9 +133,9 @@ public class ControllerOverride : MonoBehaviour
     private float pressedButtonTime;
 
     /// <summary>
-    /// The button which was released this frame, or null if no button was released this frame.
+    /// The state of the current pressed button.
     /// </summary>
-    private Controller.Button? releasedButton = null;
+    private ButtonState pressedButtonState;
 
     /// <summary>
     /// The button held for the duration of the level, or null if no button is held for the duration of the level.
@@ -135,15 +155,14 @@ public class ControllerOverride : MonoBehaviour
 
     private void Update()
     {
-        if (this.releasedButton.HasValue)
+        if (this.pressedButtonState == ButtonState.Released)
         {
-            this.releasedButton = null;
+            this.pressedButton = null;
         }
 
         if (this.pressedButton.HasValue && Time.time - this.pressedButtonTime > ControllerOverride.buttonPressTime)
         {
-            this.releasedButton = this.pressedButton;
-            this.pressedButton = null;
+            this.pressedButtonState = ButtonState.Released;
         }
     }
 }

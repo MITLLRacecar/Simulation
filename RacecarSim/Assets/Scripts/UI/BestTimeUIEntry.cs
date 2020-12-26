@@ -2,6 +2,9 @@
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
+/// <summary>
+/// Manages an entry displaying the best time for a single lab.
+/// </summary>
 public class BestTimeUIEntry : MonoBehaviour
 {
     #region Public Interface

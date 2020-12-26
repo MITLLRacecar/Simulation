@@ -138,7 +138,7 @@ public class Racecar : MonoBehaviour
 
         Material frontMaterial = this.chassisFront.GetComponent<Renderer>().material;
         frontMaterial.color = customization.FrontColor.Color;
-        frontMaterial.SetFloat("_Metallic", customization.IsFrontShiny ? 1: 0);
+        frontMaterial.SetFloat("_Metallic", customization.IsFrontShiny ? 1 : 0);
 
         Material backMaterial = this.chassisBack.GetComponent<Renderer>().material;
         backMaterial.color = customization.BackColor.Color;

@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 /// <summary>
 /// Manages the best times pane of the main menu.
@@ -14,7 +13,7 @@ public class BestTimesUI : MonoBehaviour
     private GameObject bestTimeEntry;
 
     /// <summary>
-    /// The Canvas object which contains all best time entries.
+    /// The UI object which contains all best time entries.
     /// </summary>
     [SerializeField]
     private GameObject bestTimesContainer;

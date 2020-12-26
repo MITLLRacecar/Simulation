@@ -68,7 +68,8 @@ public class MainMenu : MonoBehaviour
         LevelManager.LevelManagerMode = (LevelManagerMode)this.dropdowns[(int)Dropdowns.Mode].value;
 
         LevelManager.LevelInfo = this.SelectedLevel;
-        SceneManager.LoadScene(this.SelectedLevel.BuildIndex, LoadSceneMode.Single);
+        int buildIndex = LevelManager.LevelManagerMode == LevelManagerMode.Autograder ? this.SelectedLevel.AutograderBuildIndex : this.SelectedLevel.BuildIndex;
+        SceneManager.LoadScene(buildIndex, LoadSceneMode.Single);
     }
 
     /// <summary>

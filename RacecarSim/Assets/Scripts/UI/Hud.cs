@@ -4,7 +4,7 @@ using UnityEngine;
 /// <summary>
 /// Controls the heads-up display shown to the user during races with a single car.
 /// </summary>
-public class Hud : ScreenManager
+public class Hud : ScreenManager, IAutograderHud
 {
     #region Set in Unity Editor
     /// <summary>
@@ -22,6 +22,11 @@ public class Hud : ScreenManager
 
     #region Constants
     /// <summary>
+    /// The color used for the background of sensor visualizations.
+    /// </summary>
+    public static readonly Color SensorBackgroundColor = new Color(0.2f, 0.2f, 0.2f);
+
+    /// <summary>
     /// The number of times the LIDAR map is smaller than the color and depth visualizations.
     /// </summary>
     private const int lidarMapScale = 4;
@@ -32,9 +37,9 @@ public class Hud : ScreenManager
     private const float unconnectedScriptAlpha = 0.25f;
 
     /// <summary>
-    /// The color used for the background of sensor visualizations.
+    /// In the autograder, when the current time is this fraction of the time limit away from the time limit, the current time is shown as a warning color.
     /// </summary>
-    public static readonly Color SensorBackgroundColor = new Color(0.2f, 0.2f, 0.2f);
+    private const float autograderWarningTimeRatio = 0.25f;
 
     /// <summary>
     /// The background color of the mode label when the simulation is in each SimulationMode.
@@ -116,6 +121,38 @@ public class Hud : ScreenManager
     }
     #endregion
 
+    #region IAutograderHud
+    public void SetLevelInfo(int levelIndex, string title, string description)
+    {
+        this.texts[(int)Texts.AutograderTitle].text = $"<b>Trial {levelIndex + 1}</b> - {title}";
+        this.texts[(int)Texts.AutograderDescription].text = description;
+    }
+
+    public void UpdateScore(float score, float maxScore)
+    {
+        this.texts[(int)Texts.AutograderScore].text = $"{score:F2}/{maxScore:F2}";
+
+        if (score == maxScore)
+        {
+            this.texts[(int)Texts.AutograderScore].color = Color.green;
+        }
+    }
+
+    public void UpdateTime(float time, float timeLimit)
+    {
+        base.UpdateTime(time, new float[0]);
+
+        if (timeLimit - time < timeLimit * Hud.autograderWarningTimeRatio)
+        {
+            this.texts[(int)Texts.MainTime].color = Color.yellow;
+        }
+        else if (time > timeLimit)
+        {
+            this.texts[(int)Texts.MainTime].color = Color.red;
+        }
+    }
+    #endregion
+
     /// <summary>
     /// The texture containing the LIDAR visualization.
     /// </summary>
@@ -167,7 +204,10 @@ public class Hud : ScreenManager
         Mode = 17,
         Failure = 19,
         SuccessMessage = 21,
-        SuccessTime = 22,        
+        SuccessTime = 22,
+        AutograderTitle = 25,
+        AutograderDescription = 26,
+        AutograderScore = 27
     }
 
     /// <summary>

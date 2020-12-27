@@ -107,4 +107,25 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Lab1Autograder/Lab1_8_ChosenShape.unity
     guid: b34c6cfdffd3cc2408fe19c6e60634bc
+  - enabled: 1
+    path: Assets/Scenes/Lab2AAutograder/Lab2A_1_Straight.unity
+    guid: ac5590da3fc2478418b380a902a8fa80
+  - enabled: 1
+    path: Assets/Scenes/Lab2AAutograder/Lab2A_2_GentleTurn.unity
+    guid: d7d6bf44f8a25f549b0f010abc2fcc9e
+  - enabled: 1
+    path: Assets/Scenes/Lab2AAutograder/Lab2A_3_SharpTurn.unity
+    guid: f4137d34b0f4c5347bbfd1ff8a567379
+  - enabled: 1
+    path: Assets/Scenes/Lab2AAutograder/Lab2A_4_CurvedPath.unity
+    guid: f2514b362db400344908b29a48453d75
+  - enabled: 1
+    path: Assets/Scenes/Lab2AAutograder/Lab2A_5_ColorPriority1.unity
+    guid: c58c450cf594ef74297a334b227551d8
+  - enabled: 1
+    path: Assets/Scenes/Lab2AAutograder/Lab2A_6_ColorPriority2.unity
+    guid: e36cae308ef69294da86e9e2a2971d5e
+  - enabled: 1
+    path: Assets/Scenes/Lab2AAutograder/Lab2A_7_Perpendicular.unity
+    guid: bd57bd74199d6e64a9ea09a34a0021aa
   m_configObjects: {}

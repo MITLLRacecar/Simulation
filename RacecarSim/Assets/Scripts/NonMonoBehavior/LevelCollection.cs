@@ -144,6 +144,55 @@ public class LevelCollection
                 {
                     DisplayName = "A: Line Following",
                     BuildIndex = 5,
+                    AutograderBuildIndex = 34,
+                    AutograderLevels = new AutograderLevelInfo[]
+                    {
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Straight",
+                            Description = "Drive forward at full speed when RT is fully pressed.",
+                            MaxPoints = 1,
+                            IsRequired = true
+                        },
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Gentle Turn",
+                            Description = "Follow the red line for a 30 degree turn.",
+                            MaxPoints = 1
+                        },
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Sharp Turn",
+                            Description = "Follow the blue line for a 90 degree turn.",
+                            MaxPoints = 1
+                        },
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Curved path",
+                            Description = "Follow the green line for a winding path.",
+                            MaxPoints = 1,
+                            TimeLimit = 12
+                        },
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Color Priority 1",
+                            Description = "Follow the color priority red > blue > green.",
+                            MaxPoints = 3
+                        },
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Color Priority 2",
+                            Description = "Follow the color priority red > blue > green for a more complex path.",
+                            MaxPoints = 3,
+                            TimeLimit = 20
+                        },
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Extra: Perpendicular",
+                            Description = "Identify and turn onto a line which is directly perpendicular to the car.",
+                            MaxPoints = 0
+                        },
+                    }
                 },
                 new LevelInfo()
                 {

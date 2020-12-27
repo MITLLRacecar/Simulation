@@ -21,7 +21,7 @@ public class AutograderUIEntry : MonoBehaviour
     /// <param name="bestTimeInfo">Information about the user's performance in the level.</param>
     public void SetInfo(AutograderLevelInfo levelInfo, AutograderLevelScore levelScore)
     {
-        this.texts[(int)Texts.Name].text = levelInfo.Title;
+        this.texts[(int)Texts.Name].text = levelInfo.IsRequired ? $"*{levelInfo.Title}" : levelInfo.Title;
 
         if (levelScore != null)
         {

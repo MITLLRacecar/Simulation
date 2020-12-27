@@ -22,4 +22,9 @@ public class AutograderLevelInfo
     /// The total time in seconds which the user can spend on this level.
     /// </summary>
     public float TimeLimit = 10;
+
+    /// <summary>
+    /// If true, the entire autograder run finishes if this level is not passed with full points.
+    /// </summary>
+    public bool IsRequired = false;
 }

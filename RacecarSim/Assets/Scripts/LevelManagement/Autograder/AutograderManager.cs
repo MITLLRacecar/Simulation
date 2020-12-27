@@ -51,10 +51,9 @@ public class AutograderManager : MonoBehaviour
     {
         if (AutograderManager.CurTask == task)
         {
+            task.Disable();
             AutograderManager.instance.levelScore += task.Points;
             AutograderManager.instance.hud.UpdateScore(AutograderManager.instance.levelScore, AutograderManager.LevelInfo.MaxPoints);
-
-            task.Disable();
             AutograderManager.instance.taskIndex++;
             if (AutograderManager.instance.taskIndex >= AutograderManager.instance.tasks.Length)
             {
@@ -67,6 +66,10 @@ public class AutograderManager : MonoBehaviour
             {
                 AutograderManager.CurTask.Enable();
             }
+        }
+        else
+        {
+            Debug.LogError($"[AutograderManager::CompleteTask]: CompleteTask was called for task [{task}], but this is not the active task. No action taken.");
         }
     }
 
@@ -189,13 +192,14 @@ public class AutograderManager : MonoBehaviour
                 Time = Time.time - this.startTime ?? Time.time
             });
 
-            AutograderManager.levelIndex++;
-            if (AutograderManager.levelIndex == LevelManager.LevelInfo.AutograderLevels.Length)
+            if (AutograderManager.levelIndex == LevelManager.LevelInfo.AutograderLevels.Length - 1 ||
+                (AutograderManager.LevelInfo.IsRequired && this.levelScore < AutograderManager.LevelInfo.MaxPoints))
             {
                 LevelManager.FinishAutograder();
             }
             else
             {
+                AutograderManager.levelIndex++;
                 LevelManager.NextAutograderLevel();
             }
         }

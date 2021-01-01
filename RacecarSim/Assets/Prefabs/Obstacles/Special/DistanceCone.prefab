@@ -71,7 +71,7 @@ MonoBehaviour:
     y: 0
     width: 1
     height: 1
---- !u!114 &380525334
+--- !u!114 &6327207845079741777
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -80,20 +80,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 650117219234838040}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f05337075988a82418c753f2d9f3d933, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Resizable: 0
---- !u!114 &4599446484825791786
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 650117219234838040}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 336607bd27a25b24fbbb1a29f73349cc, type: 3}
+  m_Script: {fileID: 11500000, guid: a3ec997c158929a43a96b2a95201c523, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &6298943167762538397

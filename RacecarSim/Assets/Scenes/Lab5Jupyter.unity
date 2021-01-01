@@ -271,16 +271,16 @@ PrefabInstance:
       propertyPath: material
       value: 
       objectReference: {fileID: 2100000, guid: 73c2eb335193f7442bddba911860ca54, type: 2}
+    - target: {fileID: 1913185675328268266, guid: 75c35d7f8bf51cd4ba57dce87abf0725,
+        type: 3}
+      propertyPath: initialPattern
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 5165485823386958729, guid: 75c35d7f8bf51cd4ba57dce87abf0725,
         type: 3}
       propertyPath: m_Name
       value: ArTagToggle
       objectReference: {fileID: 0}
-    - target: {fileID: 6985946628963012230, guid: 75c35d7f8bf51cd4ba57dce87abf0725,
-        type: 3}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 2100000, guid: 15049ee271de5b647a253bbf6a814d49, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 75c35d7f8bf51cd4ba57dce87abf0725, type: 3}
 --- !u!1001 &1087853720
@@ -387,12 +387,12 @@ PrefabInstance:
     - target: {fileID: 1269795821493615070, guid: 75c35d7f8bf51cd4ba57dce87abf0725,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0.7071068
       objectReference: {fileID: 0}
     - target: {fileID: 1269795821493615070, guid: 75c35d7f8bf51cd4ba57dce87abf0725,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: 1
+      value: 0.7071068
       objectReference: {fileID: 0}
     - target: {fileID: 1269795821493615070, guid: 75c35d7f8bf51cd4ba57dce87abf0725,
         type: 3}
@@ -412,7 +412,7 @@ PrefabInstance:
     - target: {fileID: 1269795821493615070, guid: 75c35d7f8bf51cd4ba57dce87abf0725,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
+      value: -90
       objectReference: {fileID: 0}
     - target: {fileID: 1913185675328268266, guid: 75c35d7f8bf51cd4ba57dce87abf0725,
         type: 3}
@@ -423,6 +423,16 @@ PrefabInstance:
         type: 3}
       propertyPath: tagIndex
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1913185675328268266, guid: 75c35d7f8bf51cd4ba57dce87abf0725,
+        type: 3}
+      propertyPath: initialColor
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1913185675328268266, guid: 75c35d7f8bf51cd4ba57dce87abf0725,
+        type: 3}
+      propertyPath: initialPattern
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 5165485823386958729, guid: 75c35d7f8bf51cd4ba57dce87abf0725,
         type: 3}
@@ -541,12 +551,12 @@ PrefabInstance:
     - target: {fileID: 1269795821493615070, guid: 75c35d7f8bf51cd4ba57dce87abf0725,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1269795821493615070, guid: 75c35d7f8bf51cd4ba57dce87abf0725,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1269795821493615070, guid: 75c35d7f8bf51cd4ba57dce87abf0725,
         type: 3}
@@ -566,7 +576,7 @@ PrefabInstance:
     - target: {fileID: 1269795821493615070, guid: 75c35d7f8bf51cd4ba57dce87abf0725,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
+      value: 180
       objectReference: {fileID: 0}
     - target: {fileID: 1913185675328268266, guid: 75c35d7f8bf51cd4ba57dce87abf0725,
         type: 3}
@@ -576,6 +586,16 @@ PrefabInstance:
     - target: {fileID: 1913185675328268266, guid: 75c35d7f8bf51cd4ba57dce87abf0725,
         type: 3}
       propertyPath: tagIndex
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1913185675328268266, guid: 75c35d7f8bf51cd4ba57dce87abf0725,
+        type: 3}
+      propertyPath: initialPattern
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1913185675328268266, guid: 75c35d7f8bf51cd4ba57dce87abf0725,
+        type: 3}
+      propertyPath: initialColor
       value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 5165485823386958729, guid: 75c35d7f8bf51cd4ba57dce87abf0725,

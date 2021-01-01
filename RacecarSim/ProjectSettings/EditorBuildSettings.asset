@@ -128,4 +128,22 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Lab2AAutograder/Lab2A_7_Perpendicular.unity
     guid: bd57bd74199d6e64a9ea09a34a0021aa
+  - enabled: 1
+    path: Assets/Scenes/Lab2BAutograder/Lab2B_1_Far.unity
+    guid: 41a214cc4456883428bd5d3d703033e4
+  - enabled: 1
+    path: Assets/Scenes/Lab2BAutograder/Lab2B_2_Near.unity
+    guid: 9bd087244abe0d24886d766259144f7b
+  - enabled: 1
+    path: Assets/Scenes/Lab2BAutograder/Lab2B_3_VeryFar.unity
+    guid: 19301de2cb5fa2c4f89f1648656f75ee
+  - enabled: 1
+    path: Assets/Scenes/Lab2BAutograder/Lab2B_4_SlightLeft.unity
+    guid: 1ce9f41db986b4e4c9689d40b22fc429
+  - enabled: 1
+    path: Assets/Scenes/Lab2BAutograder/Lab2B_5_FarRight.unity
+    guid: b4056bfaa8ef94f45b8fa589b5bc99e0
+  - enabled: 1
+    path: Assets/Scenes/Lab2BAutograder/Lab2B_6_NearLeft.unity
+    guid: 80afb65835f43794f8c2f1e1eac81703
   m_configObjects: {}

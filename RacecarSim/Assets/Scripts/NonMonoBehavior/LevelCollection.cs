@@ -198,7 +198,52 @@ public class LevelCollection
                 {
                     DisplayName = "B: Cone Parking",
                     BuildIndex = 6,
-                    HelpMessage = "Left-click on the screen to move the cone"
+                    HelpMessage = "Left-click on the screen to move the cone",
+                    AutograderBuildIndex = 41,
+                    AutograderLevels = new AutograderLevelInfo[]
+                    {
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Far",
+                            Description = "Park 30 cm away from the cone.",
+                            MaxPoints = 2,
+                            IsRequired = true
+                        },
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Close",
+                            Description = "Park 30 cm away from the cone.",
+                            MaxPoints = 1
+                        },
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Very Far",
+                            Description = "Park 30 cm away from the cone.",
+                            MaxPoints = 1,
+                            TimeLimit = 15
+                        },
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Slight left",
+                            Description = "Park 30 cm away from the cone.",
+                            MaxPoints = 2,
+                            TimeLimit = 15
+                        },
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Far right",
+                            Description = "Park 30 cm away from the cone.",
+                            MaxPoints = 2,
+                            TimeLimit = 15
+                        },
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Near and left",
+                            Description = "Park 30 cm away from the cone.",
+                            MaxPoints = 2,
+                            TimeLimit = 15
+                        }
+                    }
                 }
             }
         },

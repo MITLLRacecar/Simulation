@@ -3,7 +3,7 @@
 /// <summary>
 /// A base class for tasks to be completed in an autograder level.
 /// </summary>
-public abstract class AutograderTask : MonoBehaviour
+public class AutograderTask : MonoBehaviour
 {
     #region Set in Unity Editor
     /// <summary>

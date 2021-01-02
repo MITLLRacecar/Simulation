@@ -121,79 +121,80 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1001 &172018104
+--- !u!1001 &471285929
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 380525334, guid: 52307a99255252a49bda57500e9455a1, type: 3}
+    - target: {fileID: 1748376885398037388, guid: 483becfe0b8254d4093606aadf82ba9e,
+        type: 3}
       propertyPath: Resizable
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 650117219234838040, guid: 52307a99255252a49bda57500e9455a1,
-        type: 3}
-      propertyPath: m_Name
-      value: DistanceCone
-      objectReference: {fileID: 0}
-    - target: {fileID: 7919091977461929259, guid: 52307a99255252a49bda57500e9455a1,
+    - target: {fileID: 1923954141691830186, guid: 483becfe0b8254d4093606aadf82ba9e,
         type: 3}
       propertyPath: m_LocalPosition.x
       value: -3
       objectReference: {fileID: 0}
-    - target: {fileID: 7919091977461929259, guid: 52307a99255252a49bda57500e9455a1,
+    - target: {fileID: 1923954141691830186, guid: 483becfe0b8254d4093606aadf82ba9e,
         type: 3}
       propertyPath: m_LocalPosition.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 7919091977461929259, guid: 52307a99255252a49bda57500e9455a1,
+    - target: {fileID: 1923954141691830186, guid: 483becfe0b8254d4093606aadf82ba9e,
         type: 3}
       propertyPath: m_LocalPosition.z
       value: 14
       objectReference: {fileID: 0}
-    - target: {fileID: 7919091977461929259, guid: 52307a99255252a49bda57500e9455a1,
+    - target: {fileID: 1923954141691830186, guid: 483becfe0b8254d4093606aadf82ba9e,
         type: 3}
       propertyPath: m_LocalRotation.x
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 7919091977461929259, guid: 52307a99255252a49bda57500e9455a1,
+    - target: {fileID: 1923954141691830186, guid: 483becfe0b8254d4093606aadf82ba9e,
         type: 3}
       propertyPath: m_LocalRotation.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 7919091977461929259, guid: 52307a99255252a49bda57500e9455a1,
+    - target: {fileID: 1923954141691830186, guid: 483becfe0b8254d4093606aadf82ba9e,
         type: 3}
       propertyPath: m_LocalRotation.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 7919091977461929259, guid: 52307a99255252a49bda57500e9455a1,
+    - target: {fileID: 1923954141691830186, guid: 483becfe0b8254d4093606aadf82ba9e,
         type: 3}
       propertyPath: m_LocalRotation.w
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 7919091977461929259, guid: 52307a99255252a49bda57500e9455a1,
+    - target: {fileID: 1923954141691830186, guid: 483becfe0b8254d4093606aadf82ba9e,
         type: 3}
       propertyPath: m_RootOrder
       value: 3
       objectReference: {fileID: 0}
-    - target: {fileID: 7919091977461929259, guid: 52307a99255252a49bda57500e9455a1,
+    - target: {fileID: 1923954141691830186, guid: 483becfe0b8254d4093606aadf82ba9e,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 7919091977461929259, guid: 52307a99255252a49bda57500e9455a1,
+    - target: {fileID: 1923954141691830186, guid: 483becfe0b8254d4093606aadf82ba9e,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 7919091977461929259, guid: 52307a99255252a49bda57500e9455a1,
+    - target: {fileID: 1923954141691830186, guid: 483becfe0b8254d4093606aadf82ba9e,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 9101959573278178457, guid: 483becfe0b8254d4093606aadf82ba9e,
+        type: 3}
+      propertyPath: m_Name
+      value: DistanceConeInteractable
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 52307a99255252a49bda57500e9455a1, type: 3}
+  m_SourcePrefab: {fileID: 100100000, guid: 483becfe0b8254d4093606aadf82ba9e, type: 3}
 --- !u!1001 &695328390
 PrefabInstance:
   m_ObjectHideFlags: 0

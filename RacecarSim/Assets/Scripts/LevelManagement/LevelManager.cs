@@ -445,7 +445,7 @@ public class LevelManager : MonoBehaviour
         LevelManager.instance = this;
         this.simulationMode = LevelManager.LevelManagerMode == LevelManagerMode.Exploration ? SimulationMode.DefaultDrive : SimulationMode.Wait;
 
-        this.raceCameras = this.GetComponentsInChildren<Camera>();
+        this.raceCameras = this.GetComponentsInChildrenOrdered<Camera>();
     }
 
     private void Start()

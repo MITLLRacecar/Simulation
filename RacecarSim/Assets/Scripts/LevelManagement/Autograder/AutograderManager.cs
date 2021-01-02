@@ -8,12 +8,6 @@ public class AutograderManager : MonoBehaviour
 {
     #region Set in Unity Editor
     /// <summary>
-    /// The tasks which must be completed for the autograder level, in order.
-    /// </summary>
-    [SerializeField]
-    private AutograderTask[] tasks = new AutograderTask[1];
-
-    /// <summary>
     /// True if we should not continue to the next task until the car stops.
     /// </summary>
     /// <remarks>If the car does not stop before the time limit, no points are deducted.</remarks>
@@ -118,6 +112,11 @@ public class AutograderManager : MonoBehaviour
     private static int levelIndex = 0;
 
     /// <summary>
+    /// The tasks which must be completed for the autograder level, in order.
+    /// </summary>
+    private AutograderTask[] tasks = new AutograderTask[1];
+
+    /// <summary>
     /// The HUD which displays autograder information.
     /// </summary>
     private IAutograderHud hud;
@@ -155,11 +154,12 @@ public class AutograderManager : MonoBehaviour
     private void Awake()
     {
         AutograderManager.instance = this;
+        this.tasks = this.GetComponentsInChildrenOrdered<AutograderTask>();
     }
 
     private void Start()
     {
-        this.tasks[taskIndex].Enable();
+        AutograderManager.CurTask.Enable();
     }
 
     private void Update()

@@ -146,4 +146,43 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Lab2BAutograder/Lab2B_6_NearLeft.unity
     guid: 80afb65835f43794f8c2f1e1eac81703
+  - enabled: 1
+    path: Assets/Scenes/Lab3AAutograder/Lab3A_1_FullSpeed.unity
+    guid: 17ebfd501e3ed4c4791a045ce4bdb351
+  - enabled: 1
+    path: Assets/Scenes/Lab3AAutograder/Lab3A_2_Wall.unity
+    guid: a415c0947d3700a4f86a2245bd3d9aaa
+  - enabled: 1
+    path: Assets/Scenes/Lab3AAutograder/Lab3A_3_Blocks.unity
+    guid: 56d360d5750b616419ca8e812ff78e5d
+  - enabled: 1
+    path: Assets/Scenes/Lab3AAutograder/Lab3A_4_Cone.unity
+    guid: 68b51b864af73d3448524c821626a037
+  - enabled: 1
+    path: Assets/Scenes/Lab3AAutograder/Lab3A_5_OffCenteredCone.unity
+    guid: 0963e92a3bc21fb47a999954471db87c
+  - enabled: 1
+    path: Assets/Scenes/Lab3AAutograder/Lab3A_6_Gap.unity
+    guid: a62360f336ad5ca4485b76279ca22823
+  - enabled: 1
+    path: Assets/Scenes/Lab3AAutograder/Lab3A_7_Ramp.unity
+    guid: 4dbc9c98b26d51b4cb70b70f18482df4
+  - enabled: 1
+    path: Assets/Scenes/Lab3AAutograder/Lab3A_8_Cliff.unity
+    guid: 7d3d9951a4b3fd94da50ffaec54c3ed5
+  - enabled: 1
+    path: Assets/Scenes/Lab3BAutograder/Lab3B_1_NormalCone.unity
+    guid: 3ce80b512f0b86e488dc37b905be7633
+  - enabled: 1
+    path: Assets/Scenes/Lab3BAutograder/Lab3B_2_LargeCone.unity
+    guid: 4ade3d291b994da4c862a5c4bb953dce
+  - enabled: 1
+    path: Assets/Scenes/Lab3BAutograder/Lab3B_3_SmallCone.unity
+    guid: 4fc49756426a8ad4692f56937caca785
+  - enabled: 1
+    path: Assets/Scenes/Lab3BAutograder/Lab3B_4_SlightLeft.unity
+    guid: 8d071732524f7b74fbb573892b77550d
+  - enabled: 1
+    path: Assets/Scenes/Lab3BAutograder/Lab3B_5_FarRight.unity
+    guid: 158d4b2fbbfe5d446b7bd0dd472133e7
   m_configObjects: {}

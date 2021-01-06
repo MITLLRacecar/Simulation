@@ -176,13 +176,13 @@ public class LevelCollection
                         new AutograderLevelInfo()
                         {
                             Title = "Color Priority 1",
-                            Description = "Follow the color priority red > blue > green.",
+                            Description = "Follow the color priority red > green > blue.",
                             MaxPoints = 3
                         },
                         new AutograderLevelInfo()
                         {
                             Title = "Color Priority 2",
-                            Description = "Follow the color priority red > blue > green for a more complex path.",
+                            Description = "Follow the color priority red > green > blue for a more complex path.",
                             MaxPoints = 3,
                             TimeLimit = 20
                         },
@@ -206,8 +206,7 @@ public class LevelCollection
                         {
                             Title = "Far",
                             Description = "Park 30 cm away from the cone.",
-                            MaxPoints = 2,
-                            IsRequired = true
+                            MaxPoints = 2
                         },
                         new AutograderLevelInfo()
                         {
@@ -262,12 +261,101 @@ public class LevelCollection
                 {
                     DisplayName = "A: Safety Stop",
                     BuildIndex = 8,
+                    AutograderBuildIndex = 47,
+                    AutograderLevels = new AutograderLevelInfo[]
+                    {
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Full Speed",
+                            Description = "Travel at full speed when there are no obstacles.",
+                            MaxPoints = 1,
+                            IsRequired = true
+                        },
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Wall",
+                            Description = "Avoid hitting the wall.",
+                            MaxPoints = 2
+                        },
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Blocks",
+                            Description = "Avoid hitting the blocks.",
+                            MaxPoints = 1
+                        },
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Cone",
+                            Description = "Avoid hitting the cone.",
+                            MaxPoints = 1
+                        },
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Off-centered Cone",
+                            Description = "Avoid hitting the cone.",
+                            MaxPoints = 2
+                        },
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Gap",
+                            Description = "Drive through the gap.",
+                            MaxPoints = 1
+                        },
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Ramp",
+                            Description = "Drive up the ramp.",
+                            MaxPoints = 2
+                        },
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Extra: Cliff",
+                            Description = "Avoid driving off the cliff.",
+                            MaxPoints = 0.5f
+                        },
+                    }
                 },
                 new LevelInfo()
                 {
                     DisplayName = "B: Cone Parking (Revisited)",
                     BuildIndex = 9,
-                    HelpMessage = "Left-click on the screen to move the cone and scroll to resize the cone"
+                    HelpMessage = "Left-click on the screen to move the cone and scroll to resize the cone",
+                    AutograderBuildIndex = 55,
+                    AutograderLevels = new AutograderLevelInfo[]
+                    {
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Normal Cone",
+                            Description = "Park 30 cm away from the cone.",
+                            MaxPoints = 1
+                        },
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Large Cone",
+                            Description = "Park 30 cm away from the cone.",
+                            MaxPoints = 1
+                        },
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Small Cone",
+                            Description = "Park 30 cm away from the cone.",
+                            MaxPoints = 1
+                        },
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Slight left",
+                            Description = "Park 30 cm away from the cone.",
+                            MaxPoints = 1,
+                            TimeLimit = 15
+                        },
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Far right",
+                            Description = "Park 30 cm away from the cone.",
+                            MaxPoints = 1,
+                            TimeLimit = 15
+                        }
+                    }
                 },
                 new LevelInfo()
                 {

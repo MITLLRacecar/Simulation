@@ -5,6 +5,14 @@
 /// </summary>
 public class DestinationStop : AutograderTask
 {
+    #region Set in Unity Editor
+    /// <summary>
+    /// The maximum speed which the car can travel in m/s and still be considered "stopped".
+    /// </summary>
+    [SerializeField]
+    private float maxStopSpeed = Constants.MaxStopSeed;
+    #endregion
+
     #region Constants
     /// <summary>
     /// The time in seconds which the car must stop at the point to complete the task.
@@ -55,7 +63,7 @@ public class DestinationStop : AutograderTask
         Racecar racecar = other.GetComponentInParent<Racecar>();
         if (racecar != null)
         {
-            if (racecar.Physics.LinearVelocity.magnitude < Constants.MaxStopSeed)
+            if (racecar.Physics.LinearVelocity.magnitude < this.maxStopSpeed)
             {
                 this.startTime = Mathf.Min(this.startTime, Time.time);
                 if (Time.time - this.startTime >= DestinationStop.stopDuration)

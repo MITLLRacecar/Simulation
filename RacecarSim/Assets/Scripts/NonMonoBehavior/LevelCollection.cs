@@ -361,6 +361,35 @@ public class LevelCollection
                 {
                     DisplayName = "C: Wall Parking",
                     BuildIndex = 10,
+                    AutograderBuildIndex = 60,
+                    AutograderLevels = new AutograderLevelInfo[]
+                    {
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Straight",
+                            Description = "Align with and park 20 cm away from the wall.",
+                            MaxPoints = 2.5f
+                        },
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Slight Angle",
+                            Description = "Align with and park 20 cm away from the wall.",
+                            MaxPoints = 2.5f
+                        },
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Moderate Angle",
+                            Description = "Align with and park 20 cm away from the wall.",
+                            MaxPoints = 2.5f
+                        },
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Major Angle",
+                            Description = "Align with and park 20 cm away from the wall.",
+                            MaxPoints = 2.5f,
+                            TimeLimit = 15
+                        }
+                    }
                 }
             }
         },

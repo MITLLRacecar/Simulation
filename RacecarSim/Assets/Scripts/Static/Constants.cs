@@ -11,6 +11,11 @@
     public const int IgnoreUIMask = ~(1 << 5);
 
     /// <summary>
+    /// A bitmask which ignores the UI and Player layers.
+    /// </summary>
+    public const int IgnoreUIAndPlayerMask = ~((1 << 5) | (1 << 9));
+
+    /// <summary>
     /// Default maxDistance to use for a raycast in world space.
     /// </summary>
     public const float RaycastMaxDistance = 1000;

@@ -16,7 +16,7 @@ public class DistanceConeObjective : DistanceCone
     /// The maximum amount the car can miss the goal distance in cm and still complete the objective.
     /// </summary>
     [SerializeField]
-    public float allowableDistanceError = 1;
+    private float allowableDistanceError = 2;
     #endregion
 
     protected override void Update()

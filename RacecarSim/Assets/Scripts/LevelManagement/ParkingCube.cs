@@ -21,30 +21,94 @@ public class ParkingCube : MonoBehaviour
 
     #region Constants
     /// <summary>
-    /// The angle that the car should attempt to reach with the wall
+    /// The angle that the car should attempt to reach with the wall in degrees.
     /// </summary>
     private const float goalAngle = 0;
 
     /// <summary>
-    /// The threshold around goalAngle we will consider an acceptable angle.
+    /// The threshold around goalAngle in degrees we will consider an acceptable angle.
     /// </summary>
     private const float angleThreshold = 5;
 
     /// <summary>
-    /// The distance that the car should attempt to reach from the wall.
+    /// The distance that the car should attempt to reach from the wall in cm.
     /// </summary>
     private const float goalDistance = 20;
 
     /// <summary>
-    /// The threshold around goalDistance we will consider an acceptable distance.
+    /// The threshold around goalDistance in cm we will consider an acceptable distance.
     /// </summary>
-    private const float distanceThreshold = 5;
+    private const float distanceThreshold = 2;
+    #endregion
+
+    private float? distance;
+
+    private float? angle;
 
     /// <summary>
-    /// The distance (in dm) above the ground at which we cast rays to measure the car's distance from the wall.
+    /// The shortest distance between the car and the wall in cm.
     /// </summary>
-    private const float rayCastHeight = 2;
-    #endregion
+    private float Distance
+    {
+        get
+        {
+            if (!distance.HasValue)
+            {
+                RaycastHit raycastHit = new RaycastHit
+                {
+                    point = this.transform.position,
+                    distance = float.NaN
+                };
+
+                for (int i = 0; i < 3; i++)
+                {
+                    // Perform a raycast from the cube to the car to find the closest point on the car
+                    if (Physics.Raycast(raycastHit.point, LevelManager.GetCar().Center - raycastHit.point, out RaycastHit carPoint, Constants.RaycastMaxDistance, Constants.IgnoreUIMask))
+                    {
+                        if (carPoint.collider.GetComponentInParent<Racecar>() == null)
+                        {
+                            break;
+                        }
+
+                        // Perform a second raycast directly back from the car to the wall to find the closest point on the wall
+                        if (Physics.Raycast(carPoint.point, this.transform.forward, out raycastHit, Constants.RaycastMaxDistance, Constants.IgnoreUIAndPlayerMask))
+                        {
+                            if (raycastHit.collider.gameObject != this.gameObject)
+                            {
+                                break;
+                            }
+
+                            print($"{i}: {carPoint.point}; {raycastHit.distance}");
+                        }
+                    }
+                }
+
+                this.distance = raycastHit.distance * 10;
+            }
+
+            return this.distance.Value;
+        }
+    }
+
+    /// <summary>
+    /// The angle between the wall and the car in degrees.
+    /// </summary>
+    private float Angle
+    {
+        get
+        {
+            if (!this.angle.HasValue)
+            {
+                this.angle = Mathf.Abs(this.transform.rotation.eulerAngles.y - LevelManager.GetCar().transform.rotation.eulerAngles.y);
+                if (this.angle > 180)
+                {
+                    this.angle = 360 - this.angle;
+                }
+            }
+
+            return this.angle.Value;
+        }
+    }
 
     private void Start()
     {
@@ -61,27 +125,26 @@ public class ParkingCube : MonoBehaviour
 
     private void Update()
     {
-        Racecar player = LevelManager.GetCar();
-        float angle = Mathf.Abs(this.transform.rotation.eulerAngles.y - player.transform.rotation.eulerAngles.y);
-        if (angle > 180)
+        // Reset angle and distance so they are recalculated this frame
+        this.angle = null;
+        this.distance = null;
+
+        Color messageColor = Color.white;
+
+        if (Mathf.Abs(ParkingCube.goalAngle - this.Angle) < ParkingCube.angleThreshold
+            && Mathf.Abs(ParkingCube.goalDistance - this.Distance) < ParkingCube.distanceThreshold)
         {
-            angle = 360 - angle;
+            messageColor = Color.green;
+            if (LevelManager.GetCar().Physics.LinearVelocity.magnitude < Constants.MaxStopSeed)
+            {
+                AutograderTask autograderTask = this.GetComponent<AutograderTask>();
+                if (autograderTask != null)
+                {
+                    AutograderManager.CompleteTask(autograderTask);
+                }
+            }
         }
 
-        // Cast a ray from the car to the wall to find the closest point on the wall
-        float distance = -1;
-        if (Physics.Raycast(player.transform.position + Vector3.up * ParkingCube.rayCastHeight, this.transform.forward, out RaycastHit hit, 1000))
-        {
-            distance = (hit.distance - Racecar.radius) * 10;
-        }
-
-        LevelManager.ShowMessage($"Angle: {angle:F1} degrees\nDistance: {distance:F1} cm", Color.white, -1);
-
-        if (Mathf.Abs(ParkingCube.goalAngle - angle) < ParkingCube.angleThreshold 
-            && Mathf.Abs(ParkingCube.goalDistance - distance) < ParkingCube.distanceThreshold
-            && player.Physics.LinearVelocity.magnitude < Constants.MaxStopSeed)
-        {
-            LevelManager.HandleFinish(player.Index);
-        }
+        LevelManager.ShowMessage($"Angle: {this.Angle:F1} degrees\nDistance: {this.Distance:F1} cm", messageColor, -1);
     }
 }

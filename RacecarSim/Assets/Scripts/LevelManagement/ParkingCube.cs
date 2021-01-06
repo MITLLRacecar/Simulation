@@ -41,8 +41,19 @@ public class ParkingCube : MonoBehaviour
     private const float distanceThreshold = 2;
     #endregion
 
+    /// <summary>
+    /// The autograder task attached to the ParkingCube, if any.
+    /// </summary>
+    private AutograderTask autograderTask;
+
+    /// <summary>
+    /// The shortest distance between the car and the wall in cm calculated this frame.
+    /// </summary>
     private float? distance;
 
+    /// <summary>
+    /// The angle between the wall and the car in degrees calculated this frame.
+    /// </summary>
     private float? angle;
 
     /// <summary>
@@ -78,7 +89,6 @@ public class ParkingCube : MonoBehaviour
                                 break;
                             }
 
-                            print($"{i}: {carPoint.point}; {raycastHit.distance}");
                         }
                     }
                 }
@@ -110,17 +120,38 @@ public class ParkingCube : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// True if the car is within the desired distance and angle threshold.
+    /// </summary>
+    private bool IsSuccess
+    {
+        get
+        {
+            return Mathf.Abs(ParkingCube.goalAngle - this.Angle) < ParkingCube.angleThreshold 
+                && Mathf.Abs(ParkingCube.goalDistance - this.Distance) < ParkingCube.distanceThreshold;
+        }
+    }
+
+    private void Awake()
+    {
+        this.autograderTask = this.GetComponent<AutograderTask>();
+    }
+
     private void Start()
     {
-        this.transform.position += new Vector3(
-            Random.Range(-this.MaxTranslation.x, this.MaxTranslation.x),
-            Random.Range(-this.MaxTranslation.y, this.MaxTranslation.y),
-            Random.Range(-this.MaxTranslation.z, this.MaxTranslation.z));
+        // In exploration mode, randomize the position and rotation within the specified boundaries
+        if (this.autograderTask == null)
+        {
+            this.transform.position += new Vector3(
+                Random.Range(-this.MaxTranslation.x, this.MaxTranslation.x),
+                Random.Range(-this.MaxTranslation.y, this.MaxTranslation.y),
+                Random.Range(-this.MaxTranslation.z, this.MaxTranslation.z));
 
-        this.transform.Rotate(
-            Random.Range(-this.MaxRotation.x, this.MaxRotation.x),
-            Random.Range(-this.MaxRotation.y, this.MaxRotation.y),
-            Random.Range(-this.MaxRotation.z, this.MaxRotation.z));
+            this.transform.Rotate(
+                Random.Range(-this.MaxRotation.x, this.MaxRotation.x),
+                Random.Range(-this.MaxRotation.y, this.MaxRotation.y),
+                Random.Range(-this.MaxRotation.z, this.MaxRotation.z));
+        }
     }
 
     private void Update()
@@ -129,22 +160,14 @@ public class ParkingCube : MonoBehaviour
         this.angle = null;
         this.distance = null;
 
-        Color messageColor = Color.white;
-
-        if (Mathf.Abs(ParkingCube.goalAngle - this.Angle) < ParkingCube.angleThreshold
-            && Mathf.Abs(ParkingCube.goalDistance - this.Distance) < ParkingCube.distanceThreshold)
+        if (this.autograderTask == null)
         {
-            messageColor = Color.green;
-            if (LevelManager.GetCar().Physics.LinearVelocity.magnitude < Constants.MaxStopSeed)
-            {
-                AutograderTask autograderTask = this.GetComponent<AutograderTask>();
-                if (autograderTask != null)
-                {
-                    AutograderManager.CompleteTask(autograderTask);
-                }
-            }
+            LevelManager.ShowMessage($"Angle: {this.Angle:F1} degrees\nDistance: {this.Distance:F1} cm", this.IsSuccess ? Color.green : Color.white, -1);
         }
-
-        LevelManager.ShowMessage($"Angle: {this.Angle:F1} degrees\nDistance: {this.Distance:F1} cm", messageColor, -1);
+        else if (this.IsSuccess && LevelManager.GetCar().Physics.LinearVelocity.magnitude < Constants.MaxStopSeed)
+        {
+            // TODO: Find a way to display Angle and Distance
+            AutograderManager.CompleteTask(this.autograderTask);
+        }
     }
 }

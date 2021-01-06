@@ -45,24 +45,43 @@ public class DistanceCone : MonoBehaviour
     }
 
     /// <summary>
-    /// The radius of the cone in dm.
+    /// The radius of the cone at the center in dm.
     /// </summary>
     private float Radius
     {
         get
         {
-            return 0.7f * this.Scale - 0.15f;
+            return 0.35f * this.Scale;
         }
     }
 
     /// <summary>
-    /// The distance between the cone and the car in cm.
+    /// The center of the cone (ie half way up the cone body).
+    /// </summary>
+    private Vector3 Center
+    {
+        get
+        {
+            return this.transform.position + this.transform.up * this.Scale * 0.6f;
+        }
+    }
+
+    /// <summary>
+    /// The distance between the cone and the car in cm, or NaN if the cone cannot see the car.
     /// </summary>
     protected float Distance
     {
         get
         {
-            return Mathf.Max(0, 10 * (Vector3.Distance(this.transform.position, LevelManager.GetCar().transform.position) - Racecar.radius - this.Radius));
+            if (Physics.Raycast(this.Center, LevelManager.GetCar().Center - this.Center, out RaycastHit raycastHit, 1000, Lidar.IgnoreUIMask))
+            {
+                if (raycastHit.collider.GetComponentInParent<Racecar>() != null)
+                {
+                    return 10 * (raycastHit.distance - this.Radius);
+                }
+            }
+
+            return float.NaN;
         }
     }
 

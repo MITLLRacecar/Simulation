@@ -8,9 +8,14 @@ public class AutograderUIEntry : MonoBehaviour
 {
     #region Constants
     /// <summary>
-    /// The color shown for a score which between 0 and full credit, not inclusive.
+    /// The color shown for a score which is between 0 and full credit, not inclusive.
     /// </summary>
     private static readonly Color partialCreditColor = new Color(1, 0.5f, 0);
+
+    /// <summary>
+    /// The color shown for a score which is greater than full credit.
+    /// </summary>
+    private static readonly Color extraCreditColor = new Color(0.75f, 0, 1);
     #endregion
 
     #region Public Interface
@@ -28,9 +33,20 @@ public class AutograderUIEntry : MonoBehaviour
             this.texts[(int)Texts.Score].text = $"{levelScore.Score:F2}/{levelInfo.MaxPoints:F2}";
             this.texts[(int)Texts.Time].text = levelScore.Time.ToString("F2");
 
-            if (levelScore.Score != levelInfo.MaxPoints)
+            if (levelScore.Score == 0)
             {
-                this.texts[(int)Texts.Score].color = levelScore.Score == 0 ? Color.red : AutograderUIEntry.partialCreditColor;
+                // No credit
+                this.texts[(int)Texts.Score].color = Color.red;
+            }
+            else if (levelScore.Score > levelInfo.MaxPoints)
+            {
+                // Extra credit
+                this.texts[(int)Texts.Score].color = AutograderUIEntry.extraCreditColor;
+            }
+            else if (levelScore.Score != levelInfo.MaxPoints)
+            {
+                // Partial credit
+                this.texts[(int)Texts.Score].color = AutograderUIEntry.partialCreditColor;
             }
         }
         else

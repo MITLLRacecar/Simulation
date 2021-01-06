@@ -73,7 +73,7 @@ public class DistanceCone : MonoBehaviour
     {
         get
         {
-            if (Physics.Raycast(this.Center, LevelManager.GetCar().Center - this.Center, out RaycastHit raycastHit, 1000, Lidar.IgnoreUIMask))
+            if (Physics.Raycast(this.Center, LevelManager.GetCar().Center - this.Center, out RaycastHit raycastHit, Constants.RaycastMaxDistance, Constants.IgnoreUIMask))
             {
                 if (raycastHit.collider.GetComponentInParent<Racecar>() != null)
                 {

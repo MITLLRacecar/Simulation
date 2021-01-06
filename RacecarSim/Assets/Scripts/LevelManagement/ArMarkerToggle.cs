@@ -143,7 +143,7 @@ public class ArMarkerToggle : MonoBehaviour
             Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out RaycastHit hit) &&
             hit.collider.gameObject == this.gameObject;
 
-        if (this.selected)
+        if (this.Selected)
         {
             if (tagClicked)
             {

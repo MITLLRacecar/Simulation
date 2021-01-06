@@ -27,11 +27,6 @@ public class Racecar : MonoBehaviour
 
     #region Constants
     /// <summary>
-    /// The radius of the car along the Z axis (in dm)
-    /// </summary>
-    public const float radius = 1.8f;
-
-    /// <summary>
     /// The distance from which each player camera follows the car.
     /// </summary>
     private static readonly Vector3[] cameraOffsets =
@@ -77,6 +72,17 @@ public class Racecar : MonoBehaviour
     /// The heads-up display controlled by this car, if any.
     /// </summary>
     public Hud Hud { get; set; }
+
+    /// <summary>
+    /// The center point of the car.
+    /// </summary>
+    public Vector3 Center
+    {
+        get
+        {
+            return this.transform.position + this.transform.up * 0.8f; 
+        }
+    }
 
     /// <summary>
     /// Called on the first frame when the car enters default drive mode.

@@ -243,14 +243,6 @@ public class CameraModule : RacecarModule
         this.colorCamera = cameras[0];
         this.depthCamera = cameras[1];
 
-        base.Awake();
-    }
-
-    private void Start()
-    {
-        this.colorCamera.fieldOfView = CameraModule.fieldOfView.y;
-        this.depthCamera.fieldOfView = CameraModule.fieldOfView.y;
-
         this.depthImage = new float[CameraModule.DepthHeight][];
         for (int r = 0; r < CameraModule.DepthHeight; r++)
         {
@@ -259,6 +251,14 @@ public class CameraModule : RacecarModule
 
         this.depthImageRaw = new byte[sizeof(float) * CameraModule.DepthHeight * CameraModule.DepthWidth];
         this.colorImageRaw = new byte[sizeof(float) * CameraModule.ColorWidth * CameraModule.ColorHeight];
+
+        base.Awake();
+    }
+
+    private void Start()
+    {
+        this.colorCamera.fieldOfView = CameraModule.fieldOfView.y;
+        this.depthCamera.fieldOfView = CameraModule.fieldOfView.y;
     }
 
     private void Update()

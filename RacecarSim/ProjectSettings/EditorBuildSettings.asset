@@ -185,4 +185,31 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Lab3BAutograder/Lab3B_5_FarRight.unity
     guid: 158d4b2fbbfe5d446b7bd0dd472133e7
+  - enabled: 1
+    path: Assets/Scenes/Lab3CAutograder/Lab3C_1_Straight.unity
+    guid: 4361781409874d24bb86c94f44d95edc
+  - enabled: 1
+    path: Assets/Scenes/Lab3CAutograder/Lab3C_2_SlightAngle.unity
+    guid: 906f7d0ee8094af4e814c2df0db5e890
+  - enabled: 1
+    path: Assets/Scenes/Lab3CAutograder/Lab3C_3_ModerateAngle.unity
+    guid: b07b2c2ee2ef8ee41a969339fca1a791
+  - enabled: 1
+    path: Assets/Scenes/Lab3CAutograder/Lab3C_4_MajorAngle.unity
+    guid: 83636b3818f71194c805aaae5cb4c249
+  - enabled: 1
+    path: Assets/Scenes/Lab4AAutograder/Lab4A_1_FullSpeed.unity
+    guid: b6c235eafa39ad4458d4d335c4e821b9
+  - enabled: 1
+    path: Assets/Scenes/Lab4AAutograder/Lab4A_2_Wall.unity
+    guid: 2c843d2fbd109674d93e327f7b0fd911
+  - enabled: 1
+    path: Assets/Scenes/Lab4AAutograder/Lab4A_3_Blocks.unity
+    guid: 093ba1826a2b416468d2d3c1753489ff
+  - enabled: 1
+    path: Assets/Scenes/Lab4AAutograder/Lab4A_4_Cone.unity
+    guid: ffe9bd0b595a0d44fa6a6ecbde198ff4
+  - enabled: 1
+    path: Assets/Scenes/Lab4AAutograder/Lab4A_5_Gap.unity
+    guid: d7c85a01571126546a55516239c8e671
   m_configObjects: {}

@@ -430,6 +430,46 @@ public class LevelCollection
                 {
                     DisplayName = "A: Safety Stop (Revisited)",
                     BuildIndex = 8,
+                    AutograderBuildIndex = 64,
+                    AutograderLevels = new AutograderLevelInfo[]
+                    {
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Full Speed",
+                            Description = "Travel at full speed when there are no obstacles.",
+                            MaxPoints = 1,
+                            IsRequired = true,
+                            DefaultCameraIndex = 2
+                        },
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Wall",
+                            Description = "Avoid hitting the wall.",
+                            MaxPoints = 1,
+                            DefaultCameraIndex = 2
+                        },
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Blocks",
+                            Description = "Avoid hitting the blocks.",
+                            MaxPoints = 1,
+                            DefaultCameraIndex = 2
+                        },
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Cone",
+                            Description = "Avoid hitting the cone.",
+                            MaxPoints = 1,
+                            DefaultCameraIndex = 2
+                        },
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Gap",
+                            Description = "Drive through the gap.",
+                            MaxPoints = 1,
+                            DefaultCameraIndex = 2
+                        }
+                    }
                 },
                 new LevelInfo()
                 {

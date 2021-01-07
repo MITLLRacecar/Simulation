@@ -159,6 +159,7 @@ public class AutograderManager : MonoBehaviour
 
     private void Start()
     {
+        LevelManager.GetCar().SetCamera(AutograderManager.LevelInfo.DefaultCameraIndex);
         AutograderManager.CurTask.Enable();
     }
 

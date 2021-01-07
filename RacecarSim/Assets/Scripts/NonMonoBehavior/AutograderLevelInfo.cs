@@ -27,4 +27,9 @@ public class AutograderLevelInfo
     /// If true, the entire autograder run finishes if this level is not passed with full points.
     /// </summary>
     public bool IsRequired = false;
+
+    /// <summary>
+    /// The index of the player camera to initially render.
+    /// </summary>
+    public int DefaultCameraIndex = 0;
 }

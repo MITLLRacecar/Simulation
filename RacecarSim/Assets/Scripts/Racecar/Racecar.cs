@@ -150,6 +150,17 @@ public class Racecar : MonoBehaviour
         backMaterial.color = customization.BackColor.Color;
         backMaterial.SetFloat("_Metallic", customization.IsBackShiny ? 1 : 0);
     }
+
+    /// <summary>
+    /// Sets the player camera which shows the user's view of the car.
+    /// </summary>
+    /// <param name="cameraIndex">The index of the player camera to use.</param>
+    public void SetCamera(int cameraIndex)
+    {
+        this.playerCameras[this.curCamera].enabled = false;
+        this.curCamera = cameraIndex;
+        this.playerCameras[this.curCamera].enabled = true;
+    }
     #endregion
 
     /// <summary>
@@ -166,10 +177,7 @@ public class Racecar : MonoBehaviour
         this.Drive = this.GetComponent<Drive>();
         this.Lidar = this.GetComponentInChildren<Lidar>();
         this.Physics = this.GetComponent<PhysicsModule>();
-    }
 
-    private void Start()
-    {
         // Begin with main player camera (0th camera)
         if (this.playerCameras.Length > 0)
         {

@@ -115,8 +115,9 @@ public class Lidar : RacecarModule
         this.racecar = this.GetComponentInParent<Racecar>();
     }
 
-    private void Start()
+    protected override void Awake()
     {
+        base.Awake();
         this.Samples = new float[Lidar.NumSamples];
     }
 

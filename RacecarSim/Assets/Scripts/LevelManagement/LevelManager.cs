@@ -565,7 +565,7 @@ public class LevelManager : MonoBehaviour
                 this.curKeyPoints[0] = Math.Min(this.curKeyPoints[0] + 1, this.NumCheckpoints);
                 LevelManager.ResetCar(0);
             }
-            else
+            else if (LevelManager.LevelManagerMode == LevelManagerMode.Race)
             {
                 this.screenManager.ShowWarning("Checkpoint skipping (TAB key) is only available in exploration mode.");
             }

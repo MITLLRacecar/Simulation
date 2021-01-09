@@ -242,4 +242,22 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Lab4BAutograder/Lab4B_5_Organic.unity
     guid: 3bd9c061a64afcb4ab27701ff488e089
+  - enabled: 1
+    path: Assets/Scenes/Lab5Autograder/Lab5_1_IdLeft.unity
+    guid: 25e9a15f128ba1a4eb49f46b1666211d
+  - enabled: 1
+    path: Assets/Scenes/Lab5Autograder/Lab5_2_IdRight.unity
+    guid: 10d758e6c9a3f4741b8d0580ded2e344
+  - enabled: 1
+    path: Assets/Scenes/Lab5Autograder/Lab5_3_OrientationLeft.unity
+    guid: 2c7ff4c5376e5f642aaf7634c1c0bdba
+  - enabled: 1
+    path: Assets/Scenes/Lab5Autograder/Lab5_4_OrientationRight.unity
+    guid: 1268a4fbeb8e5564587a34a91242954b
+  - enabled: 1
+    path: Assets/Scenes/Lab5Autograder/Lab5_5_ColorRed.unity
+    guid: 1c7dbaa2f55f8f34ebc1c97e3d11933d
+  - enabled: 1
+    path: Assets/Scenes/Lab5Autograder/Lab5_6_ColorBlue.unity
+    guid: 753966f920a69374f97d8975ba35458b
   m_configObjects: {}

@@ -134,7 +134,7 @@ public class LevelCollection
         new LevelCollection()
         {
             DisplayName = "Lab 2: Color Camera",
-            ShortName = "Lab 1",
+            ShortName = "Lab 2",
             Levels = new LevelInfo[]
             {
                 new LevelInfo()
@@ -575,7 +575,47 @@ public class LevelCollection
                     DisplayName = "AR Tag Decisions",
                     BuildIndex = 16,
                     IsRaceable = true,
-                    NumCheckpoints = 2
+                    NumCheckpoints = 2,
+                    AutograderBuildIndex = 79,
+                    AutograderLevels = new AutograderLevelInfo[]
+                    {
+                        new AutograderLevelInfo()
+                        {
+                            Title = "ID - Left",
+                            Description = "Turn left upon seeing a marker with ID 0.",
+                            MaxPoints = 1.5f
+                        },
+                        new AutograderLevelInfo()
+                        {
+                            Title = "ID - Right",
+                            Description = "Turn right upon seeing a marker with ID 1.",
+                            MaxPoints = 1.5f
+                        },
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Orientation - Left",
+                            Description = "Turn left if a marker with ID 199 is oriented left.",
+                            MaxPoints = 1.5f
+                        },
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Orientation - Right",
+                            Description = "Turn right if a marker with ID 199 is oriented right.",
+                            MaxPoints = 1.5f
+                        },
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Color - Red",
+                            Description = "Upon seeing a marker with ID 2, follow the color of the marker.",
+                            MaxPoints = 2
+                        },
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Color - Blue",
+                            Description = "Upon seeing a marker with ID 2, follow the color of the marker.",
+                            MaxPoints = 2
+                        },
+                    }
                 },
             }
         },

@@ -887,7 +887,7 @@ public class LevelManager : MonoBehaviour
         this.curKeyPoints = new int[LevelManager.NumPlayers];
 
         // Verify that the number of checkpoints listed in the level info is correct
-        if (LevelManager.LevelInfo.NumCheckpoints != this.NumCheckpoints)
+        if (LevelManager.LevelManagerMode != LevelManagerMode.Autograder && LevelManager.LevelInfo.NumCheckpoints != this.NumCheckpoints)
         {
             Debug.LogError($"Incorrect number of checkpoints found for level [{LevelManager.LevelInfo.DisplayName}]: " +
                 $"Expected [{LevelManager.LevelInfo.NumCheckpoints}], but found [{this.NumCheckpoints}].");

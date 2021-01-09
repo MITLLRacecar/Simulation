@@ -6,14 +6,14 @@
     public const float MaxStopSeed = 0.02f;
 
     /// <summary>
-    /// A bitmask which ignores the UI layer.
+    /// A bitmask which ignores the UI and IgnoreRaycast layers.
     /// </summary>
-    public const int IgnoreUIMask = ~(1 << 5);
+    public const int IgnoreUIMask = ~((1 << 5) | (1 << 2));
 
     /// <summary>
-    /// A bitmask which ignores the UI and Player layers.
+    /// A bitmask which ignores the UI, Player, and IgnoreRaycast layers.
     /// </summary>
-    public const int IgnoreUIAndPlayerMask = ~((1 << 5) | (1 << 9));
+    public const int IgnoreUIAndPlayerMask = ~((1 << 5) | (1 << 2) | (1 << 9));
 
     /// <summary>
     /// Default maxDistance to use for a raycast in world space.

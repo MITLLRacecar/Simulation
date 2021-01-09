@@ -32,4 +32,10 @@ public class AutograderLevelInfo
     /// The index of the player camera to initially render.
     /// </summary>
     public int DefaultCameraIndex = 0;
+
+    /// <summary>
+    /// True if we should not continue to the next level until the car stops.
+    /// </summary>
+    /// <remarks>If the car does not stop before the time limit, no points are deducted.</remarks>
+    public bool DoNotProceedUntilStopped = false;
 }

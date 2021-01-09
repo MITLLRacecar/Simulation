@@ -6,15 +6,6 @@ using UnityEngine;
 /// </summary>
 public class AutograderManager : MonoBehaviour
 {
-    #region Set in Unity Editor
-    /// <summary>
-    /// True if we should not continue to the next task until the car stops.
-    /// </summary>
-    /// <remarks>If the car does not stop before the time limit, no points are deducted.</remarks>
-    [SerializeField]
-    private bool doNotProceedUntilStopped = false;
-    #endregion
-
     #region Constants
     /// <summary>
     /// The build index of the level which displays a summary of an autograder run.
@@ -51,7 +42,7 @@ public class AutograderManager : MonoBehaviour
             AutograderManager.instance.taskIndex++;
             if (AutograderManager.instance.taskIndex >= AutograderManager.instance.tasks.Length)
             {
-                if (!AutograderManager.instance.doNotProceedUntilStopped)
+                if (!AutograderManager.LevelInfo.DoNotProceedUntilStopped)
                 {
                     AutograderManager.instance.FinishLevel();
                 }
@@ -159,7 +150,8 @@ public class AutograderManager : MonoBehaviour
 
     private void Start()
     {
-        LevelManager.GetCar().SetCamera(AutograderManager.LevelInfo.DefaultCameraIndex);
+        // TODO: fix
+        // LevelManager.GetCar().SetCamera(AutograderManager.LevelInfo.DefaultCameraIndex);
         AutograderManager.CurTask.Enable();
     }
 
@@ -171,7 +163,7 @@ public class AutograderManager : MonoBehaviour
             this.hud.UpdateTime(elapsedTime, AutograderManager.LevelInfo.TimeLimit);
 
             if (elapsedTime > AutograderManager.LevelInfo.TimeLimit ||
-                (this.doNotProceedUntilStopped && this.taskIndex >= this.tasks.Length && LevelManager.GetCar().Physics.LinearVelocity.magnitude < Constants.MaxStopSeed))
+                (AutograderManager.LevelInfo.DoNotProceedUntilStopped && this.taskIndex >= this.tasks.Length && LevelManager.GetCar().Physics.LinearVelocity.magnitude < Constants.MaxStopSeed))
             {
                 this.FinishLevel();
             }

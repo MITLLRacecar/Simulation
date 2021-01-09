@@ -74,6 +74,7 @@ public class AutograderManager : MonoBehaviour
         this.hud.SetLevelInfo(AutograderManager.levelIndex, AutograderManager.LevelInfo.Title, AutograderManager.LevelInfo.Description);
         this.hud.UpdateScore(this.levelScore, AutograderManager.LevelInfo.MaxPoints);
         this.hud.UpdateTime(0, AutograderManager.LevelInfo.TimeLimit);
+        this.hud.SetMaxTime(AutograderManager.LevelInfo.TimeLimit);
     }
 
     /// <summary>

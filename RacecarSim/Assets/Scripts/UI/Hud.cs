@@ -142,14 +142,19 @@ public class Hud : ScreenManager, IAutograderHud
     {
         base.UpdateTime(time, new float[0]);
 
-        if (timeLimit - time < timeLimit * Hud.autograderWarningTimeRatio)
-        {
-            this.texts[(int)Texts.MainTime].color = Color.yellow;
-        }
-        else if (time > timeLimit)
+        if (time >= timeLimit)
         {
             this.texts[(int)Texts.MainTime].color = Color.red;
         }
+        else if (timeLimit - time < timeLimit * Hud.autograderWarningTimeRatio)
+        {
+            this.texts[(int)Texts.MainTime].color = Color.yellow;
+        }
+    }
+
+    public void SetMaxTime(float maxTime)
+    {
+        this.texts[(int)Texts.MaxTime].text = $"Max: {maxTime:F1}";
     }
     #endregion
 
@@ -207,7 +212,8 @@ public class Hud : ScreenManager, IAutograderHud
         SuccessTime = 22,
         AutograderTitle = 25,
         AutograderDescription = 26,
-        AutograderScore = 27
+        AutograderScore = 27,
+        MaxTime = 28
     }
 
     /// <summary>

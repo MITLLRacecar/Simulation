@@ -24,4 +24,10 @@ public interface IAutograderHud
     /// <param name="time">The number of seconds for which the user's program has been running in the current level.</param>
     /// <param name="timeLimit">The number of seconds which the user is allowed to spend on the current level.</param>
     void UpdateTime(float time, float timeLimit);
+
+    /// <summary>
+    /// Shows the maximum time allowed for the autograder level.
+    /// </summary>
+    /// <param name="maxTime">The maximum time in seconds which the user can spend on the current level.</param>
+    void SetMaxTime(float maxTime);
 }

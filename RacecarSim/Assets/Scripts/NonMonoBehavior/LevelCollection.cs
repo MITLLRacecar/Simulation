@@ -311,7 +311,7 @@ public class LevelCollection
                         {
                             Title = "Extra: Cliff",
                             Description = "Avoid driving off the cliff.",
-                            MaxPoints = 0.5f
+                            MaxPoints = 0
                         },
                     }
                 },
@@ -476,7 +476,46 @@ public class LevelCollection
                     DisplayName = "B: Wall Following",
                     BuildIndex = 14,
                     IsRaceable = true,
-                    NumCheckpoints = 2
+                    NumCheckpoints = 2,
+                    AutograderBuildIndex = 69,
+                    AutograderLevels = new AutograderLevelInfo[]
+                    {
+                        new AutograderLevelInfo()
+                        {
+                            Title = "45 Degree",
+                            Description = "Navigate the course without touching any walls.",
+                            MaxPoints = 2,
+                            TimeLimit = 12,
+                        },
+                        new AutograderLevelInfo()
+                        {
+                            Title = "90 Degree",
+                            Description = "Navigate the course without touching any walls.",
+                            MaxPoints = 3,
+                            TimeLimit = 20
+                        },
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Tight",
+                            Description = "Navigate the course without touching any walls.",
+                            MaxPoints = 3,
+                            TimeLimit = 30
+                        },
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Posts",
+                            Description = "Navigate the course without touching any posts.",
+                            MaxPoints = 2,
+                            TimeLimit = 30
+                        },
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Extra: Organic",
+                            Description = "Navigate the course.",
+                            MaxPoints = 0,
+                            TimeLimit = 60
+                        }
+                    }
                 }
             }
         },

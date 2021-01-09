@@ -39,8 +39,8 @@ EditorBuildSettings:
     path: Assets/Scenes/Lab3C.unity
     guid: 54ab88a43a4717e45abcb27d77a75591
   - enabled: 1
-    path: Assets/Scenes/Phase1Easy.unity
-    guid: 22c7f8ad16cf0e74eb355819a1ef6c79
+    path: Assets/Scenes/Phase1.unity
+    guid: 6a70d0b00056bb043894c56e590f2175
   - enabled: 1
     path: Assets/Scenes/Phase1Hard.unity
     guid: bcf246b186421d14cb1aa25b9a51aa90
@@ -198,6 +198,21 @@ EditorBuildSettings:
     path: Assets/Scenes/Lab3CAutograder/Lab3C_4_MajorAngle.unity
     guid: 83636b3818f71194c805aaae5cb4c249
   - enabled: 1
+    path: Assets/Scenes/Phase1Autograder/P1_1_BlueCone.unity
+    guid: d2c5938a1c1cb834c9c32b3909526a32
+  - enabled: 1
+    path: Assets/Scenes/Phase1Autograder/P1_2_RedCone.unity
+    guid: e6380a231229804489662916ff7b53e2
+  - enabled: 1
+    path: Assets/Scenes/Phase1Autograder/P1_3_StraightCourse.unity
+    guid: dbfaa69ba5eb2c345bee2b2e2b4a5025
+  - enabled: 1
+    path: Assets/Scenes/Phase1Autograder/P1_4_CurvedCourse.unity
+    guid: 21d04dca5e7717646b7c6b21d699a9c0
+  - enabled: 1
+    path: Assets/Scenes/Phase1Autograder/P1_5_Gates.unity
+    guid: 70b5a665b7c849342871622a21fdbf8b
+  - enabled: 1
     path: Assets/Scenes/Lab4AAutograder/Lab4A_1_FullSpeed.unity
     guid: b6c235eafa39ad4458d4d335c4e821b9
   - enabled: 1
@@ -212,4 +227,19 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Lab4AAutograder/Lab4A_5_Gap.unity
     guid: d7c85a01571126546a55516239c8e671
+  - enabled: 1
+    path: Assets/Scenes/Lab4BAutograder/Lab4B_1_45Degree.unity
+    guid: 46ddb2efd036dd2439f4a1d0adbdbd62
+  - enabled: 1
+    path: Assets/Scenes/Lab4BAutograder/Lab4B_2_90Degree.unity
+    guid: 17a38bef5bec4144fa16b2f43b83b7d1
+  - enabled: 1
+    path: Assets/Scenes/Lab4BAutograder/Lab4B_3_Tight.unity
+    guid: 8a834d47db09eeb449d71f21182b8150
+  - enabled: 1
+    path: Assets/Scenes/Lab4BAutograder/Lab4B_4_Posts.unity
+    guid: 23202313be9f6d9438932988d3f8dbf3
+  - enabled: 1
+    path: Assets/Scenes/Lab4BAutograder/Lab4B_5_Organic.unity
+    guid: 3bd9c061a64afcb4ab27701ff488e089
   m_configObjects: {}

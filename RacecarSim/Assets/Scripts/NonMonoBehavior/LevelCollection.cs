@@ -83,7 +83,8 @@ public class LevelCollection
                         {
                             Title = "Reverse",
                             Description = "Drive backward when LT is down.",
-                            MaxPoints = 0.5f
+                            MaxPoints = 0.5f,
+                            DefaultCameraIndex = 2
                         },
                         new AutograderLevelInfo()
                         {
@@ -123,7 +124,8 @@ public class LevelCollection
                             Title = "Chosen Shape",
                             Description = "Drive in a shape of your choice when the Y button is pressed.",
                             MaxPoints = 1,
-                            TimeLimit = 15
+                            TimeLimit = 15,
+                            DoNotProceedUntilStopped = true
                         }
                     }
                 }
@@ -403,7 +405,44 @@ public class LevelCollection
                 {
                     DisplayName = "Cone Slalom: Regular",
                     BuildIndex = 11,
-                    IsRaceable = true
+                    IsRaceable = true,
+                    AutograderBuildIndex = 64,
+                    AutograderLevels = new AutograderLevelInfo[]
+                    {
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Blue Cone",
+                            Description = "Pass the left side of the blue cone.",
+                            MaxPoints = 1
+                        },
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Red Cone",
+                            Description = "Pass the right side of the red cone.",
+                            MaxPoints = 1
+                        },
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Straight Course",
+                            Description = "Complete the slalom course.",
+                            MaxPoints = 3,
+                            TimeLimit = 20
+                        },
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Curved Course",
+                            Description = "Complete the slalom course.",
+                            MaxPoints = 3,
+                            TimeLimit = 20
+                        },
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Gates",
+                            Description = "Drive through each cone gate.",
+                            MaxPoints = 2,
+                            TimeLimit = 15
+                        }
+                    }
                 },
                 new LevelInfo()
                 {
@@ -430,7 +469,7 @@ public class LevelCollection
                 {
                     DisplayName = "A: Safety Stop (Revisited)",
                     BuildIndex = 8,
-                    AutograderBuildIndex = 64,
+                    AutograderBuildIndex = 69,
                     AutograderLevels = new AutograderLevelInfo[]
                     {
                         new AutograderLevelInfo()
@@ -477,7 +516,7 @@ public class LevelCollection
                     BuildIndex = 14,
                     IsRaceable = true,
                     NumCheckpoints = 2,
-                    AutograderBuildIndex = 69,
+                    AutograderBuildIndex = 74,
                     AutograderLevels = new AutograderLevelInfo[]
                     {
                         new AutograderLevelInfo()

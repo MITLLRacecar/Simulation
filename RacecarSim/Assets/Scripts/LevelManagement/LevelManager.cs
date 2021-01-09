@@ -692,6 +692,11 @@ public class LevelManager : MonoBehaviour
             Hud hud = GameObject.Instantiate(this.hudPrefab).GetComponent<Hud>();
             this.players[0].GetComponentInChildren<Racecar>().Hud = hud;
             this.screenManager = hud;
+
+            if (LevelManager.LevelManagerMode == LevelManagerMode.Autograder && AutograderManager.LevelInfo.DefaultCameraIndex != 0)
+            {
+                this.players[0].SetCamera(AutograderManager.LevelInfo.DefaultCameraIndex);
+            }
         }
 
         // If there are multiple players, spawn multiple cars and create a RaceScreen as the screen manager

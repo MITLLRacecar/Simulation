@@ -18,7 +18,12 @@ public class AutograderManager : MonoBehaviour
     /// The score for each completed level in the current autograder run.
     /// </summary>
     public static readonly List<AutograderLevelScore> levelScores = new List<AutograderLevelScore>();
-   
+
+    /// <summary>
+    /// Autograder information about the current level.
+    /// </summary>
+    public static AutograderLevelInfo LevelInfo { get { return LevelManager.LevelInfo.AutograderLevels[AutograderManager.levelIndex]; } }
+
     /// <summary>
     /// Reset the autograder for a new lab.
     /// </summary>
@@ -133,11 +138,6 @@ public class AutograderManager : MonoBehaviour
     private bool wasFinishedCalled = false;
 
     /// <summary>
-    /// Autograder information about the current level.
-    /// </summary>
-    private static AutograderLevelInfo LevelInfo { get { return LevelManager.LevelInfo.AutograderLevels[AutograderManager.levelIndex]; } }
-
-    /// <summary>
     /// The current task which must be completed.
     /// </summary>
     private static AutograderTask CurTask { get { return AutograderManager.instance.tasks[AutograderManager.instance.taskIndex]; } }
@@ -150,8 +150,6 @@ public class AutograderManager : MonoBehaviour
 
     private void Start()
     {
-        // TODO: fix
-        // LevelManager.GetCar().SetCamera(AutograderManager.LevelInfo.DefaultCameraIndex);
         AutograderManager.CurTask.Enable();
     }
 

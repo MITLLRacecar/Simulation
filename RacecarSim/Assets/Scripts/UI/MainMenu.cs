@@ -52,6 +52,14 @@ public class MainMenu : MonoBehaviour
         new Dropdown.OptionData("Exploration"),
         new Dropdown.OptionData("Autograder")
     };
+
+    /// <summary>
+    /// The LevelManagerModes shown for a level which only supports exploration mode.
+    /// </summary>
+    private static List<Dropdown.OptionData> ModeOptionsWithoutAutograder = new List<Dropdown.OptionData>()
+    {
+        new Dropdown.OptionData("Exploration"),
+    };
     #endregion
 
     #region Public Interface
@@ -140,10 +148,13 @@ public class MainMenu : MonoBehaviour
     {
         // Adjust mode dropdown to show/hide "Race" option based on level
         Dropdown modeDropdown = this.dropdowns[(int)Dropdowns.Mode];
-        List<Dropdown.OptionData> modeOptions = SelectedLevel.IsRaceable ? MainMenu.ModeOptionsWithRace : MainMenu.ModeOptionsWithoutRace;
+        List<Dropdown.OptionData> modeOptions = 
+            SelectedLevel.IsRaceable ? MainMenu.ModeOptionsWithRace
+            :  SelectedLevel.AutograderLevels != null ? MainMenu.ModeOptionsWithoutRace : MainMenu.ModeOptionsWithoutAutograder;
         if (modeDropdown.options.Count != modeOptions.Count)
         {
             modeDropdown.options = modeOptions;
+            modeDropdown.interactable = modeOptions.Count > 1;
         }
 
         modeDropdown.value = (int)mode;

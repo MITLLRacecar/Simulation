@@ -33,7 +33,7 @@ public class AutograderUIEntry : MonoBehaviour
             this.texts[(int)Texts.Score].text = $"{levelScore.Score:F2}/{levelInfo.MaxPoints:F2}";
             this.texts[(int)Texts.Time].text = levelScore.Time.ToString("F2");
 
-            if (levelScore.Score == 0)
+            if (levelInfo.MaxPoints > 0 && levelScore.Score == 0)
             {
                 // No credit
                 this.texts[(int)Texts.Score].color = Color.red;

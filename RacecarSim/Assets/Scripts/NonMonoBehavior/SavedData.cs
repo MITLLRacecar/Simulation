@@ -2,7 +2,7 @@
 using UnityEngine;
 
 /// <summary>
-/// The data which is serialized to disk to persist between simulations.
+/// The data which is serialized to disk to persist after the program is closed.
 /// </summary>
 [Serializable]
 public class SavedData

@@ -440,7 +440,7 @@ public class LevelCollection
                             Title = "Curved Course",
                             Description = "Complete the slalom course.",
                             MaxPoints = 3,
-                            TimeLimit = 20
+                            TimeLimit = 25
                         },
                         new AutograderLevelInfo()
                         {
@@ -456,7 +456,26 @@ public class LevelCollection
                     DisplayName = "Cone Slalom: Hard",
                     BuildIndex = 12,
                     IsRaceable = true,
-                    NumCheckpoints = 2
+                    NumCheckpoints = 2,
+                    AutograderBuildIndex = 69,
+                    AutograderLevelCode = "p1hard",
+                    AutograderLevels = new AutograderLevelInfo[]
+                    {
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Extra: Close",
+                            Description = "Complete the slalom course.",
+                            MaxPoints = 0,
+                            TimeLimit = 30
+                        },
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Extra: Hill",
+                            Description = "Complete the slalom course.",
+                            MaxPoints = 0,
+                            TimeLimit = 30
+                        }
+                    }
                 }
             }
         },
@@ -476,7 +495,7 @@ public class LevelCollection
                 {
                     DisplayName = "A: Safety Stop (Revisited)",
                     BuildIndex = 8,
-                    AutograderBuildIndex = 69,
+                    AutograderBuildIndex = 71,
                     AutograderLevelCode = "lab4a",
                     AutograderLevels = new AutograderLevelInfo[]
                     {
@@ -524,7 +543,7 @@ public class LevelCollection
                     BuildIndex = 14,
                     IsRaceable = true,
                     NumCheckpoints = 2,
-                    AutograderBuildIndex = 74,
+                    AutograderBuildIndex = 76,
                     AutograderLevelCode = "lab4b",
                     AutograderLevels = new AutograderLevelInfo[]
                     {
@@ -585,7 +604,7 @@ public class LevelCollection
                     BuildIndex = 16,
                     IsRaceable = true,
                     NumCheckpoints = 2,
-                    AutograderBuildIndex = 79,
+                    AutograderBuildIndex = 81,
                     AutograderLevelCode = "lab5",
                     AutograderLevels = new AutograderLevelInfo[]
                     {

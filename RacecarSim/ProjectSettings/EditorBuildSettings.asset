@@ -213,6 +213,12 @@ EditorBuildSettings:
     path: Assets/Scenes/Phase1Autograder/P1_5_Gates.unity
     guid: 70b5a665b7c849342871622a21fdbf8b
   - enabled: 1
+    path: Assets/Scenes/Phase1AutograderHard/P1Hard_2_Hill.unity
+    guid: 039e8c0e8cc43274195c9228a6edde41
+  - enabled: 1
+    path: Assets/Scenes/Phase1AutograderHard/P1Hard_1_Close.unity
+    guid: 4a033d27b05e4ae419a71b00dd8a1ef0
+  - enabled: 1
     path: Assets/Scenes/Lab4AAutograder/Lab4A_1_FullSpeed.unity
     guid: b6c235eafa39ad4458d4d335c4e821b9
   - enabled: 1

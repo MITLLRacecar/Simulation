@@ -23,6 +23,7 @@ public class SettingsUI : MonoBehaviour
     {
         Settings.IsRealism = this.toggles[(int)Toggles.IsRealism].isOn;
         Settings.DepthRes = (Settings.DepthResolution)this.dropdowns[(int)Dropdowns.DepthRes].value;
+        Settings.Username = this.username.text;
         
         this.ApplyColorInputs();
 
@@ -77,11 +78,17 @@ public class SettingsUI : MonoBehaviour
     /// </summary>
     private Slider[] sliders;
 
+    /// <summary>
+    /// The input field in which the user enters their OpenEdx username.
+    /// </summary>
+    private InputField username;
+
     private void Awake()
     {
         this.dropdowns = this.GetComponentsInChildren<Dropdown>();
         this.toggles = this.GetComponentsInChildren<Toggle>();
         this.sliders = this.GetComponentsInChildren<Slider>();
+        this.username = this.GetComponentInChildren<InputField>();
     }
 
     private void Start()
@@ -96,6 +103,7 @@ public class SettingsUI : MonoBehaviour
     {
         this.toggles[(int)Toggles.IsRealism].isOn = Settings.IsRealism;
         this.dropdowns[(int)Dropdowns.DepthRes].value = (int)Settings.DepthRes;
+        this.username.text = Settings.Username;
 
         this.LoadColors();
     }

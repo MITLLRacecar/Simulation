@@ -14,6 +14,11 @@ public static class Settings
     private const bool defaultIsRealism = true;
 
     /// <summary>
+    /// The default value of Username.
+    /// </summary>
+    private const string defaultUsername = "Default";
+
+    /// <summary>
     /// The default fixed delta time (in seconds) chosen by Unity.
     /// </summary>
     public static readonly float DefaultFixedDeltaTime = Time.fixedDeltaTime;
@@ -56,6 +61,11 @@ public static class Settings
     public static DepthResolution DepthRes;
 
     /// <summary>
+    /// The user's OpenEdx username.
+    /// </summary>
+    public static string Username;
+
+    /// <summary>
     /// The factor that the depth image is smaller than the color image along each axis.
     /// </summary>
     public static int DepthDivideFactor
@@ -73,6 +83,7 @@ public static class Settings
     {
         Settings.IsRealism = Settings.defaultIsRealism;
         Settings.DepthRes = Settings.defaultDepthRes;
+        Settings.Username = Settings.defaultUsername;
     }
 
     /// <summary>
@@ -82,8 +93,10 @@ public static class Settings
     {
         PlayerPrefs.SetInt("IsRealism", System.Convert.ToInt32(Settings.IsRealism));
         PlayerPrefs.SetInt("DepthRes", (int)Settings.DepthRes);
+        PlayerPrefs.SetString("Username", Settings.Username);
     }
     #endregion
+
     static Settings()
     {
         Settings.LoadSettings();
@@ -96,5 +109,6 @@ public static class Settings
     {
         Settings.IsRealism = System.Convert.ToBoolean(PlayerPrefs.GetInt("IsRealism", System.Convert.ToInt32(Settings.defaultIsRealism)));
         Settings.DepthRes = (DepthResolution)PlayerPrefs.GetInt("DepthRes", (int)Settings.defaultDepthRes);
+        Settings.Username = PlayerPrefs.GetString("Username", Settings.defaultUsername);
     }
 }

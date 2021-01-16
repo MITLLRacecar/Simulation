@@ -29,6 +29,11 @@ public class LevelInfo
     public int AutograderBuildIndex;
 
     /// <summary>
+    /// The way the level is encoded in the autograder score code.
+    /// </summary>
+    public string AutograderLevelCode;
+
+    /// <summary>
     /// The information about each autograder level for this lab.
     /// </summary>
     public AutograderLevelInfo[] AutograderLevels;

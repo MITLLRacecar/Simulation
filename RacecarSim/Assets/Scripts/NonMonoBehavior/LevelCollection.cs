@@ -71,6 +71,7 @@ public class LevelCollection
                     DisplayName = "Driving in Shapes",
                     BuildIndex = 3,
                     AutograderBuildIndex = 26,
+                    AutograderLevelCode = "lab1",
                     AutograderLevels = new AutograderLevelInfo[]
                     {
                         new AutograderLevelInfo()
@@ -147,6 +148,7 @@ public class LevelCollection
                     DisplayName = "A: Line Following",
                     BuildIndex = 5,
                     AutograderBuildIndex = 34,
+                    AutograderLevelCode = "lab2a",
                     AutograderLevels = new AutograderLevelInfo[]
                     {
                         new AutograderLevelInfo()
@@ -202,6 +204,7 @@ public class LevelCollection
                     BuildIndex = 6,
                     HelpMessage = "Left-click on the screen to move the cone",
                     AutograderBuildIndex = 41,
+                    AutograderLevelCode = "lab2b",
                     AutograderLevels = new AutograderLevelInfo[]
                     {
                         new AutograderLevelInfo()
@@ -264,6 +267,7 @@ public class LevelCollection
                     DisplayName = "A: Safety Stop",
                     BuildIndex = 8,
                     AutograderBuildIndex = 47,
+                    AutograderLevelCode = "lab3a",
                     AutograderLevels = new AutograderLevelInfo[]
                     {
                         new AutograderLevelInfo()
@@ -323,6 +327,7 @@ public class LevelCollection
                     BuildIndex = 9,
                     HelpMessage = "Left-click on the screen to move the cone and scroll to resize the cone",
                     AutograderBuildIndex = 55,
+                    AutograderLevelCode = "lab3b",
                     AutograderLevels = new AutograderLevelInfo[]
                     {
                         new AutograderLevelInfo()
@@ -364,6 +369,7 @@ public class LevelCollection
                     DisplayName = "C: Wall Parking",
                     BuildIndex = 10,
                     AutograderBuildIndex = 60,
+                    AutograderLevelCode = "lab3c",
                     AutograderLevels = new AutograderLevelInfo[]
                     {
                         new AutograderLevelInfo()
@@ -407,6 +413,7 @@ public class LevelCollection
                     BuildIndex = 11,
                     IsRaceable = true,
                     AutograderBuildIndex = 64,
+                    AutograderLevelCode = "p1",
                     AutograderLevels = new AutograderLevelInfo[]
                     {
                         new AutograderLevelInfo()
@@ -470,6 +477,7 @@ public class LevelCollection
                     DisplayName = "A: Safety Stop (Revisited)",
                     BuildIndex = 8,
                     AutograderBuildIndex = 69,
+                    AutograderLevelCode = "lab4a",
                     AutograderLevels = new AutograderLevelInfo[]
                     {
                         new AutograderLevelInfo()
@@ -517,6 +525,7 @@ public class LevelCollection
                     IsRaceable = true,
                     NumCheckpoints = 2,
                     AutograderBuildIndex = 74,
+                    AutograderLevelCode = "lab4b",
                     AutograderLevels = new AutograderLevelInfo[]
                     {
                         new AutograderLevelInfo()
@@ -577,6 +586,7 @@ public class LevelCollection
                     IsRaceable = true,
                     NumCheckpoints = 2,
                     AutograderBuildIndex = 79,
+                    AutograderLevelCode = "lab5",
                     AutograderLevels = new AutograderLevelInfo[]
                     {
                         new AutograderLevelInfo()

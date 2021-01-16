@@ -260,11 +260,6 @@ public class MainMenu : MonoBehaviour
     private Dropdown[] dropdowns;
 
     /// <summary>
-    /// The toggles (check boxes) in the main menu.
-    /// </summary>
-    private Toggle[] toggles;
-
-    /// <summary>
     /// The screen which shows the controls.
     /// </summary>
     private ControllsUI controllsPane;
@@ -287,7 +282,6 @@ public class MainMenu : MonoBehaviour
     private void Awake()
     {
         this.dropdowns = this.GetComponentsInChildren<Dropdown>();
-        this.toggles = this.GetComponentsInChildren<Toggle>();
 
         this.controllsPane = this.GetComponentInChildren<ControllsUI>();
         this.settingsPane = this.GetComponentInChildren<SettingsUI>();

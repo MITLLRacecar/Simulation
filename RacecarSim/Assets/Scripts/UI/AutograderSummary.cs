@@ -55,8 +55,16 @@ public class AutograderSummary : MonoBehaviour
     private enum Texts
     {
         Title = 0,
-        Total = 1,
-        Key = 2
+        Total = 1
+    }
+
+    /// <summary>
+    /// The input fields in the autograder summary, with values corresponding to the index in inputFields.
+    /// </summary>
+    private enum InputFields
+    {
+        Username = 0,
+        ScoreCode = 1
     }
 
     /// <summary>
@@ -64,9 +72,15 @@ public class AutograderSummary : MonoBehaviour
     /// </summary>
     private Text[] texts;
 
+    /// <summary>
+    /// The input fields in the autograder summary.
+    /// </summary>
+    private InputField[] inputFields;
+
     private void Awake()
     {
         this.texts = this.GetComponentsInChildren<Text>();
+        this.inputFields = this.GetComponentsInChildren<InputField>();
     }
 
     private void Start()
@@ -74,7 +88,9 @@ public class AutograderSummary : MonoBehaviour
         this.PopulateLevelEntries(LevelManager.LevelInfo.AutograderLevels, AutograderManager.levelScores.ToArray(), out float totalScore, out float totalTime);
         this.texts[(int)Texts.Title].text = $"{LevelManager.LevelInfo.FullName} Autograder";
         this.texts[(int)Texts.Total].text = $"{totalScore:F2}/{LevelManager.LevelInfo.AutograderMaxScore:F2}; {totalTime} seconds";
-        this.texts[(int)Texts.Key].text = this.GenerateKey(LevelManager.LevelInfo, totalScore).ToString();
+
+        this.inputFields[(int)InputFields.Username].text = Settings.Username;
+        this.inputFields[(int)InputFields.ScoreCode].text = this.GenerateScoreCode(LevelManager.LevelInfo, totalScore, Settings.Username);
     }
 
     /// <summary>
@@ -132,13 +148,15 @@ public class AutograderSummary : MonoBehaviour
     }
 
     /// <summary>
-    /// Generates a GUID which confirms the user's overall score on the autograder.
+    /// Generates an encrypted score code which encodes the user's score for the level.
     /// </summary>
     /// <param name="levelInfo">Information about the lab.</param>
     /// <param name="score">The user's total score on the lab autograder.</param>
-    /// <returns>A GUID which encodes the user's total score on the lab.</returns>
-    private Guid GenerateKey(LevelInfo levelInfo, float score)
+    /// <param name="username">The user's OpenEdx username.</param>
+    /// <returns>An hex ciphertext which encodes the user's score for the level.</returns>
+    private string GenerateScoreCode(LevelInfo levelInfo, float score, string username)
     {
-        return Guid.NewGuid();
+        string scoreCode = $"{levelInfo.AutograderLevelCode}|{score}|{levelInfo.AutograderMaxScore}|{username}";
+        return Utilities.Encrypt(scoreCode);
     }
 }

@@ -122,13 +122,13 @@ public class Hud : ScreenManager, IAutograderHud
     #endregion
 
     #region IAutograderHud
-    public void SetLevelInfo(int levelIndex, string title, string description)
+    void IAutograderHud.SetLevelInfo(int levelIndex, string title, string description)
     {
         this.texts[(int)Texts.AutograderTitle].text = $"<b>Trial {levelIndex + 1}</b> - {title}";
         this.texts[(int)Texts.AutograderDescription].text = description;
     }
 
-    public void UpdateScore(float score, float maxScore)
+    void IAutograderHud.UpdateScore(float score, float maxScore)
     {
         this.texts[(int)Texts.AutograderScore].text = $"{score:F2}/{maxScore:F2}";
 
@@ -138,7 +138,7 @@ public class Hud : ScreenManager, IAutograderHud
         }
     }
 
-    public void UpdateTime(float time, float timeLimit)
+    void IAutograderHud.UpdateTime(float time, float timeLimit)
     {
         base.UpdateTime(time, new float[0]);
 
@@ -152,7 +152,7 @@ public class Hud : ScreenManager, IAutograderHud
         }
     }
 
-    public void SetMaxTime(float maxTime)
+    void IAutograderHud.SetMaxTime(float maxTime)
     {
         this.texts[(int)Texts.MaxTime].text = $"Max: {maxTime:F1}";
     }

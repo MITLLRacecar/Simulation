@@ -77,7 +77,21 @@ public class MainMenu : MonoBehaviour
 
         LevelManager.LevelInfo = this.SelectedLevel;
         int buildIndex = LevelManager.LevelManagerMode == LevelManagerMode.Autograder ? this.SelectedLevel.AutograderBuildIndex : this.SelectedLevel.BuildIndex;
-        SceneManager.LoadScene(buildIndex, LoadSceneMode.Single);
+
+        // If this is the first time the user has selected an autograder without setting their username, show dialog reminding them to set their username
+        if (LevelManager.LevelManagerMode == LevelManagerMode.Autograder &&
+            !SavedDataManager.Data.WasUsernameDialogShown &&
+            Settings.Username == Settings.DefaultUsername)
+        {
+            this.usernamePane.Initialize(buildIndex);
+            this.usernamePane.gameObject.SetActive(true);            
+            SavedDataManager.Data.WasUsernameDialogShown = true;
+            SavedDataManager.Save();
+        }
+        else
+        {
+            SceneManager.LoadScene(buildIndex, LoadSceneMode.Single);
+        }
     }
 
     /// <summary>
@@ -275,6 +289,11 @@ public class MainMenu : MonoBehaviour
     private BestTimesUI bestTimesPane;
 
     /// <summary>
+    /// The screen which prompts the user to set their username.
+    /// </summary>
+    private NoUsernameUI usernamePane;
+
+    /// <summary>
     /// The index of the next key in the Konami Code which the user must press.
     /// </summary>
     private int konamiCodeIndex = 0;
@@ -286,6 +305,7 @@ public class MainMenu : MonoBehaviour
         this.controllsPane = this.GetComponentInChildren<ControllsUI>();
         this.settingsPane = this.GetComponentInChildren<SettingsUI>();
         this.bestTimesPane = this.GetComponentInChildren<BestTimesUI>();
+        this.usernamePane = this.GetComponentInChildren<NoUsernameUI>();
 
         if (LevelInfo.WinableLevels.Count != SavedDataManager.Data.BestTimes.Length)
         {
@@ -301,6 +321,7 @@ public class MainMenu : MonoBehaviour
         this.controllsPane.gameObject.SetActive(false);
         this.settingsPane.gameObject.SetActive(false);
         this.bestTimesPane.gameObject.SetActive(false);
+        this.usernamePane.gameObject.SetActive(false);
 
         this.numCars.SetActive(false);
 

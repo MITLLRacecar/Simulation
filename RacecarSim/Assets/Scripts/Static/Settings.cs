@@ -16,7 +16,7 @@ public static class Settings
     /// <summary>
     /// The default value of Username.
     /// </summary>
-    private const string defaultUsername = "Default";
+    public const string DefaultUsername = "Default";
 
     /// <summary>
     /// The default fixed delta time (in seconds) chosen by Unity.
@@ -83,7 +83,7 @@ public static class Settings
     {
         Settings.IsRealism = Settings.defaultIsRealism;
         Settings.DepthRes = Settings.defaultDepthRes;
-        Settings.Username = Settings.defaultUsername;
+        Settings.Username = Settings.DefaultUsername;
     }
 
     /// <summary>
@@ -109,6 +109,6 @@ public static class Settings
     {
         Settings.IsRealism = System.Convert.ToBoolean(PlayerPrefs.GetInt("IsRealism", System.Convert.ToInt32(Settings.defaultIsRealism)));
         Settings.DepthRes = (DepthResolution)PlayerPrefs.GetInt("DepthRes", (int)Settings.defaultDepthRes);
-        Settings.Username = PlayerPrefs.GetString("Username", Settings.defaultUsername);
+        Settings.Username = PlayerPrefs.GetString("Username", Settings.DefaultUsername);
     }
 }

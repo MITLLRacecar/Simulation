@@ -18,6 +18,11 @@ public class SavedData
     public CarCustomization[] CarCustomizations;
 
     /// <summary>
+    /// True if the dialog was shown prompting the user to select a username.
+    /// </summary>
+    public bool WasUsernameDialogShown;
+
+    /// <summary>
     /// Returns the default data, which should be used when no saved data can be found.
     /// </summary>
     public static SavedData Default
@@ -26,16 +31,11 @@ public class SavedData
         {
             SavedData data = new SavedData()
             {
-                CarCustomizations = new CarCustomization[]
-                {
-                    new CarCustomization(Color.white),
-                    new CarCustomization(Color.red),
-                    new CarCustomization(Color.blue),
-                    new CarCustomization(Color.yellow)
-                }
+                WasUsernameDialogShown = false
             };
 
             data.ClearBestTimes();
+            data.ClearCustomization();
             return data;
         }
     }
@@ -50,5 +50,19 @@ public class SavedData
         {
             this.BestTimes[level.WinableIndex] = new BestTimeInfo(level.NumCheckpoints);
         }
+    }
+
+    /// <summary>
+    /// Resets the car customizations to the default colors.
+    /// </summary>
+    public void ClearCustomization()
+    {
+        this.CarCustomizations = new CarCustomization[]
+        {
+            new CarCustomization(Color.white),
+            new CarCustomization(Color.red),
+            new CarCustomization(Color.blue),
+            new CarCustomization(Color.yellow)
+        };
     }
 }

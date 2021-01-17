@@ -13,6 +13,7 @@ public class SettingsUI : MonoBehaviour
     public void RestoreDefaultSetting()
     {
         Settings.RestoreDefaults();
+        SavedDataManager.Data.ClearCustomization();
         this.UpdateInputs();
     }
 
@@ -59,8 +60,8 @@ public class SettingsUI : MonoBehaviour
     /// </summary>
     private enum Toggles
     {
-        IsRealism,
-        FirstShiny,
+        IsRealism = 0,
+        FirstShiny = 1
     }
 
     /// <summary>

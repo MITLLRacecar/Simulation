@@ -159,13 +159,15 @@ public class AutograderManager : MonoBehaviour
         if (this.startTime.HasValue)
         {
             float elapsedTime = Time.time - this.startTime.Value;
-            this.hud.UpdateTime(elapsedTime, AutograderManager.LevelInfo.TimeLimit);
-
-            if (elapsedTime > AutograderManager.LevelInfo.TimeLimit ||
-                (AutograderManager.LevelInfo.DoNotProceedUntilStopped && this.taskIndex >= this.tasks.Length && LevelManager.GetCar().Physics.LinearVelocity.magnitude < Constants.MaxStopSeed) ||
-                Input.GetKeyDown(KeyCode.Tab))
+            if (!this.wasFinishedCalled)
             {
-                this.FinishLevel();
+                this.hud.UpdateTime(elapsedTime, AutograderManager.LevelInfo.TimeLimit);
+                if (elapsedTime > AutograderManager.LevelInfo.TimeLimit ||
+                    (AutograderManager.LevelInfo.DoNotProceedUntilStopped && this.taskIndex >= this.tasks.Length && LevelManager.GetCar().Physics.LinearVelocity.magnitude < Constants.MaxStopSeed) ||
+                    Input.GetKeyDown(KeyCode.Tab))
+                {
+                    this.FinishLevel();
+                }
             }
         }
     }

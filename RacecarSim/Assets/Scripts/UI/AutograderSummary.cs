@@ -56,7 +56,8 @@ public class AutograderSummary : MonoBehaviour
     private enum Texts
     {
         Title = 0,
-        Total = 1
+        Total = 1,
+        RequiredTrialExplanation = 2,
     }
 
     /// <summary>
@@ -86,9 +87,10 @@ public class AutograderSummary : MonoBehaviour
 
     private void Start()
     {
-        this.PopulateLevelEntries(LevelManager.LevelInfo.AutograderLevels, AutograderManager.levelScores.ToArray(), out float totalScore, out float totalTime);
+        this.PopulateLevelEntries(LevelManager.LevelInfo.AutograderLevels, AutograderManager.levelScores.ToArray(), out float totalScore, out float totalTime, out bool requiredTrial);
         this.texts[(int)Texts.Title].text = $"{LevelManager.LevelInfo.FullName} Autograder";
         this.texts[(int)Texts.Total].text = $"{totalScore:F2}/{LevelManager.LevelInfo.AutograderMaxScore:F2}; {totalTime} seconds";
+        this.texts[(int)Texts.RequiredTrialExplanation].gameObject.SetActive(requiredTrial);
 
         this.inputFields[(int)InputFields.Username].text = Settings.Username;
         this.inputFields[(int)InputFields.ScoreCode].text = this.GenerateScoreCode(LevelManager.LevelInfo, totalScore, Settings.Username);
@@ -102,10 +104,12 @@ public class AutograderSummary : MonoBehaviour
     /// <param name="totalMaxScore">The sum of the max score of each autograder level.</param>
     /// <param name="totalScore">The sum of the user's score on each level.</param>
     /// <param name="totalTime">The sum of the user's time spent on each level.</param>
-    private void PopulateLevelEntries(AutograderLevelInfo[] levelInfos, AutograderLevelScore[] levelScores, out float totalScore, out float totalTime)
+    /// <param name="requiredTrial">True if this lab contained one or more required trials.</param>
+    private void PopulateLevelEntries(AutograderLevelInfo[] levelInfos, AutograderLevelScore[] levelScores, out float totalScore, out float totalTime, out bool requiredTrial)
     {
         totalScore = 0;
         totalTime = 0;
+        requiredTrial = false;
 
         // Set anchor points of container
         RectTransform container = (RectTransform)this.levelEntryContainer.transform;
@@ -145,6 +149,8 @@ public class AutograderSummary : MonoBehaviour
             {
                 entry.GetComponent<AutograderUIEntry>().SetInfo(levelInfos[i], null);
             }
+
+            requiredTrial |= levelInfos[i].IsRequired;
         }
     }
 

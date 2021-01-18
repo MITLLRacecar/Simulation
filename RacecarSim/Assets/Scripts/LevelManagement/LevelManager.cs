@@ -809,6 +809,7 @@ public class LevelManager : MonoBehaviour
         this.UpdateBestTimes();
         this.pythonInterface.HandleExit();
         LevelManager.cachedPythonInterface = null;
+        AutograderManager.ResetAutograder();
         SceneManager.LoadScene(LevelCollection.MainMenuBuildIndex, LoadSceneMode.Single);
     }
 

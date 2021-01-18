@@ -45,6 +45,7 @@ public class AutograderSummary : MonoBehaviour
     /// </summary>
     public void MainMenu()
     {
+        AutograderManager.ResetAutograder();
         SceneManager.LoadScene(LevelCollection.MainMenuBuildIndex, LoadSceneMode.Single);
     }
     #endregion

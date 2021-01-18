@@ -74,7 +74,16 @@ public class AutograderManager : MonoBehaviour
         this.hud.SetLevelInfo(AutograderManager.levelIndex, AutograderManager.LevelInfo.Title, AutograderManager.LevelInfo.Description);
         this.hud.UpdateScore(this.levelScore, AutograderManager.LevelInfo.MaxPoints);
         this.hud.UpdateTime(0, AutograderManager.LevelInfo.TimeLimit);
-        this.hud.SetMaxTime(AutograderManager.LevelInfo.TimeLimit);
+
+        if (AutograderManager.LevelInfo.TimeBonuses != null)
+        {
+            Vector2 timeBonus = AutograderManager.LevelInfo.TimeBonuses[this.timeBonusIndex];
+            this.hud.SetTimeBonus(timeBonus.x, timeBonus.y, false);
+        }
+        else
+        {
+            this.hud.SetMaxTime(AutograderManager.LevelInfo.TimeLimit);
+        }
     }
 
     /// <summary>
@@ -139,6 +148,11 @@ public class AutograderManager : MonoBehaviour
     private bool wasFinishedCalled = false;
 
     /// <summary>
+    /// The index of the current time bonus in LevelInfo.TimeBonuses.
+    /// </summary>
+    private int timeBonusIndex = 0;
+
+    /// <summary>
     /// The current task which must be completed.
     /// </summary>
     private static AutograderTask CurTask { get { return AutograderManager.instance.tasks[AutograderManager.instance.taskIndex]; } }
@@ -156,18 +170,33 @@ public class AutograderManager : MonoBehaviour
 
     private void Update()
     {
-        if (this.startTime.HasValue)
+        if (this.startTime.HasValue && !this.wasFinishedCalled)
         {
             float elapsedTime = Time.time - this.startTime.Value;
-            if (!this.wasFinishedCalled)
+            this.hud.UpdateTime(elapsedTime, AutograderManager.LevelInfo.TimeLimit);
+
+            Vector2[] timeBonuses = AutograderManager.LevelInfo.TimeBonuses;
+            if (timeBonuses != null && elapsedTime > timeBonuses[this.timeBonusIndex].x)
             {
-                this.hud.UpdateTime(elapsedTime, AutograderManager.LevelInfo.TimeLimit);
-                if (elapsedTime > AutograderManager.LevelInfo.TimeLimit ||
-                    (AutograderManager.LevelInfo.DoNotProceedUntilStopped && this.taskIndex >= this.tasks.Length && LevelManager.GetCar().Physics.LinearVelocity.magnitude < Constants.MaxStopSeed) ||
-                    Input.GetKeyDown(KeyCode.Tab))
+                this.timeBonusIndex++;
+                Vector2 timeBonus = timeBonuses[this.timeBonusIndex];
+
+                // If this is the last time bonus, use the overall level time limit
+                if (timeBonus.x == float.PositiveInfinity)
                 {
-                    this.FinishLevel();
+                    this.hud.SetTimeBonus(AutograderManager.LevelInfo.TimeLimit, timeBonus.y, true);
                 }
+                else
+                {
+                    this.hud.SetTimeBonus(timeBonus.x, timeBonus.y, false);
+                }
+            }
+
+            if (elapsedTime > AutograderManager.LevelInfo.TimeLimit ||
+                (AutograderManager.LevelInfo.DoNotProceedUntilStopped && this.taskIndex >= this.tasks.Length && LevelManager.GetCar().Physics.LinearVelocity.magnitude < Constants.MaxStopSeed) ||
+                Input.GetKeyDown(KeyCode.Tab))
+            {
+                this.FinishLevel();
             }
         }
     }
@@ -181,6 +210,13 @@ public class AutograderManager : MonoBehaviour
         if (!this.wasFinishedCalled)
         {
             this.wasFinishedCalled = true;
+
+            // Apply time bonus if we completed the level
+            if (this.levelScore >= AutograderManager.LevelInfo.MaxPoints && AutograderManager.LevelInfo.TimeBonuses != null)
+            {
+                this.levelScore += AutograderManager.LevelInfo.TimeBonuses[this.timeBonusIndex].y;
+            }
+
             AutograderManager.levelScores.Add(new AutograderLevelScore()
             {
                 Score = this.levelScore,

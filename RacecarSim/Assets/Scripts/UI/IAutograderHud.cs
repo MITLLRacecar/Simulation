@@ -30,4 +30,12 @@ public interface IAutograderHud
     /// </summary>
     /// <param name="maxTime">The maximum time in seconds which the user can spend on the current level.</param>
     void SetMaxTime(float maxTime);
+
+    /// <summary>
+    /// Shows the current completion time score bonus.
+    /// </summary>
+    /// <param name="maxTime">The bonus points the user would receive if they completed the level right now.</param>
+    /// <param name="bonus">The maximum time in seconds which the user can spend and still receive the current bonus.</param>
+    /// <param name="isLastBracket">True if this is the last time bracket.</param>
+    void SetTimeBonus(float maxTime, float bonus, bool isLastBracket);
 }

@@ -1,4 +1,6 @@
-﻿/// <summary>
+﻿using UnityEngine;
+
+/// <summary>
 /// Encapsulates information about an autograder level.
 /// </summary>
 public class AutograderLevelInfo
@@ -38,4 +40,9 @@ public class AutograderLevelInfo
     /// </summary>
     /// <remarks>If the car does not stop before the time limit, no points are deducted.</remarks>
     public bool DoNotProceedUntilStopped = false;
+
+    /// <summary>
+    /// An array of times bonuses for the level, where each x value is a time in seconds and each y value is the point bonus for finishing under that time.
+    /// </summary>
+    public Vector2[] TimeBonuses;
 }

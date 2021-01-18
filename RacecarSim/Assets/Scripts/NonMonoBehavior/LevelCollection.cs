@@ -714,7 +714,19 @@ public class LevelCollection
                 {
                     DisplayName = "Basic Finish",
                     BuildIndex = 21,
-                    IsRaceable = true
+                    IsRaceable = true,
+                    AutograderBuildIndex = 87,
+                    AutograderLevelCode = "test",
+                    AutograderLevels = new AutograderLevelInfo[]
+                    {
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Test: Basic Finish",
+                            Description = "This level exists for debugging purposes only.",
+                            MaxPoints = 5,
+                            TimeBonuses = new Vector2[]{ new Vector2(2, 0.5f), new Vector2(3, 0), new Vector2(5, -1), new Vector2(float.PositiveInfinity, -2) }
+                        }
+                    }
                 },
                 new LevelInfo()
                 {

@@ -156,6 +156,20 @@ public class Hud : ScreenManager, IAutograderHud
     {
         this.texts[(int)Texts.MaxTime].text = $"Max: {maxTime:F1}";
     }
+
+    void IAutograderHud.SetTimeBonus(float maxTime, float bonus, bool isLastBracket)
+    {
+        if (bonus >= 0)
+        {
+            this.texts[(int)Texts.MaxTime].text = $"Bonus: +{bonus} (under {maxTime:F1} sec)";
+            this.texts[(int)Texts.MaxTime].color = bonus > 0 ? Color.green : Color.white;
+        }
+        else
+        {
+            this.texts[(int)Texts.MaxTime].text = $"Penalty: {bonus} (under {maxTime:F1} sec)";
+            this.texts[(int)Texts.MaxTime].color = isLastBracket ? Color.red : Color.yellow;
+        }
+    }
     #endregion
 
     /// <summary>

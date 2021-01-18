@@ -29,6 +29,7 @@ public class NoUsernameUI : MonoBehaviour
     public void Save()
     {
         Settings.Username = this.input.text;
+        Settings.SaveSettings();
         this.KeepDefault();
     }
 

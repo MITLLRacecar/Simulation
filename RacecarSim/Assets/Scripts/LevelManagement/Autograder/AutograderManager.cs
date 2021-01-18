@@ -211,8 +211,8 @@ public class AutograderManager : MonoBehaviour
         {
             this.wasFinishedCalled = true;
 
-            // Apply time bonus if we completed the level
-            if (this.levelScore >= AutograderManager.LevelInfo.MaxPoints && AutograderManager.LevelInfo.TimeBonuses != null)
+            // Apply time bonus if all tasks were completed
+            if (this.taskIndex >= this.tasks.Length && AutograderManager.LevelInfo.TimeBonuses != null)
             {
                 this.levelScore += AutograderManager.LevelInfo.TimeBonuses[this.timeBonusIndex].y;
             }

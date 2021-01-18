@@ -237,7 +237,7 @@ public class LevelManager : MonoBehaviour
     /// <remarks>If there are multiple cars in the race, this will penalize all cars.</remarks>
     public static void AddTimePenalty(float penalty)
     {
-        if (LevelManager.LevelManagerMode == LevelManagerMode.Race)
+        if (LevelManager.LevelManagerMode != LevelManagerMode.Exploration)
         {
             LevelManager.instance.timePenalty += penalty;
         }

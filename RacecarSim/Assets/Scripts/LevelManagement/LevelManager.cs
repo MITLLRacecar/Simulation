@@ -105,6 +105,11 @@ public class LevelManager : MonoBehaviour
     public static LevelInfo LevelInfo = LevelInfo.DefaultLevel;
 
     /// <summary>
+    /// The total time penalty in seconds added to the level.
+    /// </summary>
+    public static float TimePenalty { get { return LevelManager.instance.timePenalty; } }
+
+    /// <summary>
     /// Displays a simulation error to the screen manager and logs it to standard error.
     /// </summary>
     /// <param name="errorText">A message describing the error.</param>

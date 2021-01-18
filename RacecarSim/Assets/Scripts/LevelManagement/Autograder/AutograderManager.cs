@@ -172,7 +172,7 @@ public class AutograderManager : MonoBehaviour
     {
         if (this.startTime.HasValue && !this.wasFinishedCalled)
         {
-            float elapsedTime = Time.time - this.startTime.Value;
+            float elapsedTime = Time.time - this.startTime.Value + LevelManager.TimePenalty;
             this.hud.UpdateTime(elapsedTime, AutograderManager.LevelInfo.TimeLimit);
 
             Vector2[] timeBonuses = AutograderManager.LevelInfo.TimeBonuses;

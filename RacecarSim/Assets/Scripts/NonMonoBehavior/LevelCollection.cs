@@ -448,6 +448,14 @@ public class LevelCollection
                             Description = "Drive through each cone gate.",
                             MaxPoints = 2,
                             TimeLimit = 15
+                        },
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Full Course",
+                            Description = "Complete the slalom course.",
+                            MaxPoints = 5,
+                            TimeLimit = 90,
+                            TimeBonuses = new Vector2[]{ new Vector2(20, 1), new Vector2(30, 0.5f), new Vector2(45, 0), new Vector2(60, -1), new Vector2(float.PositiveInfinity, -2) }
                         }
                     }
                 },
@@ -457,7 +465,7 @@ public class LevelCollection
                     BuildIndex = 12,
                     IsRaceable = true,
                     NumCheckpoints = 2,
-                    AutograderBuildIndex = 69,
+                    AutograderBuildIndex = 70,
                     AutograderLevelCode = "p1hard",
                     AutograderLevels = new AutograderLevelInfo[]
                     {
@@ -474,6 +482,14 @@ public class LevelCollection
                             Description = "Complete the slalom course.",
                             MaxPoints = 0,
                             TimeLimit = 30
+                        },
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Full Course",
+                            Description = "Complete the slalom course.",
+                            MaxPoints = 0,
+                            TimeLimit = 120,
+                            TimeBonuses = new Vector2[]{ new Vector2(60, 1), new Vector2(75, 0.5f), new Vector2(90, 0), new Vector2(float.PositiveInfinity, -0.5f) }
                         }
                     }
                 }
@@ -495,7 +511,7 @@ public class LevelCollection
                 {
                     DisplayName = "A: Safety Stop (Revisited)",
                     BuildIndex = 8,
-                    AutograderBuildIndex = 71,
+                    AutograderBuildIndex = 73,
                     AutograderLevelCode = "lab4a",
                     AutograderLevels = new AutograderLevelInfo[]
                     {
@@ -543,7 +559,7 @@ public class LevelCollection
                     BuildIndex = 14,
                     IsRaceable = true,
                     NumCheckpoints = 2,
-                    AutograderBuildIndex = 76,
+                    AutograderBuildIndex = 78,
                     AutograderLevelCode = "lab4b",
                     AutograderLevels = new AutograderLevelInfo[]
                     {
@@ -577,10 +593,19 @@ public class LevelCollection
                         },
                         new AutograderLevelInfo()
                         {
+                            Title = "Full Course",
+                            Description = "Navigate the course without touching any walls.",
+                            MaxPoints = 5,
+                            TimeLimit = 90,
+                            TimeBonuses = new Vector2[]{ new Vector2(20, 1), new Vector2(30, 0.5f), new Vector2(45, 0), new Vector2(60, -1), new Vector2(float.PositiveInfinity, -2) }
+                        },
+                        new AutograderLevelInfo()
+                        {
                             Title = "Extra: Organic",
                             Description = "Navigate the course.",
                             MaxPoints = 0,
-                            TimeLimit = 60
+                            TimeLimit = 90,
+                            TimeBonuses = new Vector2[]{ new Vector2(45, 0.5f), new Vector2(60, 0), new Vector2(float.PositiveInfinity, -0.5f) }
                         }
                     }
                 }
@@ -604,7 +629,7 @@ public class LevelCollection
                     BuildIndex = 16,
                     IsRaceable = true,
                     NumCheckpoints = 2,
-                    AutograderBuildIndex = 81,
+                    AutograderBuildIndex = 84,
                     AutograderLevelCode = "lab5",
                     AutograderLevels = new AutograderLevelInfo[]
                     {
@@ -644,6 +669,14 @@ public class LevelCollection
                             Description = "Upon seeing a marker with ID 2, follow the color of the marker.",
                             MaxPoints = 2
                         },
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Full Course",
+                            Description = "Complete the randomly generated course.",
+                            MaxPoints = 5,
+                            TimeLimit = 75,
+                            TimeBonuses = new Vector2[]{ new Vector2(15, 1), new Vector2(25, 0.5f), new Vector2(40, 0), new Vector2(60, -1), new Vector2(float.PositiveInfinity, -2) }
+                        }
                     }
                 },
             }
@@ -659,7 +692,20 @@ public class LevelCollection
                     DisplayName = "Time Trial",
                     BuildIndex = 17,
                     IsRaceable = true,
-                    NumCheckpoints = 3
+                    NumCheckpoints = 3,
+                    AutograderBuildIndex = 91,
+                    AutograderLevelCode = "final",
+                    AutograderLevels = new AutograderLevelInfo[]
+                    {
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Time Trial",
+                            Description = "Navigate through the course.",
+                            MaxPoints = 25,
+                            TimeLimit = 300,
+                            TimeBonuses = new Vector2[]{ new Vector2(75, 3), new Vector2(90, 2), new Vector2(120, 1), new Vector2(150, 0), new Vector2(180, -1), new Vector2(240, -3), new Vector2(float.PositiveInfinity, -5) }
+                        }
+                    }
                 },
                 new LevelInfo()
                 {
@@ -667,7 +713,20 @@ public class LevelCollection
                     BuildIndex = 18,
                     IsRaceable = true,
                     NumCheckpoints = 5,
-                    MaxCars = 4
+                    MaxCars = 4,
+                    AutograderBuildIndex = 92,
+                    AutograderLevelCode = "final",
+                    AutograderLevels = new AutograderLevelInfo[]
+                    {
+                        new AutograderLevelInfo()
+                        {
+                            Title = "Grad Prix",
+                            Description = "Navigate through the course.",
+                            MaxPoints = 25,
+                            TimeLimit = 360,
+                            TimeBonuses = new Vector2[]{ new Vector2(105, 3), new Vector2(120, 2), new Vector2(150, 1), new Vector2(180, 0), new Vector2(240, -1), new Vector2(300, -3), new Vector2(float.PositiveInfinity, -5) }
+                        }
+                    }
                 },
             }
         },
@@ -715,7 +774,7 @@ public class LevelCollection
                     DisplayName = "Basic Finish",
                     BuildIndex = 21,
                     IsRaceable = true,
-                    AutograderBuildIndex = 87,
+                    AutograderBuildIndex = 93,
                     AutograderLevelCode = "test",
                     AutograderLevels = new AutograderLevelInfo[]
                     {
@@ -734,7 +793,7 @@ public class LevelCollection
                     BuildIndex = 22,
                     IsRaceable = true,
                     NumCheckpoints = 2,
-                    AutograderBuildIndex = 88,
+                    AutograderBuildIndex = 94,
                     AutograderLevelCode = "test",
                     AutograderLevels = new AutograderLevelInfo[]
                     {

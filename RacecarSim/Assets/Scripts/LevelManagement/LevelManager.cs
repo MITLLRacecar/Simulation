@@ -471,6 +471,7 @@ public class LevelManager : MonoBehaviour
                 {
                     LevelManager.autograderBuildIndex = LevelManager.LevelInfo.AutograderBuildIndex;
                     AutograderManager.ResetAutograder();
+                    this.screenManager.ShowMessage("To begin the autograder, connect a Python program and press START (or enter).", Color.white);
                 }
 
                 // Not the first autograder trial for level: load python interface from cache, automatically start
@@ -759,6 +760,7 @@ public class LevelManager : MonoBehaviour
 
                 if (LevelManager.LevelManagerMode == LevelManagerMode.Autograder)
                 {
+                    this.screenManager.ShowMessage(string.Empty, Color.white);
                     this.autograderManager.HandleStart((IAutograderHud)this.screenManager);
                 }
             }

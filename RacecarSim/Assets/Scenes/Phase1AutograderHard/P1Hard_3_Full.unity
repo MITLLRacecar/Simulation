@@ -2432,6 +2432,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5537827485497529039, guid: 14ad4e8c5d330bc469c868ba215a8195,
+        type: 3}
+      propertyPath: points
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6456443427987711237, guid: 14ad4e8c5d330bc469c868ba215a8195,
         type: 3}
       propertyPath: m_Name
@@ -2761,6 +2766,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 701418469}
     m_Modifications:
+    - target: {fileID: 2367730746617113176, guid: 1b6612b4e7b4e5749a4f20d1e9f64635,
+        type: 3}
+      propertyPath: points
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3558656673853895548, guid: 1b6612b4e7b4e5749a4f20d1e9f64635,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -3708,6 +3718,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 701418469}
     m_Modifications:
+    - target: {fileID: 2367730746617113176, guid: 1b6612b4e7b4e5749a4f20d1e9f64635,
+        type: 3}
+      propertyPath: points
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 3558656673853895548, guid: 1b6612b4e7b4e5749a4f20d1e9f64635,
         type: 3}
       propertyPath: m_LocalPosition.x

@@ -20,6 +20,12 @@ public class AutograderSummary : MonoBehaviour
     /// </summary>
     [SerializeField]
     private GameObject levelEntryContainer;
+
+    /// <summary>
+    /// The UI object which is displayed when the autograder was cut short.
+    /// </summary>
+    [SerializeField]
+    private GameObject cutShortMessage;
     #endregion
 
     #region Constants
@@ -41,6 +47,16 @@ public class AutograderSummary : MonoBehaviour
 
     #region Public Interface
     /// <summary>
+    /// True if autograding was cut short because the user did not pass a required level.
+    /// </summary>
+    public static bool WasRequiredLevelFailed = false;
+
+    /// <summary>
+    /// True if autograding was cut short because of an error.
+    /// </summary>
+    public static bool WasError = false;
+
+    /// <summary>
     /// Return to the main menu.
     /// </summary>
     public void MainMenu()
@@ -57,7 +73,7 @@ public class AutograderSummary : MonoBehaviour
     {
         Title = 0,
         Total = 1,
-        RequiredTrialExplanation = 2,
+        RequiredTrialExplanation = 2
     }
 
     /// <summary>
@@ -94,6 +110,31 @@ public class AutograderSummary : MonoBehaviour
 
         this.inputFields[(int)InputFields.Username].text = Settings.Username;
         this.inputFields[(int)InputFields.ScoreCode].text = this.GenerateScoreCode(LevelManager.LevelInfo, totalScore, Settings.Username);
+
+        if (AutograderSummary.WasError || AutograderSummary.WasRequiredLevelFailed)
+        { 
+            this.cutShortMessage.SetActive(true);
+            Text message = this.cutShortMessage.GetComponentsInChildren<Text>()[0];
+            if (AutograderSummary.WasError)
+            {
+                message.text = "The autograder was cut short because an error occurred. This may be because your Python program encountered an error.";
+            }
+            else // wasRequiredLevelFailed
+            {
+                AutograderLevelInfo lastLevelInfo = LevelManager.LevelInfo.AutograderLevels[AutograderManager.levelScores.Count - 1];
+                message.text = $"The autograder was cut short because you did not pass the required trial <b>{AutograderManager.levelScores.Count}. {lastLevelInfo.Title}</b>. To complete the full autograder for this lab, you must pass that trial with full points.";
+            }
+        }
+        AutograderSummary.WasError = false;
+        AutograderSummary.WasRequiredLevelFailed = false;
+    }
+
+    private void Update()
+    {
+        if (Input.anyKeyDown)
+        {
+            this.cutShortMessage.SetActive(false);
+        }
     }
 
     /// <summary>

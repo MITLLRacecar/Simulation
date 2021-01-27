@@ -96,6 +96,7 @@ public class AutograderManager : MonoBehaviour
             Score = this.levelScore,
             Time = Time.time - this.startTime ?? Time.time
         });
+        AutograderSummary.WasError = true;
     }
 
     /// <summary>
@@ -223,9 +224,13 @@ public class AutograderManager : MonoBehaviour
                 Time = Time.time - this.startTime ?? Time.time
             });
 
-            if (AutograderManager.levelIndex == LevelManager.LevelInfo.AutograderLevels.Length - 1 ||
-                (AutograderManager.LevelInfo.IsRequired && this.levelScore < AutograderManager.LevelInfo.MaxPoints))
+            if (AutograderManager.levelIndex == LevelManager.LevelInfo.AutograderLevels.Length - 1)
             {
+                LevelManager.FinishAutograder();
+            }
+            else if (AutograderManager.LevelInfo.IsRequired && this.levelScore < AutograderManager.LevelInfo.MaxPoints)
+            {
+                AutograderSummary.WasRequiredLevelFailed = true;
                 LevelManager.FinishAutograder();
             }
             else

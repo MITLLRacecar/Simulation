@@ -42,6 +42,7 @@ GameObject:
   - component: {fileID: 1138938600693832155}
   - component: {fileID: 1138938600694635003}
   - component: {fileID: 1138938600695733051}
+  - component: {fileID: 6345926872421379397}
   m_Layer: 0
   m_Name: default
   m_TagString: Untagged
@@ -110,6 +111,26 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!114 &6345926872421379397
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1138938600693532155}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a3e4dc2d0287744d9de20c6b0cb45b0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  colorSetIndex: 0
+  colorIndex: 0
+  turnIndex: -1
+  turnDirection: 0
+  setColor: 1
+  setColorInChild: 0
+  setRotation: 0
+  remove: 0
 --- !u!1 &8703170319971903996
 GameObject:
   m_ObjectHideFlags: 0
@@ -119,9 +140,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1353160247580470312}
-  - component: {fileID: 4021004155412849690}
   m_Layer: 0
-  m_Name: ColorLineCurved
+  m_Name: VariableColorLineCurved
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -142,22 +162,3 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &4021004155412849690
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8703170319971903996}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8a3e4dc2d0287744d9de20c6b0cb45b0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  color: 0
-  turnDirection: 0
-  turnIndex: 0
-  setColor: 0
-  setColorInChild: 0
-  setRotation: 0
-  remove: 0

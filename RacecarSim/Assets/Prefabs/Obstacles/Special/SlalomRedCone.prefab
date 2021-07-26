@@ -12,6 +12,16 @@ PrefabInstance:
       propertyPath: m_Center.x
       value: -20
       objectReference: {fileID: 0}
+    - target: {fileID: 1687111232707540048, guid: 78b96a2b0d60e6443997c6f67c18f29b,
+        type: 3}
+      propertyPath: m_Center.y
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 1687111232707540048, guid: 78b96a2b0d60e6443997c6f67c18f29b,
+        type: 3}
+      propertyPath: m_Size.y
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 3410366078833470301, guid: 78b96a2b0d60e6443997c6f67c18f29b,
         type: 3}
       propertyPath: m_Name

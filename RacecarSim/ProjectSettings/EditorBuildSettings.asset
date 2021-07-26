@@ -290,4 +290,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/TestAutograder/Test2_1_CheckpointsAndFinish.unity
     guid: a71f21fa0fdcb724687c9b981f97b0e6
+  - enabled: 1
+    path: Assets/Scenes/GrandPrix2021.unity
+    guid: 6816cf11d22888f4f89643d36b37ad55
   m_configObjects: {}

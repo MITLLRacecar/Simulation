@@ -590,10 +590,10 @@ public class LevelManager : MonoBehaviour
             }
         }
 
-        // For multi-car races, manage switching between race cameras
+        // Manage race-specific inputs
         if (LevelManager.NumPlayers > 1)
         {
-            this.ManageRaceCameras();
+            this.ManageRaceInputs();
         }
     }
 
@@ -641,9 +641,9 @@ public class LevelManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Register changes between race cameras triggered by keyboard input.
+    /// Handle keyboard inputs used during a race.
     /// </summary>
-    private void ManageRaceCameras()
+    private void ManageRaceInputs()
     {
         int prevRaceCamera = this.curRaceCamera;
 
@@ -669,8 +669,15 @@ public class LevelManager : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.Alpha1 + i))
             {
-                this.curRaceCamera = i;
-                break;
+                if (Input.GetKey(KeyCode.R))
+                {
+                    LevelManager.ResetCar(i);
+                }
+                else
+                {
+                    this.curRaceCamera = i;
+                    break;
+                }
             }
         }
 

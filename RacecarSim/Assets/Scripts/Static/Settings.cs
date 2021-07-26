@@ -14,6 +14,11 @@ public static class Settings
     private const bool defaultIsRealism = true;
 
     /// <summary>
+    /// The default value of HideCarsInColorCamera.
+    /// </summary>
+    private const bool defaultHideCarsInColorCamera = false;
+
+    /// <summary>
     /// The default value of Username.
     /// </summary>
     public const string DefaultUsername = "Default";
@@ -48,7 +53,12 @@ public static class Settings
     /// <summary>
     /// If true, Gaussian error is added to all sensor readings.
     /// </summary>
-    public static bool IsRealism = true;
+    public static bool IsRealism;
+
+    /// <summary>
+    /// If true, other cars do not show up in the color camera.
+    /// </summary>
+    public static bool HideCarsInColorCamera;
 
     /// <summary>
     /// If true, controller input is still sent in evaluation mode but best times are not recorded.
@@ -82,6 +92,7 @@ public static class Settings
     public static void RestoreDefaults()
     {
         Settings.IsRealism = Settings.defaultIsRealism;
+        Settings.HideCarsInColorCamera = Settings.defaultHideCarsInColorCamera;
         Settings.DepthRes = Settings.defaultDepthRes;
         Settings.Username = Settings.DefaultUsername;
     }
@@ -92,6 +103,7 @@ public static class Settings
     public static void SaveSettings()
     {
         PlayerPrefs.SetInt("IsRealism", System.Convert.ToInt32(Settings.IsRealism));
+        PlayerPrefs.SetInt("HideCarsInColorCamera", System.Convert.ToInt32(Settings.HideCarsInColorCamera));
         PlayerPrefs.SetInt("DepthRes", (int)Settings.DepthRes);
         PlayerPrefs.SetString("Username", Settings.Username);
     }
@@ -108,6 +120,7 @@ public static class Settings
     private static void LoadSettings()
     {
         Settings.IsRealism = System.Convert.ToBoolean(PlayerPrefs.GetInt("IsRealism", System.Convert.ToInt32(Settings.defaultIsRealism)));
+        Settings.HideCarsInColorCamera = System.Convert.ToBoolean(PlayerPrefs.GetInt("HideCarsInColorCamera", System.Convert.ToInt32(Settings.defaultHideCarsInColorCamera)));
         Settings.DepthRes = (DepthResolution)PlayerPrefs.GetInt("DepthRes", (int)Settings.defaultDepthRes);
         Settings.Username = PlayerPrefs.GetString("Username", Settings.DefaultUsername);
     }

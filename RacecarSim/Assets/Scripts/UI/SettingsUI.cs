@@ -23,6 +23,7 @@ public class SettingsUI : MonoBehaviour
     public void SaveSettings()
     {
         Settings.IsRealism = this.toggles[(int)Toggles.IsRealism].isOn;
+        Settings.HideCarsInColorCamera = this.toggles[(int)Toggles.HideCarsInColorCamera].isOn;
         Settings.DepthRes = (Settings.DepthResolution)this.dropdowns[(int)Dropdowns.DepthRes].value;
         Settings.Username = this.username.text;
         
@@ -61,7 +62,8 @@ public class SettingsUI : MonoBehaviour
     private enum Toggles
     {
         IsRealism = 0,
-        FirstShiny = 1
+        HideCarsInColorCamera = 1,
+        FirstShiny = 2,
     }
 
     /// <summary>
@@ -103,6 +105,7 @@ public class SettingsUI : MonoBehaviour
     private void UpdateInputs()
     {
         this.toggles[(int)Toggles.IsRealism].isOn = Settings.IsRealism;
+        this.toggles[(int)Toggles.HideCarsInColorCamera].isOn = Settings.HideCarsInColorCamera;
         this.dropdowns[(int)Dropdowns.DepthRes].value = (int)Settings.DepthRes;
         this.username.text = Settings.Username;
 

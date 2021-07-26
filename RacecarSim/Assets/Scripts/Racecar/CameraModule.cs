@@ -252,6 +252,11 @@ public class CameraModule : RacecarModule
         this.depthImageRaw = new byte[sizeof(float) * CameraModule.DepthHeight * CameraModule.DepthWidth];
         this.colorImageRaw = new byte[sizeof(float) * CameraModule.ColorWidth * CameraModule.ColorHeight];
 
+        if (Settings.HideCarsInColorCamera)
+        {
+            this.colorCamera.cullingMask &= ~(1 << LayerMask.NameToLayer("Player"));
+        }
+
         base.Awake();
     }
 

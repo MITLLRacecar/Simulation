@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -159,6 +159,7 @@ public class PythonInterface
         lidar_get_samples,
         physics_get_linear_acceleration,
         physics_get_angular_velocity,
+        physics_get_position, //Added this for the new get_position feature
     }
 
     /// <summary>
@@ -410,6 +411,14 @@ public class PythonInterface
                         Vector3 angularVelocity = racecar.Physics.AngularVelocity;
                         sendData = new byte[sizeof(float) * 3];
                         Buffer.BlockCopy(new float[] { angularVelocity.x, angularVelocity.y, angularVelocity.z }, 0, sendData, 0, sendData.Length);
+                        this.udpClient.Send(sendData, sendData.Length, endPoint);
+                        break;
+
+                    //Added this new case for the get_position feature
+                    case Header.physics_get_position:
+                        Vector3 position = racecar.Physics.Position;
+                        sendData = new byte[sizeof(float) * 3];
+                        Buffer.BlockCopy(new float[] { position.x, position.y, position.z }, 0, sendData, 0, sendData.Length);
                         this.udpClient.Send(sendData, sendData.Length, endPoint);
                         break;
 

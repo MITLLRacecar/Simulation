@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 /// <summary>
 /// Simulates the IMU.
@@ -82,6 +82,33 @@ public class PhysicsModule : RacecarModule
             return this.angularVelocity.Value;
         }
     }
+
+    //New Vector3 addition for the position of the car
+    /// <summary>
+    /// The position of the car (in meters).
+    /// </summary>
+    public Vector3 Position
+    {
+        get
+        {
+            if (!this.position.HasValue)
+            {
+                // Unity uses a left-handed coordinate system, but our API is right-handed
+                Vector3 position = -this.rBody.position;
+
+                if (Settings.IsRealism)
+                {
+                    position *= NormalDist.Random(1, PhysicsModule.angularErrorFactor);
+                    position.x += NormalDist.Random(0, PhysicsModule.angularErrorFixed);
+                    position.y += NormalDist.Random(0, PhysicsModule.angularErrorFixed);
+                    position.z += NormalDist.Random(0, PhysicsModule.angularErrorFixed);
+                }
+
+                this.position = position;
+            }
+            return this.position.Value;
+        }
+    }
     #endregion
 
     /// <summary>
@@ -103,6 +130,12 @@ public class PhysicsModule : RacecarModule
     /// Private member for the AngularVelocity accessor
     /// </summary>
     private Vector3? angularVelocity = null;
+
+    //New addition to get the position of the car
+    /// <summary>
+    /// Private member for the Position accessor
+    /// </summary>
+    private Vector3? position = null;
 
     protected override void Awake()
     {
@@ -146,5 +179,6 @@ public class PhysicsModule : RacecarModule
     {
         this.linearVelocity = null;
         this.angularVelocity = null;
+        this.position = null; //Not sure if this needs to be here
     }
 }

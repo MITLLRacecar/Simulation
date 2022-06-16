@@ -40,7 +40,7 @@ public class PythonInterface
     /// <summary>
     /// The time (in ms) to wait for Python to respond.
     /// </summary>
-    private const int timeoutTime = 5000;
+    private const int timeoutTime = 20000; //changed this from 5000 to 20000 since image processing takes > 5s
 
     /// <summary>
     /// The maximum UDP packet size allowed on Windows.
@@ -159,6 +159,11 @@ public class PythonInterface
         lidar_get_samples,
         physics_get_linear_acceleration,
         physics_get_angular_velocity,
+        physics_get_position,
+        drone_get_drone_image,
+        drone_get_drone_height,
+        drone_set_height,
+        drone_return_home,
     }
 
     /// <summary>
@@ -226,7 +231,7 @@ public class PythonInterface
                 return null;
             }
         }
-        
+
         LevelManager.UpdateConnectedPrograms();
         return index;
     }
@@ -413,6 +418,30 @@ public class PythonInterface
                         this.udpClient.Send(sendData, sendData.Length, endPoint);
                         break;
 
+                    case Header.physics_get_position:
+                        Vector3 position = racecar.Physics.Position;
+                        sendData = new byte[sizeof(float) * 3];
+                        Buffer.BlockCopy(new float[] { position.x, position.y, position.z }, 0, sendData, 0, sendData.Length);
+                        this.udpClient.Send(sendData, sendData.Length, endPoint);
+                        break;
+
+                    case Header.drone_get_drone_image:
+                        pythonFinished = !this.SendFragmented(racecar.Drone.DroneImageRaw, 32, endPoint);
+                        break;
+
+                    case Header.drone_get_drone_height:
+                        sendData = BitConverter.GetBytes(racecar.Drone.CurrentPosition.y);
+                        this.udpClient.Send(sendData, sendData.Length, endPoint);
+                        break;
+
+                    case Header.drone_set_height:
+                        racecar.Drone.TargetHeight = BitConverter.ToSingle(data, 4);
+                        break;
+
+                    case Header.drone_return_home:
+                        racecar.Drone.Land();
+                        break;
+
                     default:
                         Debug.LogError($">> Error: The function {header} is not supported by RacecarSim.");
                         pythonFinished = true;
@@ -590,6 +619,10 @@ public class PythonInterface
                     sendData = new byte[sizeof(float) * Lidar.NumSamples];
                     Buffer.BlockCopy(racecar.Lidar.Samples, 0, sendData, 0, sendData.Length);
                     this.udpClientAsync.Send(sendData, sendData.Length, receiveEndPoint);
+                    break;
+
+                case Header.drone_get_drone_image:
+                    this.SendFragmentedAsync(racecar.Drone.GetDroneImageRawAsync(), 32, receiveEndPoint);
                     break;
 
                 default:

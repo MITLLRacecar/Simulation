@@ -34,6 +34,18 @@ public class PhysicsModule : RacecarModule
     /// This value is made up (it is NOT specified in the Intel RealSense D435i datasheet).
     /// </summary>
     private const float angularErrorFixed = 0.005f;
+
+    /// <summary>
+    /// The average relative error of position measurements.
+    /// This value is made up (it is NOT specified in the Intel RealSense D435i datasheet).
+    /// </summary>
+    private const float positionErrorFactor = 0.001f;
+
+    /// <summary>
+    /// The average fixed error applied to all position measurements.
+    /// This value is made up (it is NOT specified in the Intel RealSense D435i datasheet).
+    /// </summary>
+    private const float positionErrorFixed = 0.005f; //old value => 4.90f
     #endregion
 
     #region Public Interface
@@ -82,6 +94,32 @@ public class PhysicsModule : RacecarModule
             return this.angularVelocity.Value;
         }
     }
+
+    /// <summary>
+    /// The position of the car (in meters).
+    /// </summary>
+    public Vector3 Position
+    {
+        get
+        {
+            if (!this.position.HasValue)
+            {
+                // Unity uses a left-handed coordinate system, but our API is right-handed
+                Vector3 pos = -this.rBody.position;
+
+                if (Settings.IsRealism)
+                {
+                    pos *= NormalDist.Random(1, PhysicsModule.positionErrorFactor);
+                    pos.x += NormalDist.Random(0, PhysicsModule.positionErrorFixed);
+                    pos.y += NormalDist.Random(0, PhysicsModule.positionErrorFixed);
+                    pos.z += NormalDist.Random(0, PhysicsModule.positionErrorFixed);
+                }
+
+                this.position = pos;
+            }
+            return this.position.Value;
+        }
+    }
     #endregion
 
     /// <summary>
@@ -103,6 +141,11 @@ public class PhysicsModule : RacecarModule
     /// Private member for the AngularVelocity accessor
     /// </summary>
     private Vector3? angularVelocity = null;
+
+    /// <summary>
+    /// Private member for the Position accessor
+    /// </summary>
+    private Vector3? position = null;
 
     protected override void Awake()
     {
@@ -146,5 +189,6 @@ public class PhysicsModule : RacecarModule
     {
         this.linearVelocity = null;
         this.angularVelocity = null;
+        this.position = null;
     }
 }

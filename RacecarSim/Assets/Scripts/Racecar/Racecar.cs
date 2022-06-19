@@ -72,6 +72,11 @@ public class Racecar : MonoBehaviour
     /// The heads-up display controlled by this car, if any.
     /// </summary>
     public Hud Hud { get; set; }
+    
+    /// <summary>
+    /// Exposes the drone model.
+    /// </summary>
+    public Drone Drone { get; private set; }
 
     /// <summary>
     /// The center point of the car.
@@ -177,6 +182,7 @@ public class Racecar : MonoBehaviour
         this.Drive = this.GetComponent<Drive>();
         this.Lidar = this.GetComponentInChildren<Lidar>();
         this.Physics = this.GetComponent<PhysicsModule>();
+        this.Drone = this.GetComponentInChildren<Drone>();
 
         // Begin with main player camera (0th camera)
         if (this.playerCameras.Length > 0)

@@ -62,12 +62,12 @@ public class CameraModule : RacecarModule
     /// <summary>
     /// The width (in pixels) of the depth images captured by the camera.
     /// </summary>
-    public static int DepthWidth { get { return ImageProcessingSM.ColorWidth / Settings.DepthDivideFactor; } }
+    public static int DepthWidth { get { return ImageCaptureHelper.ColorWidth / Settings.DepthDivideFactor; } }
 
     /// <summary>
     /// The height (in pixels) of the depth images captured by the camera.
     /// </summary>
-    public static int DepthHeight { get { return ImageProcessingSM.ColorHeight / Settings.DepthDivideFactor; } }
+    public static int DepthHeight { get { return ImageCaptureHelper.ColorHeight / Settings.DepthDivideFactor; } }
 
     /// <summary>
     /// The depth values (in cm) captured by the depth camera this frame, from top left to bottom right.

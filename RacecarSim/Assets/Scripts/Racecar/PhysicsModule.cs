@@ -37,15 +37,15 @@ public class PhysicsModule : RacecarModule
 
     /// <summary>
     /// The average relative error of position measurements.
-    /// This value is made up (it is NOT specified in the Intel RealSense D435i datasheet).
+    /// This value is made up.
     /// </summary>
     private const float positionErrorFactor = 0.001f;
 
     /// <summary>
     /// The average fixed error applied to all position measurements.
-    /// This value is made up (it is NOT specified in the Intel RealSense D435i datasheet).
+    /// This value is made up.
     /// </summary>
-    private const float positionErrorFixed = 0.005f; //old value => 4.90f
+    private const float positionErrorFixed = 0.005f;
     #endregion
 
     #region Public Interface
@@ -96,7 +96,7 @@ public class PhysicsModule : RacecarModule
     }
 
     /// <summary>
-    /// The position of the car (in meters).
+    /// The position of the car relative to the Unity scene's global origin (in meters).
     /// </summary>
     public Vector3 Position
     {

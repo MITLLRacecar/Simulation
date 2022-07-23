@@ -20,7 +20,7 @@ public class PythonInterface
     /// should be incremented both here and in racecar_core_sim.py. This allows us to immediately detect
     /// if a user attempts to use incompatible versions of RacecarSim and racecar_core.
     /// </remarks>
-    private const int version = 1;
+    private const int version = 2;
 
     /// <summary>
     /// The UDP port used by the Unity simulation (this program).
@@ -40,7 +40,7 @@ public class PythonInterface
     /// <summary>
     /// The time (in ms) to wait for Python to respond.
     /// </summary>
-    private const int timeoutTime = 20000; //changed this from 5000 to 20000 since image processing takes > 5s
+    private const int timeoutTime = 5000; //Need to fix this.
 
     /// <summary>
     /// The maximum UDP packet size allowed on Windows.
@@ -160,10 +160,10 @@ public class PythonInterface
         physics_get_linear_acceleration,
         physics_get_angular_velocity,
         physics_get_position,
-        drone_get_drone_image,
-        drone_get_drone_height,
+        drone_get_image,
+        drone_get_height,
         drone_set_height,
-        drone_return_home,
+        drone_return_to_car,
     }
 
     /// <summary>
@@ -328,7 +328,8 @@ public class PythonInterface
                         break;
 
                     case Header.camera_get_color_image:
-                        pythonFinished = !this.SendFragmented(racecar.Camera.ColorImageRaw, 32, endPoint);
+                        pythonFinished = !this.SendFragmented(racecar.Camera.colorCameraHelper.RawImage, 32, endPoint);
+                        //pythonFinished = !this.SendFragmented(racecar.Camera.ColorImageRaw, 32, endPoint);
                         break;
 
                     case Header.camera_get_depth_image:
@@ -338,11 +339,13 @@ public class PythonInterface
 
                     case Header.camera_get_width:
                         sendData = BitConverter.GetBytes(CameraModule.ColorWidth);
+                        //sendData = BitConverter.GetBytes(CameraModule.ColorWidth);
                         this.udpClient.Send(sendData, sendData.Length, endPoint);
                         break;
 
                     case Header.camera_get_height:
                         sendData = BitConverter.GetBytes(CameraModule.ColorHeight);
+                        //sendData = BitConverter.GetBytes(CameraModule.ColorHeight);
                         this.udpClient.Send(sendData, sendData.Length, endPoint);
                         break;
 
@@ -425,11 +428,12 @@ public class PythonInterface
                         this.udpClient.Send(sendData, sendData.Length, endPoint);
                         break;
 
-                    case Header.drone_get_drone_image:
-                        pythonFinished = !this.SendFragmented(racecar.Drone.DroneImageRaw, 32, endPoint);
+                    case Header.drone_get_image:
+                        pythonFinished = !this.SendFragmented(racecar.Drone.droneCameraHelper.RawImage, 32, endPoint);
+                        //pythonFinished = !this.SendFragmented(racecar.Drone.DroneImageRaw, 32, endPoint);
                         break;
 
-                    case Header.drone_get_drone_height:
+                    case Header.drone_get_height:
                         sendData = BitConverter.GetBytes(racecar.Drone.CurrentPosition.y);
                         this.udpClient.Send(sendData, sendData.Length, endPoint);
                         break;
@@ -438,7 +442,7 @@ public class PythonInterface
                         racecar.Drone.TargetHeight = BitConverter.ToSingle(data, 4);
                         break;
 
-                    case Header.drone_return_home:
+                    case Header.drone_return_to_car:
                         racecar.Drone.Land();
                         break;
 
@@ -607,7 +611,8 @@ public class PythonInterface
                     break;
 
                 case Header.camera_get_color_image:
-                    this.SendFragmentedAsync(racecar.Camera.GetColorImageRawAsync(), 32, receiveEndPoint);
+                    this.SendFragmentedAsync(racecar.Camera.colorCameraHelper.GetRawImageAsync(), 32, receiveEndPoint);
+                    //this.SendFragmentedAsync(racecar.Camera.GetColorImageRawAsync(), 32, receiveEndPoint);
                     break;
 
                 case Header.camera_get_depth_image:
@@ -621,8 +626,9 @@ public class PythonInterface
                     this.udpClientAsync.Send(sendData, sendData.Length, receiveEndPoint);
                     break;
 
-                case Header.drone_get_drone_image:
-                    this.SendFragmentedAsync(racecar.Drone.GetDroneImageRawAsync(), 32, receiveEndPoint);
+                case Header.drone_get_image:
+                    this.SendFragmentedAsync(racecar.Drone.droneCameraHelper.GetRawImageAsync(), 32, receiveEndPoint);
+                    //this.SendFragmentedAsync(racecar.Drone.GetDroneImageRawAsync(), 32, receiveEndPoint);
                     break;
 
                 default:

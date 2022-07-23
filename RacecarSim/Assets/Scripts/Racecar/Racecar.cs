@@ -67,16 +67,16 @@ public class Racecar : MonoBehaviour
     /// Exposes the RealSense D435i IMU.
     /// </summary>
     public PhysicsModule Physics { get; private set; }
-
-    /// <summary>
-    /// The heads-up display controlled by this car, if any.
-    /// </summary>
-    public Hud Hud { get; set; }
     
     /// <summary>
     /// Exposes the drone model.
     /// </summary>
     public Drone Drone { get; private set; }
+
+    /// <summary>
+    /// The heads-up display controlled by this car, if any.
+    /// </summary>
+    public Hud Hud { get; set; }
 
     /// <summary>
     /// The center point of the car.

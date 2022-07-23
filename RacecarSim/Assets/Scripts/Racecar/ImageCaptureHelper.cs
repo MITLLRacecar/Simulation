@@ -10,12 +10,12 @@ public class ImageCaptureHelper : RacecarModule {
   /// <summary>
   /// The width (in pixels) of the color images captured by the camera.
   /// </summary>
-  private const int ColorWidth = 640;
+  public const int ColorWidth = 640;
 
   /// <summary>
   /// The height (in pixels) of the color images captured by the camera.
   /// </summary>
-  private const int ColorHeight = 480;
+  public const int ColorHeight = 480;
 
   /// <summary>
   /// The average relative error of distance measurements.

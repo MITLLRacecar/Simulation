@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading;
 using UnityEngine;
 
@@ -62,39 +62,12 @@ public class CameraModule : RacecarModule
     /// <summary>
     /// The width (in pixels) of the depth images captured by the camera.
     /// </summary>
-    public static int DepthWidth { get { return CameraModule.ColorWidth / Settings.DepthDivideFactor; } }
+    public static int DepthWidth { get { return ImageCaptureHelper.ColorWidth / Settings.DepthDivideFactor; } }
 
     /// <summary>
     /// The height (in pixels) of the depth images captured by the camera.
     /// </summary>
-    public static int DepthHeight { get { return CameraModule.ColorHeight / Settings.DepthDivideFactor; } }
-
-    /// <summary>
-    /// The GPU-side texture to which the color camera renders.
-    /// </summary>
-    public RenderTexture ColorImage
-    {
-        get
-        {
-            return this.colorCamera.targetTexture;
-        }
-    }
-
-    /// <summary>
-    /// The raw bytes of the color image captured by the color camera this frame.
-    /// Each pixel is stored in the ARGB 32-bit format, from top left to bottom right.
-    /// </summary>
-    public byte[] ColorImageRaw
-    {
-        get
-        {
-            if (!isColorImageRawValid)
-            {
-                this.UpdateColorImageRaw();
-            }
-            return this.colorImageRaw;
-        }
-    }
+    public static int DepthHeight { get { return ImageCaptureHelper.ColorHeight / Settings.DepthDivideFactor; } }
 
     /// <summary>
     /// The depth values (in cm) captured by the depth camera this frame, from top left to bottom right.
@@ -162,18 +135,6 @@ public class CameraModule : RacecarModule
     }
 
     /// <summary>
-    /// Asynchronously updates and returns the color image captured by the camera.
-    /// Warning: This method blocks for asyncWaitTime ms to wait for the new image to load.
-    /// </summary>
-    /// <returns>The color image captured by the camera.</returns>
-    public byte[] GetColorImageRawAsync()
-    {
-        this.mustUpdateColorImageRaw = true;
-        Thread.Sleep(CameraModule.asyncWaitTime);
-        return this.colorImageRaw;
-    }
-
-    /// <summary>
     /// Asynchronously updates and returns the depth image captured by the camera.
     /// Warning: This method blocks for asyncWaitTime ms to wait for the new image to load.
     /// </summary>
@@ -185,16 +146,6 @@ public class CameraModule : RacecarModule
         return this.depthImageRaw;
     }
     #endregion
-
-    /// <summary>
-    /// Private member for the ColorImageRaw accessor.
-    /// </summary>
-    private byte[] colorImageRaw;
-
-    /// <summary>
-    /// True if colorImageRaw is up to date with the color image rendered for the current frame.
-    /// </summary>
-    private bool isColorImageRawValid = false;
 
     /// <summary>
     /// Private member for the DepthImage accessor.
@@ -217,25 +168,25 @@ public class CameraModule : RacecarModule
     private bool isDepthImageRawValid = false;
 
     /// <summary>
-    /// The color camera on the car.
-    /// </summary>
-    private Camera colorCamera;
-
-    /// <summary>
     /// The depth camera on the car.
     /// This is currently unused, but a future goal is to use this instead of raycasts.
     /// </summary>
     private Camera depthCamera;
 
     /// <summary>
-    /// If true, colorImageRaw is updated next frame.
-    /// </summary>
-    private bool mustUpdateColorImageRaw;
-
-    /// <summary>
     /// If true, depthImageRaw is updated next frame.
     /// </summary>
     private bool mustUpdateDepthImageRaw;
+
+    /// <summary>
+    /// The color camera on the car.
+    /// </summary>
+    private Camera colorCamera;
+
+    /// <summary>
+    /// Helper object for the color camera.
+    /// </summary>
+    public ImageCaptureHelper colorCameraHelper;
 
     protected override void Awake()
     {
@@ -250,13 +201,7 @@ public class CameraModule : RacecarModule
         }
 
         this.depthImageRaw = new byte[sizeof(float) * CameraModule.DepthHeight * CameraModule.DepthWidth];
-        this.colorImageRaw = new byte[sizeof(float) * CameraModule.ColorWidth * CameraModule.ColorHeight];
-
-        if (Settings.HideCarsInColorCamera)
-        {
-            this.colorCamera.cullingMask &= ~(1 << LayerMask.NameToLayer("Player"));
-        }
-
+        colorCameraHelper = new ImageCaptureHelper(this.colorCamera);
         base.Awake();
     }
 
@@ -268,10 +213,10 @@ public class CameraModule : RacecarModule
 
     private void Update()
     {
-        if (this.mustUpdateColorImageRaw)
+        if (colorCameraHelper.mustUpdateRawImage)
         {
-            this.UpdateColorImageRaw();
-            this.mustUpdateColorImageRaw = false;
+            colorCameraHelper.UpdateRawImage();
+            colorCameraHelper.mustUpdateRawImage = false;
         }
 
         if (this.mustUpdateDepthImageRaw)
@@ -288,7 +233,7 @@ public class CameraModule : RacecarModule
 
     private void LateUpdate()
     {
-        this.isColorImageRawValid = false;
+        colorCameraHelper.isRawImageValid = false;
         this.isDepthImageValid = false;
         this.isDepthImageRawValid = false;
     }
@@ -323,39 +268,6 @@ public class CameraModule : RacecarModule
     }
 
     /// <summary>
-    /// Update colorImageRaw by rendering the color camera on the GPU and copying to the CPU.
-    /// Warning: this operation is very expensive.
-    /// </summary>
-    private void UpdateColorImageRaw()
-    {
-        RenderTexture activeRenderTexture = RenderTexture.active;
-
-        // Tell GPU to render the image captured by the color camera
-        RenderTexture.active = this.ColorImage;
-        this.colorCamera.Render();
-
-        // Copy this image from the GPU to a Texture2D on the CPU
-        Texture2D image = new Texture2D(this.ColorImage.width, this.ColorImage.height);
-        image.ReadPixels(new Rect(0, 0, this.ColorImage.width, this.ColorImage.height), 0, 0);
-        image.Apply();
-
-        // Restore the previous GPU render target
-        RenderTexture.active = activeRenderTexture;
-
-        // Copy the bytes from the Texture2D to this.colorImageRaw, reversing row order
-        // (Unity orders bottom-to-top, we want top-to-bottom)
-        byte[] bytes = image.GetRawTextureData();
-        int bytesPerRow = CameraModule.ColorWidth * 4;
-        for (int r = 0; r < CameraModule.ColorHeight; r++)
-        {
-            Buffer.BlockCopy(bytes, (CameraModule.ColorHeight - r - 1) * bytesPerRow, this.colorImageRaw, r * bytesPerRow, bytesPerRow);
-        }
-
-        Destroy(image);
-        this.isColorImageRawValid = true;
-    }
-
-    /// <summary>
     /// Update depthImage by performing a ray cast for each depth pixel.
     /// Warning: this operation is very expensive.
     /// </summary>
@@ -372,8 +284,8 @@ public class CameraModule : RacecarModule
 
                 if (Physics.Raycast(ray, out RaycastHit raycastHit, CameraModule.maxRange, Constants.IgnoreUIMask))
                 {
-                    float distance = Settings.IsRealism 
-                        ? raycastHit.distance * NormalDist.Random(1, CameraModule.averageErrorFactor) 
+                    float distance = Settings.IsRealism
+                        ? raycastHit.distance * NormalDist.Random(1, CameraModule.averageErrorFactor)
                         : raycastHit.distance;
                     this.depthImage[r][c] = distance > CameraModule.minRange ? distance * 10 : CameraModule.minCode;
                 }

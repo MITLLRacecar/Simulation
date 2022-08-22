@@ -67,6 +67,11 @@ public class Racecar : MonoBehaviour
     /// Exposes the RealSense D435i IMU.
     /// </summary>
     public PhysicsModule Physics { get; private set; }
+    
+    /// <summary>
+    /// Exposes the drone model.
+    /// </summary>
+    public Drone Drone { get; private set; }
 
     /// <summary>
     /// The heads-up display controlled by this car, if any.
@@ -177,6 +182,7 @@ public class Racecar : MonoBehaviour
         this.Drive = this.GetComponent<Drive>();
         this.Lidar = this.GetComponentInChildren<Lidar>();
         this.Physics = this.GetComponent<PhysicsModule>();
+        this.Drone = this.GetComponentInChildren<Drone>();
 
         // Begin with main player camera (0th camera)
         if (this.playerCameras.Length > 0)

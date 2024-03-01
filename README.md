@@ -1,6 +1,6 @@
 # RacecarSim
 
-_The MIT Beaver Works RACECAR simulation environment_
+_The MIT Beaver Works RACECAR simulation environment using [Wheel Controller 3D by NWH Coding](https://assetstore.unity.com/packages/tools/physics/wheel-controller-3d-74512)_
 
 You can learn more about RacecarSim and download the current version [here](https://mitll-racecar-mn.readthedocs.io/en/latest/simulation.html).
 
@@ -9,6 +9,8 @@ You can learn more about RacecarSim and download the current version [here](http
 RacecarSim is built with Unity and C#. Before you begin, you will need to download Unity [here](https://unity3d.com/get-unity/download). Select the option that says "Download Unity Hub".
 
 Open Unity Hub and install the latest version of Unity in the "Installs" page. In the "Projects" page, click the "Add" button and select the `RacecarSim` directory located at the root of this repository. This will import the RacecarSim project into Unity.
+
+Once the project is open in the Unity Editor, press `Window` from the toolbar and pick `Package Manager`. Import `Wheel Controller 3D` from the `My Assets` section found in the `Packages:` dropdown. Make sure you have purchased the [package](https://assetstore.unity.com/packages/tools/physics/wheel-controller-3d-74512) and are using the Unity account associated with that purchase. When prompted to install extra dependencies, press `Skip`. Then in the import window, deselect `Materials`, `Models`, `PostProcessing`, `Prefabs`, `Resources`, `Settings`, `Textures`, and `Vegetation` folders that are inside the `Common` folder. Deselect `InputSystem` from inside the `Common/Input/` folder and deselect `DemoContent` from inside the `WheelController` folder. Now you can press the `Import` button.
 
 If you installed [Microsoft Visual Studio](https://visualstudio.microsoft.com/) with Unity, you should see a file called `RacecarSim.sln` in `RacecarSim` directory. This is the Visual Studio Solution for the project. Open this in Visual Studio to edit the RacecarSim C# scripts.
 

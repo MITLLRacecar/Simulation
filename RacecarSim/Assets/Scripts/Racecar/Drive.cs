@@ -7,7 +7,7 @@ using NWH.WheelController3D;
 /// </summary>
 public class Drive : RacecarModule
 {
-    private CarController carController;
+    private RacecarNWH carController;
 
     #region Constants
     /// <summary>
@@ -44,7 +44,7 @@ public class Drive : RacecarModule
 
     protected override void Awake()
     {
-        this.carController = this.GetComponent<CarController>();
+        this.carController = this.GetComponent<RacecarNWH>();
 
         base.Awake();
     }

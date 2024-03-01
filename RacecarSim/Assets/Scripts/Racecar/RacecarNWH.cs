@@ -36,7 +36,7 @@ namespace NWH.WheelController3D
     /// inherit from the same Vehicle class.
     /// </summary>
     [RequireComponent(typeof(Rigidbody))]
-    public class CarController : Vehicle
+    public class RacecarNWH : Vehicle
     {
         /// <summary>
         /// Maximum brake torque to be applied to the wheel.
@@ -188,9 +188,9 @@ namespace NWH.WheelController3D
     /// <summary>
     ///     Editor for WheelController.
     /// </summary>
-    [CustomEditor(typeof(CarController))]
+    [CustomEditor(typeof(RacecarNWH))]
     [CanEditMultipleObjects]
-    public class CarControllerEditor : NUIEditor
+    public class RacecarNWHEditor : NUIEditor
     {
         public override bool OnInspectorNUI()
         {

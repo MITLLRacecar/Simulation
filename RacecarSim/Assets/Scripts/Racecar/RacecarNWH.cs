@@ -74,6 +74,7 @@ namespace NWH.WheelController3D
 
         public float driveAxis;
         public float steerAxis;
+        public bool handbrakeToggle;
 
         protected float smoothXAxis;
         protected float xAxis;
@@ -122,7 +123,6 @@ namespace NWH.WheelController3D
             
             xAxis = steerAxis;
             yAxis = driveAxis;
-            bool spaceHeld = Input.GetKey(KeyCode.Space);
             smoothXAxis = Mathf.SmoothDamp(smoothXAxis, xAxis, ref xAxisVelocity, 0.12f);
 
             for (int i = 0; i < wheels.Count; i++)
@@ -132,7 +132,7 @@ namespace NWH.WheelController3D
                 wc.BrakeTorque = 0f;
                 wc.MotorTorque = 0f;
 
-                if ( w.handbrake && spaceHeld)
+                if ( w.handbrake && handbrakeToggle)
                 {
                     wc.BrakeTorque = maxBrakeTorque;
                 }

@@ -75,3 +75,7 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 
 Assets/Imported/
+
+# Wheel Controller 3D by NWH Coding
+/Assets/NWH/
+Assets/NWH.meta
